@@ -33,7 +33,7 @@
               category = "forester";
               name = "new";
               command = ''
-                ${foresterExe} new --dirs=trees --prefix=${myselfTree} --dest=trees
+                ${foresterExe} new --dirs=trees --dest=trees --prefix=''${1:-${myselfTree}}
               '';
             }
           ];
