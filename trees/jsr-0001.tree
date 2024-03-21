@@ -1,0 +1,43 @@
+\title{the root of my forest}
+\author{jinser}
+
+\p{This is an play tree in my forest.}
+
+\transclude{jsr-0002}
+
+\p{中文，你好👋。}
+
+\p{
+  使用 \code{flake-parts} 配置 forester 开发 shell 的 flake.nix，主要内容在 \code{./nix} 目录中。
+\pre{
+{
+  description = "Forest de J.K.";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    forester = {
+      url = "sourcehut:~jonsterling/ocaml-forester";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    devshell.url = "github:numtide/devshell";
+  };
+
+  outputs = inputs@{ flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+        "x86_64-darwin"
+      ];
+
+      imports = [
+        inputs.devshell.flakeModule
+
+        ./nix
+      ];
+    };
+}
+ }}
