@@ -1,0 +1,6 @@
+\title{nvim lsp debugger}
+\date{2024-03-22}
+\author{jinser}
+
+\p{想要一个能显示 client <=> server 之间交互的 lsp debugger，可能会用 nui 来实现？}
+\p{主要目的是帮助 HLS 开发和学习下 neovim 的插件怎么开发的。}

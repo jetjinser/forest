@@ -1,0 +1,12 @@
+\title{一些可能会做的想法}
+\author{jinser}
+
+\p{在此树记录防止遗忘，也可能会保存一些进度或问题。}
+
+\p{一些和 neovim 有关的，主要是插件什么的。}
+\transclude{idea-0002}
+\transclude{idea-0005}
+
+\transclude{idea-0003}
+
+\transclude{idea-0004}
