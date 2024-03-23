@@ -3,10 +3,20 @@
 
 \p{在此树记录防止遗忘，也可能会保存一些进度或问题。}
 
-\p{一些和 neovim 有关的，主要是插件什么的。}
+\p{
+一些和 neovim 有关的，主要是插件什么的。
 \transclude{idea-0002}
 \transclude{idea-0005}
+}
 
+\p{
+nix 相关的想法，有 nix 本身的，也有想要用 nix 做的事情。
 \transclude{idea-0003}
+\transclude{idea-0006}
+}
 
+\p{
+一些奇怪或者乱七八糟的想法...
 \transclude{idea-0004}
+\transclude{idea-0007}
+}
