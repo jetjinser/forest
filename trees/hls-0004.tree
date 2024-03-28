@@ -1,0 +1,5 @@
+\title{haskell-language-server plugin handlers}
+\date{2024-03-29}
+\author{jinser}
+
+\p{\code{pluginHandlers} 的想法挺朴素的，就是 handle LSP 客户端来的请求，返回相应的响应。handle 的过程中会用到很多资源，比如文件内容，引用 map 等，有时候会通过不同的 \code{use_*} 来获得，比如 \code{type instance RuleResult} 实例的结果。用 \code{use_*} 系列的函数，主要是为了缓存上一次的计算结果，以免出现即使文件内容没变，仍然会重新计算结果的情况出现。}

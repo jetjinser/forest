@@ -1,0 +1,14 @@
+\title{haskell-language-server plugin system}
+\date{2024-03-29}
+\author{jinser}
+
+\p{haskell-language-server 有一个 plugin 系统，所有的能力都是通过 plugin 来提供的。虽然 plugin 现在并不能 plug：要添加一个插件，只能在 \code{haskell-language-server.cabal} 中添加后重新编译。}
+
+\p{每个 plugin 都由一个这样的 \code{descriptor} 来描述：\pre{
+descriptor :: Recorder (WithPriority Log) -> PluginId -> PluginDescriptor IdeState}}
+
+\p{haskell-language-server 很朴素的列了一个 \code{idePlugins}，每个 plugin 都通过 cabal 中设定的条件编译启用或关闭 \code{descriptor}。}
+
+\p{要实现一个 \code{plugin descriptor}，通常会使用 \code{defaultPluginDescriptor pluginId "PLUGIN DESC"} 这个函数来先得到一个什么都不做的 plugin，然后用 Haskell 的 record update 语法来覆盖掉其中的一些 record。}
+
+\transclude{hls-0003}

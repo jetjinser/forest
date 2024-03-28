@@ -1,0 +1,7 @@
+\title{haskell-language-server insights}
+\date{2024-03-29}
+\author{jinser}
+
+\p{给 MPJ 写过邮件之后，他给我推荐了[zubin 在一次会议上的演讲录像](https://www.youtube.com/watch?v=YU6rn_uyLbo)。比较详细地介绍了整个 HLS 的架构和 plugin 系统。}
+
+\transclude{hls-0002}

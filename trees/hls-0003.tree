@@ -1,0 +1,5 @@
+\title{haskell-language-server plugin rules}
+\date{2024-03-29}
+\author{jinser}
+
+\p{\code{pluginRules} 是 \code{plugin descriptor} 的一个 record，在需要的时候，比如在 \code{pluginHandlers} 中被 \code{use_*} 时，返回 \code{type instance RuleResult} 作为结果。这么做应该是为了缓存和异步/非阻塞地获取结果，返回响应。}

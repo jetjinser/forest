@@ -9,3 +9,6 @@
 
 \p{这是一棵 idea 树：}
 \transclude{idea-0001}
+
+\p{想试着记录一些学习 HLS 代码过程中获得的启示。}
+\transclude{hls-0001}
