@@ -1,0 +1,5 @@
+\title{haskell-language-server hover compose}
+\date{2024-04-01}
+\author{jinser}
+
+\p{HLS 接收到 hover request 时实际上有很多个插件都会响应，有一些是让 Rule 异步地计算结果，比如 Fixity 和 haddock 文档。所以第一次 hover 的时候，往往只能看到 core hover 响应的 type 信息。}

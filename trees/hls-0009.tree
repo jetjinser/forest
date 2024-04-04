@@ -1,0 +1,5 @@
+\title{haskell-language-server core hover}
+\date{2024-04-01}
+\author{jinser}
+
+\p{core hover 通过 \code{getAtPoint} 获取并显示 hover 请求下 point 的 synthesis 或者说是 type。}

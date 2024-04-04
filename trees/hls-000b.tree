@@ -1,0 +1,7 @@
+\title{haskell-language-server PluginHandlers distribution}
+\date{2024-04-04}
+\author{jinser}
+
+\p{HLS 的 \code{PluginHandlers} 分发机制是通过一个 \code{DMap IdeMethod (PluginHandler a)} 实现的，所以同一个 \code{IdeMethod} 的 handler，同时只能存在一个。}
+
+\p{虽然 \code{PluginHandler} 可以 \code{mappend (<>)}，但只能得到第一个有响应的 handler 的结果。}

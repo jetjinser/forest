@@ -1,0 +1,7 @@
+\title{haskell-language-server regex myth}
+\date{2024-03-30}
+\author{jinser}
+
+\p{HLS 的 diagnostic 和 code action 等信息，是从 GHC 的编译日志中，regex match 出来的。这是我从 hole 的 code action 中发现的：HLS regex 出了 hole 的 type 和 fit。}
+
+\p{震惊的点在于，处理手法过于粗糙了，GHC as Lib 的路还有很长。}

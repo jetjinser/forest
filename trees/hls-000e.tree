@@ -1,0 +1,6 @@
+\title{haskell-language-server redundant imports warning}
+\date{2024-04-04}
+\author{jinser}
+
+
+\p{不知道为什么，大部分情况下都看不到是哪一个 import 的项 redundant 了，HLS 会标注一整句 import 都变灰。}

@@ -1,0 +1,9 @@
+\title{haskell-language-server core hover hole}
+\date{2024-04-01}
+\author{jinser}
+
+\p{不同于 diagnostic 的 hole，hover hole 不是通过 regex match GHC 的 output 拿到的，而是 GHC as Lib 通过 API 拿到的 synthesis。}
+
+\p{diagnostic hole 从 GHC 的日志中 regex match 除了得到 typed hole，应该还是为了获得 hole fits。这部分 GHC 还没有 API 暴露出来。}
+
+\transclude{hls-0006}

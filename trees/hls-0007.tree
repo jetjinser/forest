@@ -1,0 +1,5 @@
+\title{haskell-language-server hover IdeAction}
+\date{2024-04-01}
+\author{jinser}
+
+\p{HLS 的 core hover 是一个 IdeAction，即需要即时得到结果的 Action。Client 发送 hover request，HLS 响应 hover response 用户需要立刻得到结果。}

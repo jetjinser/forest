@@ -1,0 +1,7 @@
+\title{haskell-language-server tips}
+\date{2024-04-04}
+\author{jinser}
+
+\p{一些 HLS 使用中遇到的小问题和小技巧。}
+
+\p{感觉 HLS 的 redundant imports 还可以再改进一下。warning 的地方就经常有问题，\transclude{hls-000e}。另外一点就是 code action 应该给每一个 redundant imports 加上。\transclude{hls-000c}}

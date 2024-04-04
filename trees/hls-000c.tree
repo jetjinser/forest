@@ -1,0 +1,5 @@
+\title{haskell-language-server remove all redundant imports}
+\date{2024-04-04}
+\author{jinser}
+
+\p{每一个 redundant imports 都会有 warning，但是只有第一个 redundant imports 会有 code action。如果想要删除所有的 redundant imports，需要找到第一个警告的地方，在这个地方调用 code action，可以 \pre{Remove all redundant imports}}
