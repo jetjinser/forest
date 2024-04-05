@@ -1,0 +1,6 @@
+\title{haskell-language-server only hole}
+\date{2024-04-06}
+\author{jinser}
+
+\p{根本不知道 \code{HieAST} 里，如何判断一个 \code{node} 是不是 \code{hole}。我现在做到最接近的，就是判断 \code{nodeAnnotConstr NodeAnnotation} 是不是 \code{HsUnboundVar}，也就是说，所有的未绑定变量都会显示 inlay hints。我本来还想直接判断 \code{identifier} 是不是 \code{_}，但是，hole 和字面量，都没有 \code{nodeIdentifiers}。暂时无解了。}
+\p{不会要像是 hole diagnostic 那样 regex 出来吧... \transclude{hls-0006}}
