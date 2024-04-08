@@ -3,6 +3,6 @@
 \author{jinser}
 
 \p{感觉 HLS 的 redundant imports 还可以再改进一下。warning 的地方就经常有问题。}
-\transclude{hls-000e}
+\transclude{hls-000E}
 \p{另外一点就是 code action 应该给每一个 redundant imports 加上。}
-\transclude{hls-000c}
+\transclude{hls-000C}

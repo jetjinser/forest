@@ -1,0 +1,12 @@
+\title{NixOS RFC42-style module options x config}
+\date{2024-04-08}
+\author{jinser}
+
+\p{一个典型的 RFC42 module 一般由 \code{options} 和 \code{config} 组成。
+\pre{
+  options = {};
+  config = {};
+}
+
+\em{TODO}
+}

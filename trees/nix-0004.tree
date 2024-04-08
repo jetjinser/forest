@@ -1,0 +1,6 @@
+\title{NixOS RFC42 balancing module option count}
+\date{2024-04-08}
+\author{jinser}
+
+\p{只是推荐 module 编写者平衡 option 的数量。适当地写 option，帮助生成合适数量的文档选项，但是不用把所有的选项都写出来，使后续维护困难。}
+

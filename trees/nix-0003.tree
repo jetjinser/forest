@@ -1,0 +1,43 @@
+\title{NixOS RFC42 structural settings}
+\date{2024-04-08}
+\author{jinser}
+
+\p{简单概括，就是将原本 module config 中硬编码的程序配置，改为使用结构化的 nix 数据，使其对应程序 config。}
+
+\p{例如 [wakapi](https://github.com/muety/wakapi) 使用 yaml 来作为配置文件，在 RFC42 之前，一个做法是写 str type 的 option 为 \code{services.wakapi.extraConfig}，直接将 yaml 内容写入此处，传递给 wakapi。
+
+\pre{
+  options.services.wakapi.extraConfig = lib.mkOption {
+    type = lib.types.str;
+    description = lib.mdDoc ''
+      The wakapi config content.
+    '';
+  };
+}
+
+这么做显然有很多缺点，比如语法无法检查、选项合并困难等。}
+
+\p{在 RFC42 之后，不再推荐这种写法，而是提供了一种统一的结构化（structural）的 \code{settings} option。还是 wakapi：
+\pre{
+  let
+    format = pkgs.formats.yaml { };
+  in
+    options.services.wakapi.settings = lib.mkOption {
+      type = lib.types.submodule {
+        freeformType = format.type;
+        options = { };
+        default = { };
+        description = lib.mdDoc ''
+          The wakapi config settings.
+        '';
+      };
+    };
+}
+这里的重点在于 \code{freeformType = format.type;}，它允许 config 中写下 option 中未直接定义的选项。这些任意写下的选项，最后都可以通过 \code{format.generate} 以设定的文件格式写入。
+
+\pre{
+  confFile = format.generate "wakapi.yaml" cfg.settings
+}
+
+另外，\code{options = { };} 中仍然可以写明确的 option，如果这么写的话，选项可以被类型检查和生成文档。
+}

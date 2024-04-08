@@ -7,6 +7,8 @@
 
 \transclude{jsr-0002}
 
+\transclude{nix-0001}
+
 \p{这是一棵 idea 树：}
 \transclude{idea-0001}
 

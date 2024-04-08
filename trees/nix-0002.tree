@@ -1,0 +1,13 @@
+\title{NixOS RFC42-style module}
+\date{2024-04-08}
+\author{jinser}
+
+\p{[RFC42](https://github.com/NixOS/rfcs/blob/master/rfcs/0042-config-option.md) 提出了两个稳定的部分。}
+\ol{
+  \li{Structural settings instead of stringly extraConfig \transclude{nix-0003}}
+  \li{Balancing module option count \transclude{nix-0004}}
+}
+
+\p{另外，尽管 NixOS module 没有明确的 RFC 或 spec，但在 RFC42 中隐含地使用了 module 的部分结构。可以相信这部分的 module 结构是稳定，不轻易改变的。}
+
+\transclude{nix-0005}

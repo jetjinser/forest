@@ -1,0 +1,34 @@
+\title{use NixOS RFC42-style module options to expose function}
+\date{2024-04-08}
+\author{jinser}
+
+\p{origin: https://github.com/hercules-ci/flake-parts/issues/51}
+
+\p{
+  通过 \code{options} 和 \code{options} 的 \code{default} 值来导出和共享一个全局的 function。
+\pre{
+  { self, ... }:
+  {
+    options = {
+      mkCheck = lib.mkOption {
+        type = lib.types.functionTo lib.types.unspecified;
+        default = { package, ... }:
+        abort "TODO: return a derivation that runs the tests for $package";
+      };
+    };
+  }
+}
+
+这是一个 RFC42-style 的 module，options 会被自动合并，并赋予一个默认值。
+}
+
+\p{
+  因此，在其他 RFC42-style module 中，可以通过 \code{config} 来访问该函数。
+\pre{
+  { self, ... }: {
+    perSystem = { config, ... }: {
+      checks.foo = config.mkCheck { ... };
+    };
+  }
+}
+}

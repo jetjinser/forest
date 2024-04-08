@@ -1,0 +1,38 @@
+\title{NixOS RFC42-style module as libaray}
+\date{2024-04-08}
+\author{jinser}
+
+\p{不知道叫做 RFC42-style module 这个名字合适不合适，因为 RFC42 实际上并不是定义 module 的。但是既然 [flake.parts 这么叫了](https://flake.parts/define-custom-flake-attribute.html?highlight=rfc#configflake)，那就继续沿用了。}
+
+\transclude{nix-0002}
+
+\p{在 nix 程序的组织中，经常需要，但是并没有默认提供定义方式的是 libaray 的写法。即有一系列常用或相关的函数，想要在程序的全局中方便地调用。}
+
+\p{最直觉想到的解决方式是一个 \code{mylib.nix}，其接收一些必要的参数，返回一个含所有函数的 \code{attrset}。
+\pre{
+  { lib, inputs, nixpkgs }:
+  {
+    mkSystem = nixpkgs.lib.nixosSystem { ... };
+
+    mkEmptyFreeformOption = description: lib.mkOption {
+      type = lib.types.submodule {
+        freeformType = format.type;
+      };
+      default = { };
+      inherit description;
+    };
+  }
+}
+
+社区中的例子🌰：
+\ol{
+  \li{[Ryan4yin 的 NixOS config](https://github.com/ryan4yin/nix-config/blob/487d410e70ed4298e45cbe9dbf80bd22c558bd6e/lib/default.nix)}
+  \li{[Mitchell Hashimoto 的 NixOS config](https://github.com/mitchellh/nixos-config/blob/0bc623cded29408b041bb0792dd6bf893b43eecf/lib/mksystem.nix)}
+}
+}
+
+\p{另外一个方式是从 [srid 在 flake-parts 中提的 issue](https://github.com/hercules-ci/flake-parts/issues/51) 中学到的，利用 module 实现的全局共享函数。借助 module 的自动合并和自动应用，可以比较优雅地共享 libaray。不过不确定的一点是，这么做是否构成了对 \code{options} 的滥用，或者说违反了 \code{options} 的语义。}
+
+\p{尽管该 issue 还处于 open 状态，flake-parts 对于这个问题还没有共识。但在自己的配置中这么做还是没有问题。}
+
+\transclude{nix-0007}
