@@ -1,0 +1,28 @@
+\title{neo-tree file nesting}
+\date{2024-04-09}
+\author{jinser}
+
+\pre{
+  :help neo-tree-file-nesting
+}
+
+\pre{
+  nesting_rules = {
+    ["forester"] = {
+      pattern = "(.*)-0001%.tree$",
+      files = { "%1-*.tree" },
+    },
+  },
+}
+
+\pre{
+  hls-0001.tree
+      hls-0002.tree
+      hls-0003.tree
+      hls-0004.tree
+
+  TREENAME-0001.tree
+      TREENAME-0002.tree
+      TREENAME-0003.tree
+      ...
+}

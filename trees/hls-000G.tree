@@ -1,0 +1,9 @@
+\title{haskell-language-server only hole bigbrother suggestions}
+\date{2024-04-09}
+\author{jinser}
+
+\transclude{hls-000F}
+
+\p{问了大哥，大哥也认为暂时只能这么做了。他还建议我可以去看看 GHC 的代码，试着给 HieAST 里加上 hole 的信息。}
+
+\p{虽然我对 GHC 的 code base 感到害怕，但是他说 HLS 在 GHC 的代码里很好用，鼓励我去修改。想起了 MPJ 一开始给我回邮件的时候说的，可能会涉及修改 GHC 的代码，没想到这么快...}
