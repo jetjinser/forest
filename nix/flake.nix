@@ -2,10 +2,10 @@
   description = "Forest de J.K.";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/44d0940ea560dee511026a53f0e2e2cde489b4d4";
+
     forester = {
-      url = "sourcehut:~jonsterling/ocaml-forester";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "sourcehut:~jinser/ocaml-forester/fix-x86_64-darwin-nix";
     };
 
     flake-parts.url = "github:hercules-ci/flake-parts";
@@ -23,8 +23,7 @@
 
       imports = [
         inputs.devshell.flakeModule
-
-        ./nix
+        ./devshell.nix
       ];
     };
 }

@@ -5,6 +5,8 @@
       foresterExe = lib.getExe' forester "forester";
     in
     {
+      packages.default = forester;
+
       devshells.default = {
         packages =
           let
@@ -14,14 +16,14 @@
           in
           [
             forester
-
             tex
           ];
 
         commands =
           let
             myselfTree = "jsr";
-          in [
+          in
+          [
             {
               category = "forester";
               name = "build";
