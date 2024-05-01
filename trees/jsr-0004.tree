@@ -1,0 +1,8 @@
+\title{forester 与 nvim/nix 合作笔记}
+\date{2024-05-01}
+\author{jinser}
+
+\p{扁平的文件树导航问题可以通过虚拟嵌套（部分）解决，如果不是遇到特别大的树，效果挺好的。}
+
+\transclude{fst-0001}
+

@@ -1,16 +1,10 @@
-\title{the root of forest de J.K.}
+\title{Jinser Kafka}
 \author{jinser}
+\meta{author}{false}
 
-\p{This is an root tree in my forest.}
+\p{I am a \em{Sophomore Computer Science major} and a \em{fancier of programming languages}.}
 
-\p{你好👋。}
-
-\p{👷施工中🏗️。}
-
-\transclude{nix-0001}
-
-\p{这是一棵 idea 树：}
-\transclude{idea-0001}
-
-\p{想试着记录一些学习 HLS 代码过程中获得的启示。}
-\transclude{hls-0001}
+\scope{
+  \put\transclude/title{blog posts}
+  \transclude{jsr-0003}
+}

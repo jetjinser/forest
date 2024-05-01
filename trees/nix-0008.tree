@@ -1,0 +1,15 @@
+\title{opam-nix override stdenv}
+\date{2024-05-01}
+\author{jinser}
+
+\pre{/startverb
+pkgs = import nixpkgs {
+  inherit system;
+  config.replaceStdenv = { pkgs }: if pkgs.stdenv.isDarwin then pkgs.overrideSDK pkgs.stdenv "11.0" else pkgs.stdenv;
+};
+...
+scope = on.buildOpamProject' { repos = [ "${opam-repository}" ]; inherit pkgs; } ./. query;
+/stopverb}
+
+\p{example: https://git.sr.ht/~jinser/ocaml-forester/commit/df9f952d1de06b8f0aad228b3e538321df8fd5fe}
+

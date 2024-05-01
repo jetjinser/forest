@@ -1,0 +1,37 @@
+\title{fix forester opam-nix ocaml-cf broken}
+\date{2024-05-01}
+\author{jinser}
+
+\p{[ocaml-cf](https://github.com/mirage/ocaml-cf) 的 \code{lib_gen/dune} 文件疑似写错了，导致 forester 在 x86_64-darwin 上构建失败。}
+
+\pre{\startverb
+(rule
+ (targets detect.exe)
+ (enabled_if
+  (= %{system} macosx))
+ (deps
+  detect.c
+  (package ctypes))
+ (action
+  (run %{cc} -I %{ocaml_where} -I %{lib:ctypes:} -o %{targets} %{deps})))
+\stopverb}
+
+\pre{\startverb
+Done: 31% (18/58, 40 left) (jobs: 0)^M                                    ^MFile "lib_gen/dune", line 27, characters 0-185:
+27 | (rule
+28 |  (targets detect.exe)
+29 |  (enabled_if
+30 |   (= %{system} macosx))
+31 |  (deps
+32 |   detect.c
+33 |   (package ctypes))
+34 |  (action
+35 |   (run %{cc} -I %{ocaml_where} -I %{lib:ctypes:} -o %{targets} %{deps})))
+Error: File unavailable:
+/nix/store/xb81cf7qgnyvsyvp9nfj15dmqchc24gk-ctypes-0.22.0/doc/ctypes/CHANGES.md
+\stopverb}
+
+\p{我不懂 dune 是如何工作的，但我猜测 \code{(deps detect.c (package ctypes))} 是将 ctypes 当作源代码依赖来构建了。我将 \code{(package ctypes)} 直接删去，一切都正常工作了。}
+
+\p{我在 GitHub 提了一个 [PR](https://github.com/mirage/ocaml-cf/pull/9)。}
+
