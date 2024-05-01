@@ -19,23 +19,19 @@
             tex
           ];
 
-        commands =
-          let
-            myselfTree = "jsr";
-          in
-          [
+        commands = [
             {
               category = "forester";
               name = "build";
               command = ''
-                ${foresterExe} build --root ${myselfTree}-0001 trees/
+                ${foresterExe} build forest.toml
               '';
             }
             {
               category = "forester";
               name = "new";
               command = ''
-                ${foresterExe} new --dirs=trees --dest=trees --prefix=''${1:-${myselfTree}}
+                ${foresterExe} new --dest=trees --prefix=''${1:-jsr}
               '';
             }
           ];

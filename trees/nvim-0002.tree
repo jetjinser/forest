@@ -2,26 +2,26 @@
 \date{2024-04-09}
 \author{jinser}
 
-\p{
-expand nested files:
+\import{base-macros}
+
+\p{expand nested files}
 \pre{
-  \xml{span}[style]{color:orange}{trees/}
-    hls-0001.tree
-        hls-0002.tree
-        \xml{span}[style]{color:orange}{hls-0003.tree}
-        hls-0004.tree
+ \nowrap{\color{orange}{trees/}}
+  hls-0001.tree
+  hls-0002.tree
+ \nowrap{\color{orange}{hls-0003.tree}}
+  hls-0004.tree
+  ...
+  TREENAME-0001.tree
+  TREENAME-0002.tree
+  TREENAME-0003.tree
+  ...}
 
-    TREENAME-0001.tree
-        TREENAME-0002.tree
-        TREENAME-0003.tree
-        ...
-}
+\hr
 
-collapse nested files:
+\p{collapse nested files}
 \pre{
-  \xml{span}[style]{color:orange}{trees/}
-    hls-0001.tree
-
-    TREENAME-0001.tree
-}
-}
+ \nowrap{\color{orange}{trees/}}
+  hls-0001.tree
+  ...
+  TREENAME-0001.tree}
