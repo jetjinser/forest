@@ -17,24 +17,26 @@
           [
             forester
             tex
+
+            pkgs.nodePackages.pnpm
           ];
 
         commands = [
-            {
-              category = "forester";
-              name = "build";
-              command = ''
-                ${foresterExe} build forest.toml
-              '';
-            }
-            {
-              category = "forester";
-              name = "new";
-              command = ''
-                ${foresterExe} new --dest=trees --prefix=''${1:-jsr}
-              '';
-            }
-          ];
+          {
+            category = "forester";
+            name = "build";
+            command = ''
+              ${foresterExe} build forest.toml
+            '';
+          }
+          {
+            category = "forester";
+            name = "new";
+            command = ''
+              ${foresterExe} new --dest=trees --prefix=''${1:-jsr}
+            '';
+          }
+        ];
 
         serviceGroups = {
           liforest = {
