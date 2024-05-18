@@ -39,9 +39,6 @@
           </header>
         </xsl:if>
         <div id="grid-wrapper">
-          <article>
-            <xsl:apply-templates select="f:tree" />
-          </article>
           <xsl:if test="f:tree/f:mainmatter/f:tree[not(@toc='false')] and not(/f:tree/f:frontmatter/f:meta[@name = 'toc']/.='false')">
             <nav id="toc">
               <div class="block">
@@ -50,6 +47,9 @@
               </div>
             </nav>
           </xsl:if>
+          <article>
+            <xsl:apply-templates select="f:tree" />
+          </article>
         </div>
       </body>
     </html>
