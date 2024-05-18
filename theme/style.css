@@ -13,6 +13,12 @@ html.dark {
 /*   background-color: rgba(50, 200, 200, 0.04); */
 /* } */
 
+#button-dark-mode {
+  position: absolute;
+  right: 0;
+  margin-right: 0.5em;
+}
+
 .katex {
   font-size: 1.15em !important;
 }
@@ -209,6 +215,10 @@ footer h2 {
     transition: ease all .2s;
   }
 
+  #grid-wrapper>article {
+    max-width: calc((2.5 / 3) * 100%);
+  }
+
   #grid-wrapper {
     display: grid;
     grid-template-columns: 1fr 3fr;
@@ -220,7 +230,6 @@ body>header {
 }
 
 #grid-wrapper>article {
-  max-width: calc((2.5 / 3) * 100%);
   margin-right: auto;
   grid-column: 2;
 }
