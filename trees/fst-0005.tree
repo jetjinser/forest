@@ -1,0 +1,29 @@
+\title{forester def of \startverb\def\stopverb}
+\date{2024-05-19}
+\author{jinser}
+
+\p{forester 的 def 语法定义大致摘抄自 [ocaml-forester](https://git.sr.ht/~jonsterling/ocaml-forester) 中的 \code{lib/frontend/Grammar.mly}。}
+
+\pre{\startverb
+%token <string> IDENT
+let ident :=
+| ident = IDENT;
+ { String.split_on_char '/' ident }
+
+let bvar :=
+| x = TEXT; { [x] }
+let binder == list(squares(bvar))
+
+let textual_expr == list(locate(textual_node))
+let arg == braces(textual_expr)
+let textual_node :=
+| ~ = TEXT; <Code.Text>
+| ~ = WHITESPACE; <Code.Text>
+| ~ = head_node; <Fun.id>
+
+let fun_spec == ~ = ident; ~ = binder; ~ = arg; <>
+
+let head_node :=
+(* ... *)
+| DEF; (~,~,~) = fun_spec; <Code.Def>
+\stopverb}

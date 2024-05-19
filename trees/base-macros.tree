@@ -10,4 +10,4 @@
   \<html:span>[style]{color:\colorcode}{\body}
 }
 
-\p{This tree defines the basic notational macros used across my forest. Deriving from jsm-trees.}
+\p{This tree defines the basic notational macros used across my forest. Deriving from [jsm-trees](https://git.sr.ht/~jonsterling/public-trees/tree/22da887927bdc7fff2af54a59aa3a9729e692394/item/base-macros.tree).}

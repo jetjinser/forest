@@ -1,0 +1,8 @@
+\title{forester example of \startverb\def\stopverb with multi binder}
+\date{2024-05-19}
+\taxon{example}
+\author{jinser}
+
+\pre{\startverb
+    \def\SubSup[arg1][arg2]{#{_{\arg1}^{\arg2}}}
+\stopverb}
