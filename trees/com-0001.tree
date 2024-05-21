@@ -1,0 +1,13 @@
+\title{finite automation}
+\date{2024-05-21}
+\taxon{definition}
+\author{jinser}
+
+\p{A \em{finite automation}(FA) is a five-tuple #{(S, \Sigma, \delta, s_0, S_A)}, where}
+\ol{
+  \li{#{S} is the finite set of states in the recognizer, including #{s_e}.}
+  \li{#{\Sigma} is the finite alphabet used by the recognizer. Typically, #{\Sigma} is the union of the edge labels in the transition diagram.}
+  \li{#{\delta(s, c)} is the recognizer's transition function. It maps each state #{s \in S} and each character #{c \in \Sigma} into some next state. In state #{s_i} with input character #{c}, the FA takes the transition #{s_i \xrightarrow{c} \delta(s_i, c)}.}
+  \li{#{s_0 \in S} is the designated start state.}
+  \li{#{S_A} is the set of accepting states, #{S_A \in S}. Each state in #{S_A} appears as a double circle in the transition diagram.}
+}

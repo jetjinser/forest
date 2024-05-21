@@ -11,7 +11,11 @@
         packages =
           let
             tex = (pkgs.texlive.combine {
-              inherit (pkgs.texlive) scheme-small latexindent;
+              inherit (pkgs.texlive) scheme-small latexindent dvisvgm
+                pgf tikz-cd spath3 tikz-automata
+                mathtools amsfonts stmaryrd
+                standalone
+                ;
             });
           in
           [

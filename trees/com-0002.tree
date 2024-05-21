@@ -1,0 +1,52 @@
+\title{finite automation the \em{new or not or while}}
+\date{2024-05-21}
+\taxon{example}
+\author{jinser}
+
+\import{base-macros}
+
+\p{Putting the \em{finite automation} for \strong{\em{new or not or while}} into formalism yields:}
+
+##{
+ \begin{aligned}
+  & S = \{ s_0, s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8, s_9, s_{10}, s_e \} \\
+  & \Sigma = \{ e, h, i, l, n, o, t, w \} \\
+  & \delta = \left\lbrace
+    \begin{aligned}
+    & s_0 \xrightarrow{n} s_1, s_0 \xrightarrow{w} s_6, s_1 \xrightarrow{e} s_2, s_1 \xrightarrow{o} s_4, s_2 \xrightarrow{w} s_3, \\
+    & s_0 \xrightarrow{n} s_1, s_0 \xrightarrow{w} s_6, s_1 \xrightarrow{e} s_2, s_1 \xrightarrow{o} s_4, s_2 \xrightarrow{w} s_3
+    \end{aligned}
+  \right\rbrace \\
+  & s_0 = s_0 \\
+  & S_A = \{ s_3, s_5, s_10 \}
+ \end{aligned}
+}
+
+\texfig{
+  \begin{tikzpicture}
+    \node[state, initial] (s0) {$s0$};
+    \node[state, right of=s0] (s1) {$s1$};
+    \node[state, above right of=s1] (s2) {$s2$};
+    \node[state, accepting, right of=s2] (s3) {$s3$};
+    \node[state, below right of=s1] (s4) {$s4$};
+    \node[state, accepting, right of=s4] (s5) {$s5$};
+
+    \node[state, below of=s4] (s7) {$s7$};
+    \node[state, left of=s7] (s6) {$s6$};
+    \node[state, right of=s7] (s8) {$s8$};
+    \node[state, right of=s8] (s9) {$s9$};
+    \node[state, accepting, right of=s9] (s10) {$s10$};
+
+    \draw (s0) edge[above] node{$n$} (s1)
+          (s1) edge[above] node{$e$} (s2)
+          (s2) edge[above] node{$w$} (s3)
+          (s1) edge[above] node{$o$} (s4)
+          (s4) edge[above] node{$t$} (s5)
+
+          (s0) edge[above right] node{$w$} (s6)
+          (s6) edge[above] node{$h$} (s7)
+          (s7) edge[above] node{$i$} (s8)
+          (s8) edge[above] node{$l$} (s9)
+          (s9) edge[above] node{$e$} (s10);
+    \end{tikzpicture}
+}

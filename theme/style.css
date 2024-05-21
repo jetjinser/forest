@@ -148,7 +148,7 @@ code {
 
 body {
   font-family: "Inria Sans";
-  font-size: 12pt;
+  font-size: 14pt;
   line-height: 1.55;
 }
 
@@ -247,12 +247,12 @@ a.heading-link {
 }
 
 details h1 {
-  font-size: 13pt;
+  font-size: 14pt;
   display: inline;
 }
 
 section .block[data-taxon] details>summary>header>h1 {
-  font-size: 12pt;
+  font-size: 14pt;
 }
 
 span.taxon {
@@ -262,7 +262,7 @@ span.taxon {
 
 
 .link-list>section>details>summary>header h1 {
-  font-size: 12pt;
+  font-size: 14pt;
 }
 
 

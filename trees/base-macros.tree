@@ -1,4 +1,8 @@
 \title{basic macros}
+\author{jonmsterling}
+\author{jinser}
+
+\import{latex-preamble}
 
 \xmlns:html{http://www.w3.org/1999/xhtml}
 
@@ -8,6 +12,19 @@
 \def\nowrap[body]{\<html:span>[style]{white-space: nowrap}{\body}}
 \def\color[colorcode][body]{
   \<html:span>[style]{color:\colorcode}{\body}
+}
+
+\alloc\base/tex-preamble
+
+\def\texfig[body]{
+ \scope{
+  \put?\base/tex-preamble{
+   \latex-preamble/string-diagrams
+   \latex-preamble/diagrams
+   \latex-preamble/automata
+  }
+  \tex{\get\base/tex-preamble}{\body}
+ }
 }
 
 \p{This tree defines the basic notational macros used across my forest. Deriving from [jsm-trees](https://git.sr.ht/~jonsterling/public-trees/tree/22da887927bdc7fff2af54a59aa3a9729e692394/item/base-macros.tree).}
