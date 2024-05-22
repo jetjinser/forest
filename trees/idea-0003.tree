@@ -1,5 +1,7 @@
 \title{nix in-repl editor}
 \date{2024-03-22}
+\tag{nix}
+\tag{cli}
 \author{jinser}
 
 \p{nix repl 和其他的 repl 一样，都会遇到一个问题：编辑跨行的代码的时候非常困难，我遇到的解决方案大概有这几种。}

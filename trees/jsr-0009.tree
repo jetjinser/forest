@@ -1,0 +1,32 @@
+\title{一些可能会做的想法}
+\date{2024-05-22}
+\author{jinser}
+
+\p{记录防止遗忘。}
+
+\p{一些和 neovim 有关的。}
+\scope{
+  \put\transclude/title{neovim}
+  \put\transclude/expanded{true}
+  \query{
+    \query/tag{neovim}
+  }
+}
+
+\p{nix 相关的想法，有 nix 本身的，也有想要用 nix 做的事情。}
+\scope{
+  \put\transclude/title{nix}
+  \put\transclude/expanded{true}
+  \query{
+    \query/tag{nix}
+  }
+}
+
+\p{想实现的项目。}
+\scope{
+  \put\transclude/title{project}
+  \put\transclude/expanded{true}
+  \query{
+    \query/tag{project}
+  }
+}

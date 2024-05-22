@@ -1,5 +1,7 @@
 \title{nvim instance change diff}
 \date{2024-03-22}
+\tag{neovim}
+\tag{lsp}
 \author{jinser}
 
 \p{每次补全触发 auto-import，或者使用 code action 时候，经常不知道代码中具体发生了什么改变。}

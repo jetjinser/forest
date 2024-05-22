@@ -1,5 +1,6 @@
 \title{normal pastebin}
 \date{2024-03-23}
+\tag{project}
 \author{jinser}
 
 \p{Hastebin 跑在 docker 里，而且还需要 redis，我不太喜欢，所以想要一个单可执行文件 pastebin。但是我很喜欢 Hastebin 的前端和工作模式，不需要用户，也不需要复杂的 UI，只需要一个能输入和分享的页面就好。}

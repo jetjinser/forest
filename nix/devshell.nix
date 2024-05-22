@@ -12,7 +12,7 @@
           let
             tex = (pkgs.texlive.combine {
               inherit (pkgs.texlive) scheme-small latexindent dvisvgm
-                pgf tikz-cd spath3 tikz-automata
+                pgf tikz-cd spath3
                 mathtools amsfonts stmaryrd
                 standalone
                 ;

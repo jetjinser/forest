@@ -1,5 +1,8 @@
 \title{nvim lsp debugger}
 \date{2024-03-22}
+\tag{neovim}
+\tag{lsp}
+\tag{project}
 \author{jinser}
 
 \p{想要一个能显示 client <=> server 之间交互的 lsp debugger，可能会用 nui 来实现？}
