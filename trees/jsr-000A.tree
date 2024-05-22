@@ -1,0 +1,12 @@
+\title{highlight for all}
+\date{2024-05-23}
+\author{jinser}
+
+\import{base-macros}
+
+\p{Highlights test.}
+
+\hcode{haskell}{
+  main :: IO ()
+  main = putStrLn "Hello, Forester!"
+}

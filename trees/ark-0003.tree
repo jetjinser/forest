@@ -1,0 +1,9 @@
+\title{manifest of riscv-sig Ark}
+\date{2024-05-22}
+\author{jinser}
+
+\p{[riscv-sig/arkcompiler_toolchain](https://gitee.com/riscv-sig/arkcompiler_toolchain) 相关仓库。}
+
+\pre{repo init -u https://gitee.com/riscv-sig/arkcompiler-manifest.git -b master -m arkcompiler-toolchains.xml}
+\pre{repo init}
+

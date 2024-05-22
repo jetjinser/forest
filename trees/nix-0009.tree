@@ -1,0 +1,16 @@
+\title{darwin stdenv with apple sdk 11}
+\date{2024-05-23}
+\author{jinser}
+
+\pre{
+let
+  stdenv' = if stdenv.isDarwin then overrideSDK stdenv "11.0" else stdenv;
+in
+stdenv'.mkDerivation (
+  pname = "foo";
+  version = "0.1.0";
+  # ...
+)
+}
+
+\p{在 [overrideSDK in nixpkgs](https://github.com/search?q=repo\%3ANixOS\%2Fnixpkgs\%20overrideSDK&type=code) 里寻找实例。}

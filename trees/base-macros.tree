@@ -6,6 +6,10 @@
 
 \xmlns:html{http://www.w3.org/1999/xhtml}
 
+\def\hcode[lang][body]{
+  \<html:pre>[class]{highlight}[lang]{\lang}{\body}
+}
+
 \def\hr{
   \<html:hr>{}
 }
