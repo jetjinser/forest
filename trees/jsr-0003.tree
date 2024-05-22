@@ -9,6 +9,12 @@
 \put\transclude/metadata{true}
 \put\transclude/expanded{false}
 
-\transclude{jsr-0004}
-\transclude{jsr-0005}
-\transclude{jsr-0006}
+\scope{
+  \query{
+    \query/and{
+      \query/author{jinser}
+      \query/tag{blog}
+      \query/tag{done}
+    }
+  }
+}
