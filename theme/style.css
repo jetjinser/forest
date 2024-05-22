@@ -229,6 +229,10 @@ body>header {
   margin-bottom: 2em;
 }
 
+#grid-wrapper {
+  padding-bottom: 15vh;
+}
+
 #grid-wrapper>article {
   margin-right: auto;
   grid-column: 2;
