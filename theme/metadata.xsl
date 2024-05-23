@@ -159,4 +159,12 @@
   </li>
  </xsl:template>
 
+ <xsl:template match="f:meta[@name='github']">
+  <li class="meta-item">
+   <a class="link external" href="{.}">
+     <i class="fa fa-github"></i><xsl:text> GitHub</xsl:text>
+   </a>
+  </li>
+ </xsl:template>
+
 </xsl:stylesheet>

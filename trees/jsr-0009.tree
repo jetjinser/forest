@@ -4,18 +4,18 @@
 
 \p{记录防止遗忘。}
 
-\p{一些和 neovim 有关的。}
+\p{一些和 [[neovim]] 有关的。}
 \scope{
-  \put\transclude/title{neovim}
+  \put\transclude/title{[[neovim]]}
   \put\transclude/expanded{true}
   \query{
     \query/tag{neovim}
   }
 }
 
-\p{nix 相关的想法，有 nix 本身的，也有想要用 nix 做的事情。}
+\p{[[nix]] 相关的想法，有 [[nix]] 本身的，也有想要用 [[nix]] 做的事情。}
 \scope{
-  \put\transclude/title{nix}
+  \put\transclude/title{[[nix]]}
   \put\transclude/expanded{true}
   \query{
     \query/tag{nix}

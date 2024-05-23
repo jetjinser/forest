@@ -4,17 +4,10 @@
 
 \p{这是我的 blog，我会在这里写一些工作，学习中遇到的经验和笔记。}
 
-\put\transclude/toc{false}
-\put\transclude/numbered{false}
-\put\transclude/metadata{true}
-\put\transclude/expanded{false}
-
-\scope{
-  \query{
-    \query/and{
-      \query/author{jinser}
-      \query/tag{blog}
-      \query/tag{done}
-    }
+\query{
+  \query/and{
+    \query/author{jinser}
+    \query/tag{blog}
+    \query/tag{done}
   }
 }

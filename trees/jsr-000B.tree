@@ -1,0 +1,51 @@
+\title{what should I to do now?}
+\author{jinser}
+
+\p{我现在应该做什么？}
+
+\put\transclude/toc{false}
+\put\transclude/numbered{false}
+
+\subtree{
+  \title{TODO}
+  \query{
+    \query/and{
+      \query/author{jinser}
+      \query/taxon{task}
+      \query/tag{todo}
+    }
+  }
+}
+
+\subtree{
+  \title{WIP}
+  \query{
+    \query/and{
+      \query/author{jinser}
+      \query/taxon{task}
+      \query/tag{wip}
+    }
+  }
+}
+
+\subtree{
+  \title{pending}
+  \query{
+    \query/and{
+      \query/author{jinser}
+      \query/taxon{task}
+      \query/tag{pending}
+    }
+  }
+}
+
+\subtree{
+  \title{cancelled}
+  \query{
+    \query/and{
+      \query/author{jinser}
+      \query/taxon{task}
+      \query/tag{cancelled}
+    }
+  }
+}

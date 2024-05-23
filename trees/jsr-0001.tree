@@ -8,3 +8,8 @@
   \put\transclude/title{blog posts}
   \transclude{jsr-0003}
 }
+
+\scope{
+  \put\transclude/title{task list}
+  \transclude{jsr-000B}
+}

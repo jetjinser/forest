@@ -12,6 +12,7 @@
         <meta name="viewport" content="width=device-width" />
         <link rel="stylesheet" href="style.css" />
         <link rel="stylesheet" href="katex.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
         <script type="text/javascript">
           <xsl:if test="/f:tree/f:frontmatter/f:source-path">
             <xsl:text>window.sourcePath = '</xsl:text>
@@ -173,6 +174,7 @@
           <xsl:apply-templates select="f:meta[@name='external']" />
           <xsl:apply-templates select="f:meta[@name='slides']" />
           <xsl:apply-templates select="f:meta[@name='video']" />
+          <xsl:apply-templates select="f:meta[@name='github']" />
         </ul>
       </div>
     </header>

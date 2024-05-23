@@ -3,4 +3,4 @@ trees = ["trees"]
 assets = ["assets"]
 theme = "theme"
 root = "jsr-0001"
-base_url = "https://forest.purejs.icu"
+base_url = "https://www.purejs.icu"

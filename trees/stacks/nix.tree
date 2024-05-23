@@ -1,0 +1,9 @@
+\import{base-macros}
+
+\def\nixicon{
+  \icon{https://raw.githubusercontent.com/NixOS/nixos-artwork/f38303238fb03b89e29b6c8c2fd32e59df59a2d5/logo/nix-snowflake-colours.svg}{❄️}
+}
+
+\title{\nixicon Nix}
+
+\p{The Nix icon \nixicon is from [NixOS/nixos-artwork](https://github.com/NixOS/nixos-artwork), under a [CC-BY 4.0](https://github.com/NixOS/nixos-artwork/tree/master/logo#license) license.}

@@ -10,6 +10,14 @@
   \<html:pre>[class]{highlight}[lang]{\lang}{\body}
 }
 
+\def\icon[path][alt]{
+  \<html:img>[class]{custom-icon}[src]{\path}[alt]{\alt}{}
+}
+
+\def\fa[icon]{
+  \<html:i>[class]{fa fa-\icon}{}
+}
+
 \def\hr{
   \<html:hr>{}
 }

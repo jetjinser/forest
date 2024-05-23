@@ -4,7 +4,7 @@
 \tag{done}
 \author{jinser}
 
-\p{从 forester 3.0 开始增加了 nix flake 支持，遗憾的是，jon 和 kento 都不使用 x86_64-darwin。作为二等公民 nix-darwin 的二等公民 x86_64-darwin 不幸运地 broken 了。}
+\p{从 forester 3.0 开始增加了 [[nix]] flake 支持，遗憾的是，jon 和 kento 都不使用 x86_64-darwin。作为二等公民 nix-darwin 的二等公民 x86_64-darwin 不幸运地 broken 了。}
 
 \transclude{fst-0002}
 

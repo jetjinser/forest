@@ -23,6 +23,11 @@ html.dark {
   font-size: 1.15em !important;
 }
 
+.custom-icon {
+  height: 10pt;
+  width: auto;
+}
+
 /* inria-sans-300 - latin_latin-ext */
 @font-face {
   font-display: swap;
