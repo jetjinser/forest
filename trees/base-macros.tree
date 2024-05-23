@@ -18,6 +18,10 @@
   \<html:i>[class]{fa fa-\icon}{}
 }
 
+\def\emojicon[body][delta]{
+  \<html:span>[class]{emojicon}{\body}
+}
+
 \def\hr{
   \<html:hr>{}
 }

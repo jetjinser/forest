@@ -23,9 +23,12 @@ html.dark {
   font-size: 1.15em !important;
 }
 
-.custom-icon {
-  height: 10pt;
-  width: auto;
+/* TODO: align icon with text horizonly */
+.custom-icon, .fa, .emojicon {
+  display: inline !important;
+  font-size: 13pt !important;
+  width: 10pt;
+  height: auto;
 }
 
 /* inria-sans-300 - latin_latin-ext */

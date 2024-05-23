@@ -1,7 +1,7 @@
 \import{base-macros}
 
 \def\forestericon{
-  🌲
+  \fa{tree}
 }
 
 \title{\forestericon Forester}
