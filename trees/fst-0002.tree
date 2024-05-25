@@ -1,8 +1,8 @@
-\title{fix forester opam-nix ocaml-cf broken}
+\title{fix [[forester]] opam-nix ocaml-cf broken}
 \date{2024-05-01}
 \author{jinser}
 
-\p{[ocaml-cf](https://github.com/mirage/ocaml-cf) 的 \code{lib_gen/dune} 文件疑似写错了，导致 forester 在 x86_64-darwin 上构建失败。}
+\p{[ocaml-cf](https://github.com/mirage/ocaml-cf) 的 \code{lib_gen/dune} 文件疑似写错了，导致 [[forester]] 在 x86_64-darwin 上构建失败。}
 
 \pre{\startverb
 (rule

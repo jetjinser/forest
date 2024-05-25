@@ -1,8 +1,8 @@
-\title{Forester nesting tree}
+\title{[[forester]] nesting tree}
 \date{2024-04-09}
 \author{jinser}
 
-\p{forester 的 tree 是扁平的，不推荐用 file tree 组织，这样一来当树多的时候，使用 file tree 就难以导航。我暂时没有使用 fuzz finder 类似插件的习惯，所以我就在 file tree 插件层面配置了一个 file nesting 虚拟嵌套。}
+\p{[[forester]] 的 tree 是扁平的，不推荐用 file tree 组织，这样一来当树多的时候，使用 file tree 就难以导航。我暂时没有使用 fuzz finder 类似插件的习惯，所以我就在 file tree 插件层面配置了一个 file nesting 虚拟嵌套。}
 
 \transclude{nvim-0001}
 
@@ -13,5 +13,5 @@
 \p{这有一点两难，我目前想到了两个方式。
 \ol{
   \li{动态渲染：折叠 file 后，让 pattern 也渲染 git status。但是估计有点问题，文件夹的状态应该也是 git status 给的，貌似很难决定 nested file pattern 应该是什么状态。}
-  \li{虚拟文件夹：在 Forester 的用例下，其实有个虚拟文件夹会更好？但是这样仍然不能让 git 来计算文件夹的 status。}
+  \li{虚拟文件夹：在 [[forester]] 的用例下，其实有个虚拟文件夹会更好？但是这样仍然不能让 git 来计算文件夹的 status。}
 }}

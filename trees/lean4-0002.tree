@@ -1,0 +1,33 @@
+\title{cannot simp \code{String.append}}
+\date{2024-05-25}
+\tag{wonder}
+\author{jinser}
+
+\import{base-macros}
+
+\hcode{lean4}{
+theorem addAndAppend : 1 + 1 = 2 ∧ "Str".append "ing" = "String" := And.intro rfl rfl
+theorem addAndAppend' : 1 + 1 = 2 ∧ "Str".append "ing" = "String" := by simp
+theorem addAndAdd : 1 + 1 = 2 ∧ 2 + 2 = 4 := by simp
+}
+
+\p{其中的 \code{addAndAppend'} 会报错：}
+\pre{
+unsolved goals
+⊢ String.append "Str" "ing" = "String"
+}
+
+\p{但是在 [functional programming in lean](https://leanprover.github.io/functional_programming_in_lean/props-proofs-indexing.html#connectives) 书里说 \code{simp} 有能力做到。}
+
+\blockquote{
+If \code{A} and \code{B} are propositions, then \code{"A and B"} (written \code{A ∧ B}) is a proposition. Evidence for \code{A ∧ B} consists of the constructor \code{And.intro}, which has the type \code{A → B → A ∧ B}. Replacing \code{A} and \code{B} with concrete propositions, it is possible to prove \code{1 + 1 = 2 ∧ "Str".append "ing" = "String"} with \code{And.intro rfl rfl}. Of course, \code{simp} is also powerful enough to find this proof:
+\hcode{lean4}{theorem addAndAppend : 1 + 1 = 2 ∧ "Str".append "ing" = "String" := by simp}
+}
+
+\p{即使是单纯的 \code{append} 相等作为 \code{Prop}，\code{by simp} tactic 也不起作用。}
+\hcode{lean4}{
+theorem onlyAppend : "Str".append "ing" = "String" := rfl
+theorem onlyAppend' : "Str".append "ing" = "String" := by simp
+}
+\p{其中 \code{onlyAppend} 使用 \code{rfl} proof，证明成立，而后者 \code{onlyAppend'} 报错：}
+\pre{simp made no progress}

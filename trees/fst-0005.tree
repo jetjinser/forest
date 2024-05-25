@@ -1,8 +1,8 @@
-\title{forester def of \startverb\def\stopverb}
+\title{[[forester]] def of \startverb\def\stopverb}
 \date{2024-05-19}
 \author{jinser}
 
-\p{forester 的 def 语法定义大致摘抄自 [ocaml-forester](https://git.sr.ht/~jonsterling/ocaml-forester) 中的 \code{lib/frontend/Grammar.mly}。}
+\p{[[forester]] 的 def 语法定义大致摘抄自 [ocaml-forester](https://git.sr.ht/~jonsterling/ocaml-forester) 中的 \code{lib/frontend/Grammar.mly}。}
 
 \pre{\startverb
 %token <string> IDENT

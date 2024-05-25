@@ -1,0 +1,6 @@
+\title{meaning of [[lean4]] \code{simp made no progress}}
+\date{2024-05-25}
+\author{jinser}
+
+\p{\code{simp} 之前和 \code{simp} 之后 goal state 没有变化，不需要跑额外的 simplifier。}
+

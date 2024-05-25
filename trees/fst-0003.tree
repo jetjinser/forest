@@ -1,8 +1,8 @@
-\title{fix forster nix flake on x86_64-darwin link error}
+\title{fix [[forster]] nix flake on x86_64-darwin link error}
 \date{2024-05-01}
 \author{jinser}
 
-\p{使用 forster 原先的 nix flake 在 x86_64-darwin 上 build 到最后 link 的阶段会遇到 ld 报错：\code{Unresolved Symbol(s): `_preadv`} 和 \code{Unresolved Symbol(s): `_pwritev`}。}
+\p{使用 [[forster]] 原先的 nix flake 在 x86_64-darwin 上 build 到最后 link 的阶段会遇到 ld 报错：\code{Unresolved Symbol(s): `_preadv`} 和 \code{Unresolved Symbol(s): `_pwritev`}。}
 
 \p{好吧，是因为 nixpkgs 中的 x86_64-darwin 默认用的 apple sdk 是 10.12 的，是个非常老的版本，确实没有这两个符号。解决方案就是用更高的版本 override 掉默认的 10.12 sdk，一般是 11。}
 

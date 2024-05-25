@@ -1,0 +1,15 @@
+\title{\code{simp} with \code{String.append}}
+\date{2024-05-25}
+\author{jinser}
+
+\import{base-macros}
+
+\p{在此时的最新版本 lean4 (Lean (version 4.7.0, commit v4.7.0, Release)) 中，\code{String.append} 似乎没有被标记 \code{@[simp]}，所以 \code{simp} 不能自动应用。}
+\transclude{lean4-0002}
+
+\p{类似 [[lean4-0003]] 里做的，由于 \code{simp} 并不能自动应用未 registered 的 \code{lemma}，所以手动提供：}
+\hcode{lean4}{
+theorem append : "Str".append "ing" = "String" := by
+  simp [String.append]
+}
+

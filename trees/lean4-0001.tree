@@ -1,0 +1,18 @@
+\title{[[lean4]] theorem with intermediate \code{Prop} type cannot \code{by simp}}
+\date{2024-05-25}
+\tag{wonder}
+\author{jinser}
+
+\import{base-macros}
+
+\hcode{lean4}{
+theorem onePlusOneIsTwo : 1 + 1 = 2 := by
+  simp
+
+def OnePlusOneIsTwo : Prop := 1 + 1 = 2
+theorem onePlusOneIsTwo' : OnePlusOneIsTwo := by
+  simp
+}
+
+\p{前者工作，后者不工作。报错：}
+\pre{simp made no progress}

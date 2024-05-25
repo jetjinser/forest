@@ -1,0 +1,42 @@
+\title{[[lean4]] simp tactic register}
+\date{2024-05-25}
+\author{jinser}
+
+\import{base-macros}
+
+\transclude{lean4-0001}
+
+\transclude{lean4-0004}
+
+
+\p{\code{simp} 不认为 \code{OnePlusOneIsTwo} 是可以用的 \code{Prop}，因为还没有注册。通过以下两种方式可以让 \code{simp} 使用它。}
+
+\hcode{lean4}{
+@[simp]
+def OnePlusOneIsTwo : Prop := 1 + 1 = 2
+theorem onePlusOneIsTwo' : OnePlusOneIsTwo := by simp
+}
+
+\hcode{lean4}{
+def OnePlusOneIsTwo : Prop := 1 + 1 = 2
+theorem onePlusOneIsTwo' : OnePlusOneIsTwo := by
+  simp only [OnePlusOneIsTwo]
+}
+
+
+\p{或者还可以用 \code{unfold} tactic 来展开 \code{Prop}。}
+\hcode{lean4}{
+def OnePlusOneIsTwo : Prop := 1 + 1 = 2
+theorem onePlusOneIsTwo' : OnePlusOneIsTwo := by
+  unfold OnePlusOneIsTwo
+  simp
+}
+
+
+\p{虽然直接 \code{rfl} 也可以，但硬是用 tactic 写还可以先 \code{show 2 = 2}。}
+\hcode{lean4}{
+def OnePlusOneIsTwo : Prop := 1 + 1 = 2
+theorem onePlusOneIsTwo' : OnePlusOneIsTwo := by
+  show 2 = 2
+  rfl
+}

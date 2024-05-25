@@ -1,0 +1,21 @@
+\title{\code{simp only [...]} with \code{rfl}}
+\date{2024-05-25}
+\author{jinser}
+
+\import{base-macros}
+
+\p{在这里的解决方案中使用了 \code{simp [...]}，这样性能较之 \code{simp only [...]} 稍差。}
+\transclude{lean4-0006}
+
+\p{但试图使用 \code{simp only [...]} 时，会发现 [[lean4]] 不能自动化简，应该是少了一些 registered 的 \code{lemma} 能应用（[[lean4-0003]]）。不知道是什么，尝试：}
+
+\hcode{lean4}{
+theorem append : "Str".append "ing" = "String" := by
+  simp only [String.append, Eq.refl]
+}
+\p{报错：}
+\pre{
+invalid `simp` theorem, equation is equivalent to
+  a = a
+}
+

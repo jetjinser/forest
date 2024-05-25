@@ -1,4 +1,4 @@
-\title{forester anatomy of \startverb\def\stopverb}
+\title{[[forester]] anatomy of \startverb\def\stopverb}
 \date{2024-05-19}
 \tag{blog}
 \tag{done}
@@ -16,7 +16,7 @@
     \code{\startverb\def\stopverb}
 }
 
-\p{简单描述在 forester 中 \codedef 的使用方式。从语法开始。}
+\p{简单描述在 [[forester]] 中 \codedef 的使用方式。从语法开始。}
 
 \transclude{fst-0005}
 

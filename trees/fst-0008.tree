@@ -1,4 +1,4 @@
-\title{修复 theme bug: forester link 的 xsl template 渲染出多个 a tag}
+\title{修复 theme bug: [[forester]] link 的 xsl template 渲染出多个 a tag}
 \date{2024-05-23}
 \taxon{task}
 \tag{todo}

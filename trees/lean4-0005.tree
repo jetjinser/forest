@@ -1,0 +1,34 @@
+\let\simp{\code{simp}}
+
+\title{tactic \simp and \code{simp [...]}}
+\date{2024-05-25}
+\author{jinser}
+
+\import{base-macros}
+
+\p{\simp 会去找 \code{@[simp]} 的 \code{lemma}，包括 \code{rfl}。}
+
+\p{\code{@[simp]} 理解为 register，\simp 只会自动使用那些 registered 的 \code{lemma}。}
+
+\p{如果想提供给 \simp 哪些 \code{lemma} 可以使用，使用 \code{simp [...]} 语法，在方括号中提供可以使用的 \code{lemma}。}
+
+\p{不过，一般推荐使用的是 \code{simp only [...]}，因为 \code{simp [...]} 的性能更差。需要注意的是，如 \code{only} 所暗示的，\simp 将\strong{只会}使用其中提供的 \code{lemma}，前文提到的 \code{rfl} 将不会自动应用。}
+
+\transclude{lean4-0006}
+\p{如上面这个例子中的 \code{simp [...]} 如果使用 \code{simp only [...]} 来证明：}
+
+\hcode{lean4}{
+theorem append : "Str".append "ing" = "String" := by
+  simp only [String.append]
+}
+
+\p{将会报错：}
+\pre{
+unsolved goals
+⊢ { data := [Char.ofNat 83, Char.ofNat 116, Char.ofNat 114] ++ [Char.ofNat 105, Char.ofNat 110, Char.ofNat 103] } =
+  "String"
+}
+
+\p{不过这貌似不只是 \code{rfl} 的问题，因为给列表中加入 \code{Eq.rfl} 也不能工作。}
+\transclude{lean4-0007}
+

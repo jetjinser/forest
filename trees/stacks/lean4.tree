@@ -1,0 +1,7 @@
+\import{base-macros}
+
+\def\lean4icon{
+  \icon{https://lean-lang.org/static/lean_logo.svg}{L∃∀N}
+}
+
+\title{\lean4icon Lean4}

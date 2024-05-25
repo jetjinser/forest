@@ -3,7 +3,7 @@
 \author{jinser}
 
 \p{
-  使用 \code{flake-parts} 配置 forester 开发 shell 的 flake.nix，主要内容在 \code{./nix} 目录中。
+  使用 \code{flake-parts} 配置 [[forester]] 开发 shell 的 flake.nix，主要内容在 \code{./nix} 目录中。
 \pre{
 {
   description = "Forest de J.K.";
