@@ -2,7 +2,7 @@
 
 html.dark {
   filter: invert(1) hue-rotate(150deg);
-  background-color: rgba(174, 172, 170, 0.3);
+  background-color: rgb(230, 230, 230);
 }
 
 /* html.dark .block:hover { */
