@@ -1,0 +1,17 @@
+\title{wrapper of hls wrapper}
+\date{2024-05-31}
+\author{jinser}
+
+\import{base-macros}
+
+\p{[[nix]] shell 中包装一个程序代理调用 \code{haskell-language-server-wrapper} 并复制输出到 \code{stderr.log} 里观察。}
+
+\hcode{nix}{
+hls-wrapper = pkgs.writeShellApplication {
+  name = "haskell-language-server-wrapper";
+  text = ''
+    export PATH=$HOME/life/project/hls-about/haskell-language-server/dist-newstyle/build/x86_64-linux/ghc-9.6.3/haskell-language-server-2.8.0.0/x/haskell-language-server/build/haskell-language-server:$PATH
+    ./dist-newstyle/build/x86_64-linux/ghc-9.6.3/haskell-language-server-2.8.0.0/x/haskell-language-server-wrapper/build/haskell-language-server-wrapper/haskell-language-server-wrapper "$@" 2> >(tee -a stderr.log >&2)
+  '';
+};
+}
