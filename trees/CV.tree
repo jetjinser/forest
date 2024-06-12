@@ -1,0 +1,28 @@
+\title{CV de Jinser Kafka}
+\author{jinser}
+
+\import{base-macros}
+
+\wip{complete it}
+
+\subtree{
+  \title{教育经历}
+  \ul{
+    \li{\duration{2022}{2026} [[yeu]]}
+  }
+}
+
+\subtree{
+  \title{工作经历}
+  \ul{
+    \li{\duration{2022.7}{2023.7} [[second-state]]}
+    \li{\duration{2023.9}{2024.7} [[rwlabs]]}
+  }
+}
+
+\subtree{
+  \title{其他经历}
+  \ul{
+    \li{\duration{2024.5}{2024.8} GSOC haskell-language-server}
+  }
+}

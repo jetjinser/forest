@@ -1,0 +1,11 @@
+\import{base-macros}
+
+\def\ssicon{
+  \icon{https://www.secondstate.io/assets/img/logo.png}{𝑺}
+}
+
+\title{\ssicon Second State}
+\taxon{institution}
+\meta{external}{https://www.secondstate.io/}
+\meta{external}{https://github.com/second-state/}
+\meta{external}{https://github.com/WasmEdge}

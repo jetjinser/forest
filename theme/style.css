@@ -26,9 +26,15 @@ html.dark {
 /* TODO: align icon with text horizonly */
 .custom-icon, .fa, .emojicon {
   display: inline !important;
+  vertical-align: middle;
   font-size: 13pt !important;
   width: 10pt;
   height: auto;
+}
+
+.duration {
+  color: #555;
+  font-size: 0.9em;
 }
 
 /* inria-sans-300 - latin_latin-ext */

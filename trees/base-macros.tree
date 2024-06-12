@@ -4,23 +4,65 @@
 
 \import{latex-preamble}
 
+% ===
+
 \xmlns:html{http://www.w3.org/1999/xhtml}
 
 \def\hcode[lang][body]{
   \<html:pre>[class]{highlight}[lang]{\lang}{\body}
 }
-
 \def\icon[path][alt]{
   \<html:img>[class]{custom-icon}[src]{\path}[alt]{\alt}{}
 }
-
 \def\fa[icon]{
   \<html:i>[class]{fa fa-\icon}{}
 }
-
 \def\emojicon[body][delta]{
   \<html:span>[class]{emojicon}{\body}
 }
+
+% task {{{
+\def\todo[body]{
+  \scope{
+    \put\transclude/numbered{false}
+    \subtree{
+      \title{\body}
+      \taxon{task}
+      \tag{todo}
+    }
+  }
+}
+\def\wip[body]{
+  \scope{
+    \put\transclude/numbered{false}
+    \subtree{
+      \title{\body}
+      \taxon{task}
+      \tag{wip}
+    }
+  }
+}
+\def\pending[body]{
+  \scope{
+    \put\transclude/numbered{false}
+    \subtree{
+      \title{\body}
+      \taxon{task}
+      \tag{pending}
+    }
+  }
+}
+\def\cancelled[body]{
+  \scope{
+    \put\transclude/numbered{false}
+    \subtree{
+      \title{\body}
+      \taxon{task}
+      \tag{cancelled}
+    }
+  }
+}
+% }}}
 
 \def\hr{
   \<html:hr>{}
@@ -29,6 +71,14 @@
 \def\color[colorcode][body]{
   \<html:span>[style]{color:\colorcode}{\body}
 }
+\def\duration[from][to]{
+  \<html:span>[class]{duration}{
+    % \<html:time>[datetime]{\from-dt}{\from} - \<html:time>[datetime]{\to-dt}{\to}
+    \from - \to
+  }
+}
+
+% ===
 
 \alloc\base/tex-preamble
 
@@ -42,5 +92,7 @@
   \tex{\get\base/tex-preamble}{\body}
  }
 }
+
+% ===
 
 \p{This tree defines the basic notational macros used across my forest. Deriving from [jsm-trees](https://git.sr.ht/~jonsterling/public-trees/tree/22da887927bdc7fff2af54a59aa3a9729e692394/item/base-macros.tree).}
