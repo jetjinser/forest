@@ -1,0 +1,124 @@
+\title{peano algebra in zuo}
+\date{2024-06-16}
+\author{jinser}
+
+\import{base-macros}
+
+\p{preable: shebang and \code{#lang}.}
+\hcode{racket}{%
+#!/usr/bin/env zuo
+#lang zuo
+}
+
+
+\p{利用 pair 定义 peano number。}
+\hcode{racket}{%
+(define zero '())
+(define succ (lambda (pred) (cons pred '())))
+
+(define pred car)
+}
+
+\p{一些 peano number。}
+\hcode{racket}{%
+(define one (succ zero))
+(define two (succ (succ zero)))
+(define three (succ (succ (succ zero))))
+}
+
+\p{定义第一个对 peano number 的关系。}
+\hcode{racket}{%
+(define zero? (lambda (n) (eq? n zero)))
+}
+
+\p{将 peano number 转为 integer。}
+\hcode{racket}{%
+(define peano->integer
+  (lambda (peano)
+    (if (zero? peano)
+      0
+      (+ 1 (peano->integer (car peano))))))
+
+; (peano->integer zero) ; 0
+; (peano->integer one) ; 1
+; (peano->integer two) ; 2
+; (peano->integer three) ; 3
+}
+
+\p{反之，将 integer 转为 peano number。}
+\hcode{racket}{%
+(define integer->peano
+  (lambda (int)
+    (if (= int 0)
+      zero
+      (succ (integer->peano (- int 1))))))
+
+; (integer->peano 0) ; '()
+; (integer->peano 1) ; (list '())
+; (integer->peano 2) ; (list (list '()))
+; (integer->peano 3) ; (list (list (list '())))
+}
+
+
+\p{定义加法。}
+\hcode{racket}{%
+(define add
+  (lambda (rhs lhs)
+    (cond
+      [(zero? rhs) lhs]
+      [else (succ (add (pred rhs) lhs))])))
+
+(define seven (integer->peano 7))
+(define nine (integer->peano 9))
+; (peano->integer (add seven nine)) ; 16
+}
+
+\p{减法。}
+\hcode{racket}{%
+(define sub
+  (lambda (rhs lhs)
+    (cond
+      [(zero? lhs) rhs]
+      [else (sub (pred rhs) (pred lhs))])))
+
+; (peano->integer (sub nine seven)) ; 2
+}
+
+\p{乘法。}
+\hcode{racket}{%
+(define mul
+  (lambda (rhs lhs)
+    (cond
+      [(= (peano->integer rhs) 1) lhs]
+      [else (add lhs (mul (pred rhs) lhs))])))
+
+; (peano->integer (mul seven nine)) ; 63
+}
+
+\p{比较两个 peano number 的大小，定义关系小于（less than）。}
+\hcode{racket}{%
+(define lt?
+  (lambda (rhs lhs)
+   (cond
+     [(zero? rhs) #t]
+     [(zero? lhs) #f]
+     [else (lt? (pred rhs) (pred lhs))])))
+
+; (lt? seven nine) ; #t
+; (lt? nine seven) ; #f
+}
+
+
+\p{定义除法，用到了 \code{lt?} 关系。}
+\hcode{racket}{%
+(define div
+  (lambda (rhs lhs)
+    (cond
+      [(= (peano->integer lhs) 0) (error "cannot divide by 0")]
+      [(eq? rhs lhs) (succ zero)]
+      [(lt? lhs rhs) (succ (div (sub rhs lhs) lhs))]
+      [else zero])))
+
+; (peano->integer (div seven three)) ; 2
+; (peano->integer (div seven two)) ; 3
+}

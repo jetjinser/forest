@@ -1,0 +1,122 @@
+\title{rewrite swos bash script in zuo}
+\date{2024-06-16}
+\author{jinser}
+
+\import{base-macros}
+
+\p{\code{swos} 是我在 [[nix]] system config 的 devshell 中使用的简单 \code{nix} 和 \code{nixos-rebuild}/\code{darwin-rebuild} 包装脚本。}
+
+\p{\code{swos} 首先是用 bash script 写的，或者说是糊的，因为 bash 实在太难写了，需要反复地尝试运行来猜测和验证它的行为。我确实不会写 bash script，所以当我遇到 zuo 的时候，我马上就萌生了用它来重写这个简单脚本的想法。除了不想写 bash 之外，另一个最主要的原因是：\em{sexp 很酷}。}
+
+\p{重写的 commit 可以在[这里](https://github.com/jetjinser/flake/commit/05e92bc90c2730cb1bca0cec68d7e7d2266058a7)找到。除了添加新的 \code{swos} 脚本之外，还稍微调整了一下 devshell 的结构，可以忽略。}
+
+\p{先记录一下当前的脚本代码，下次再解释。}
+
+\todo{explain \code{swos} code}
+
+\hcode{racket}{\startverb
+#!/usr/bin/env zuo
+#lang zuo
+
+(define unix? (eq? (hash-ref (runtime-env) 'system-type) 'unix))
+
+(define nom?
+  (lambda (accum)
+    (hash-ref accum 'nom? #f)))
+
+(define add-flag
+  (lambda (accum flag)
+    (let ([flags (hash-ref accum 'flags '())])
+      (hash-set accum 'flags (cons flag flags)))))
+
+(define remove-flag
+  (lambda (accum flag)
+    (let ([flags (hash-ref accum 'flags '())])
+      (hash-set accum 'flags
+                (filter (lambda (x) (not (string=? x flag))) flags)))))
+
+(define run-command
+  (lambda (command)
+    (shell/wait command (hash 'no-thread? #t))))
+
+(define read-command
+  (lambda (command)
+    (let* ([p (shell command (hash 'stdout 'pipe))]
+           [output (fd-read (hash-ref p 'stdout) eof)])
+      (fd-close (hash-ref p 'stdout))
+      output)))
+
+(module+ main
+  (command-line
+    :program "swos"
+    :init (hash 'flags
+                '("--no-link"
+                  "--extra-experimental-features 'nix-command flakes'"))
+    :once-each
+    [accum ("-n" "--nom") "Build the system with nom"
+           (hash-set accum 'nom? #t)]
+    [accum ("-s" "--show-trace") "Enable the show-trace setting"
+           (add-flag accum "--show-trace")]
+    [accum ("-v" "--verbose") "Increase the logging verbosity level"
+           (add-flag accum "--verbose")]
+    [accum ("-k" "--keep-result") "Keep the system result symlink"
+           (remove-flag accum "--no-link")]
+    :args ([hostname (read-command "hostname")])
+    (lambda (accum)
+     (let* ([builder (if (nom? accum) "nom" "nix")]
+            [trimmed-hostname (string-trim (string-trim hostname) "\n")]
+            [flake-path
+              (shell-subst
+                ".#nixosConfigurations.${hostname}.config.system.build.toplevel"
+                (hash 'hostname trimmed-hostname))]
+            [flags (string-join (let ([f (hash-ref accum 'flags)])
+                                  (if unix? f (cons "--json" f))))]
+            [build-command
+              (shell-subst
+                "${builder} build ${flake-path} ${flags}"
+                (hash
+                  'builder builder
+                  'flake-path flake-path
+                  'flags flags))]
+            [switch-command
+              (if unix?
+                (shell-subst
+                  "nixos-rebuild switch --use-remote-sudo --flake .#${hostname}"
+                  (hash 'hostname trimmed-hostname))
+                (lambda (sysconf)
+                  (shell-subst
+                    "${sysconf}/sw/bin/darwin-rebuild switch --flake .#${hostname}"
+                    (hash 'sysconf sysconf 'hostname trimmed-hostname))))])
+       (cond
+         [unix?
+           (run-command build-command)
+           (run-command switch-command)]
+         [else
+           (let* ([json (read-command build-command)]
+                  [sysconf (list-ref (string-split json "\"") 9)])
+             (displayln (switch-command sysconf)))])))))
+\stopverb}
+
+\p{usage:}
+\hcode{bash}{\startverb
+> swos -h
+usage: swos [<option> ...]  [<hostname>]
+
+<option> is one of
+
+  -n, --nom
+     Build the system with nom
+  -s, --show-trace
+     Enable the show-trace setting
+  -v, --verbose
+     Increase the logging verbosity level
+  -k, --keep-result
+     Keep the system result symlink
+  --help, -h
+     Show this help
+  --
+     Do not treat any remaining argument as a switch (at this level)
+
+ Multiple single-letter switches can be combined after
+ one `-`. For example, `-h-` is the same as `-h --`.
+\stopverb}

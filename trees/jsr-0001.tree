@@ -4,6 +4,8 @@
 
 \p{I am a \em{Sophomore Computer Science major} and a \em{fancier of programming languages}.}
 
+\p{\strong{NOTE}: I always forget, so let me write it down here: Press the key \code{Ctrl + k} or \code{Cmd + k} to open ninja "telescope".}
+
 \scope{
   \put\transclude/title{blog posts}
   \transclude{jsr-0003}
