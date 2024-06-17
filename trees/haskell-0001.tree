@@ -1,0 +1,39 @@
+\title{why cabal cannot update \code{lsp-test} dep to latest}
+\date{2024-06-17}
+\author{jinser}
+
+\p{不知道为什么 \code{cabal update} 之后，即使 \code{index-state} 更新到了 \code{2024-06-17T11:22:16Z}，还是找不到 \code{lsp-test} 在 \code{2024-06-06T11:58:42Z} 更新的 \code{0.17.1} 版本。}
+
+\p{尝试限制 \code{lsp-test} 版本为 \code{^>=0.17.1}，\code{cabal build} 得到以下报错：}
+\pre{\startverb
+Resolving dependencies...
+Error: cabal: Could not resolve dependencies:
+[__0] trying: ghcide-2.8.0.0 (user goal)
+[__1] trying: lsp-types-2.2.0.0 (dependency of ghcide)
+[__2] trying: base-4.18.1.0/installed-4.18.1.0 (dependency of ghcide)
+[__3] trying: haskell-language-server-2.8.0.0 (user goal)
+[__4] trying: haskell-language-server:*test
+[__5] next goal: lsp-test (dependency of haskell-language-server)
+[__5] rejecting: lsp-test-0.17.0.1, lsp-test-0.17.0.0, lsp-test-0.16.0.1,
+lsp-test-0.16.0.0, lsp-test-0.15.0.1, lsp-test-0.15.0.0, lsp-test-0.14.1.0,
+lsp-test-0.14.0.3, lsp-test-0.14.0.2, lsp-test-0.14.0.1, lsp-test-0.14.0.0,
+lsp-test-0.13.0.0, lsp-test-0.12.0.0, lsp-test-0.11.0.7, lsp-test-0.11.0.6,
+lsp-test-0.11.0.5, lsp-test-0.11.0.4, lsp-test-0.11.0.3, lsp-test-0.11.0.2,
+lsp-test-0.11.0.1, lsp-test-0.11.0.0, lsp-test-0.10.3.0, lsp-test-0.10.2.0,
+lsp-test-0.10.1.0, lsp-test-0.10.0.0, lsp-test-0.9.0.0, lsp-test-0.8.2.0,
+lsp-test-0.8.1.0, lsp-test-0.8.0.0, lsp-test-0.7.0.0, lsp-test-0.6.1.0,
+lsp-test-0.6.0.0, lsp-test-0.5.4.0, lsp-test-0.5.3.0, lsp-test-0.5.2.3,
+lsp-test-0.5.2.2, lsp-test-0.5.2.1, lsp-test-0.5.2.0, lsp-test-0.5.1.4,
+lsp-test-0.5.1.3, lsp-test-0.5.1.2, lsp-test-0.5.1.1, lsp-test-0.5.1.0,
+lsp-test-0.5.0.2, lsp-test-0.5.0.1, lsp-test-0.5.0.0, lsp-test-0.4.0.0,
+lsp-test-0.3.0.0, lsp-test-0.2.1.0, lsp-test-0.2.0.0, lsp-test-0.1.0.0
+(conflict: haskell-language-server *test => lsp-test^>=0.17.1)
+[__5] fail (backjumping, conflict set: haskell-language-server, lsp-test,
+haskell-language-server:test)
+After searching the rest of the dependency tree exhaustively, these were the
+goals I've had most trouble fulfilling: haskell-language-server, lsp-types,
+haskell-language-server:test, lsp-test, ghcide, base
+Try running with --minimize-conflict-set to improve the error message.
+\stopverb}
+
+\p{可以看到最新版本的 \code{lsp-test} 也只有 \code{0.17.0.1}，不知道是有什么限制或者属性我没弄清楚的。}
