@@ -1,0 +1,21 @@
+\title{wrap the haskell-language-server-wrapper}
+\date{2024-06-17}
+\author{jinser}
+
+\import{base-macros}
+
+\p{Wrap the haskell-language-server-wrapper in the way of [[jsr-000C]]. Record HLS stderr output in the file \code{stderr.log}.}
+\hcode{nix}{%
+hls-wrapper = pkgs.writeShellApplication {
+  name = "haskell-language-server-wrapper";
+  text = ''
+    export PATH=$DIRENV_DIR/dist-newstyle/build/x86_64-linux/ghc-9.6.3/haskell-language-server-2.8.0.0/x/haskell-language-server/build/haskell-language-server:$PATH
+    ./dist-newstyle/build/x86_64-linux/ghc-9.6.3/haskell-language-server-2.8.0.0/x/haskell-language-server-wrapper/build/haskell-language-server-wrapper/haskell-language-server-wrapper "$@" 2> >(tee -a stderr.log >&2)
+  '';
+};
+}
+
+\p{Follow the \code{stderr.log}.}
+\hcode{bash}{%
+tail -f stderr.log | bat -l log -pp
+}
