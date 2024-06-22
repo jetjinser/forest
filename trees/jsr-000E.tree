@@ -14,9 +14,9 @@
   \li{[Telegram server](https://github.com/flows-network/tg-flows/tree/master/tg-integration)}
 }
 
-\p{I also need to write SDK in rust for users of [[flows.network]] so that they can interact with the servers.}
+\p{I also need to write SDK in \strong{Rust} for users of [[flows.network]] so that they can interact with the servers.}
 
-\p{Since the environment in which flows.network runs the program is [[WasmEdge]], the targets of the sdk are all \em{WASI}. I need to make a lot of trade-offs and workarounds specific to the wasi target.}
+\p{Since the environment in which [[flows.network]] runs the program is [[WasmEdge]], the targets of the sdk are all \em{WASI}. I need to make a lot of trade-offs and workarounds specific to the WASI target.}
 
 \ul{
   \li{[Notion SDK](https://github.com/flows-network/notion-flows/tree/master/sdk)}
