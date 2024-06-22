@@ -4,6 +4,8 @@
 
 \import{latex-preamble}
 
+\def\id[body]{\body}
+
 % ===
 
 \xmlns:html{http://www.w3.org/1999/xhtml}
