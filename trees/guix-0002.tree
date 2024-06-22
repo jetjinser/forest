@@ -1,0 +1,23 @@
+\title{strange \code{guix shell} and \code{setenv}}
+\date{2024-06-19}
+\author{jinser}
+
+\p{在 GitHub 某人的 \code{manifest.scm} 中找到了 \code{setenv} 的写法，但是与 \code{guix shell} 奇怪的行为让我迷惑。}
+
+\pre{%
+> # 1
+> guix shell
+> echo $A
+a
+> exit
+
+> # 2
+> echo $A
+
+> # 3
+> guix shell
+> echo $A
+
+}
+
+\p{前两次都在意料中，但第三次竟然不存在 \code{A} env，不知道是为什么。}

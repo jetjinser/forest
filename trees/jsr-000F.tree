@@ -1,0 +1,27 @@
+\title{product engineer intern at [[rwlabs]]}
+\author{jinser}
+
+\import{base-macros}
+
+\p{\duration{2023.9}{2024.7} I do a lot of testing and development on [[RisingWave]].}
+
+\p{I need to test the sink/source connection between [[RisingWave]] and various connectors, and also need to write connector e2e tests for CI.}
+\ul{
+  \li{[ci: add dynamodb integration test](https://github.com/risingwavelabs/risingwave/pull/17106)}
+  \li{[ci: add pubsub integration test](https://github.com/risingwavelabs/risingwave/pull/16926)}
+  \li{[test: add integration test for mindsdb](https://github.com/risingwavelabs/risingwave/pull/13808)}
+}
+
+\p{I also wrote and fixed some sink/source connectors to enable efficient data communication with [[RisingWave]] without losing data.}
+\ul{
+  \li{[feat(connector): add DynamoDB sink](https://github.com/risingwavelabs/risingwave/pull/16670)}
+  \li{[feat(sink): add Google Pub/Sub support](https://github.com/risingwavelabs/risingwave/pull/16363)}
+}
+
+\p{In addition to connector-related work, I will also do some database kernel-related work, such as supporting a certain SQL statement, adding a certain built-in function, adding internal tables, etc.}
+\ul{
+  \li{[feat(telemetry): add streaming_job_count to meta telemetry report](https://github.com/risingwavelabs/risingwave/pull/14878)}
+  \li{[feat(expr): implement <expr> [ NOT ] SIMILAR TO <pat> [ ESCAPE <esc_text> ]](https://github.com/risingwavelabs/risingwave/pull/14000)}
+  \li{[feat: support convert_from/convert_to function that only support UTF8 encoding](https://github.com/risingwavelabs/risingwave/pull/13597)}
+  \li{[feat: add comment on clause support](https://github.com/risingwavelabs/risingwave/pull/12849)}
+}

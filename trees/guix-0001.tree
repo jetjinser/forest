@@ -1,0 +1,26 @@
+\title{direnv \code{use guix} cannot export all env}
+\date{2024-06-19}
+\author{jinser}
+
+\import{base-macros}
+
+\p{direnv export 出的 env 不包括 \code{GUIX_ENVIRONMENT} 和 \code{GUIX_LOCATION}，这让我的 starship 默认设置认不出现在是否处在 guix shell 中（starship 靠检查是否存在 \code{GUIX_ENVIRONMENT} env 来判断）。}
+
+\p{使用以下 \code{manifest.scm} 测试：}
+\hcode{scheme}{%
+(setenv "A" "a")
+(packages->manifest (list))
+}
+
+\pre{%
+> echo "use guix" > .envrc
+> direnv allow
+...
+> if test "$A"
+      echo 1
+  else
+      echo 2
+  end
+2
+}
+\p{很好，什么都没有。\code{setenv} 在 \code{guix shell} 中的行为确实[有点奇怪](guix-0002)，也许不应该这么做，但我还没有搞明白。}

@@ -1,0 +1,24 @@
+\title{backend development intern at [[second-state]]}
+\author{jinser}
+
+\import{base-macros}
+
+\p{\duration{2022.7}{2023.7} During the internship, I was mainly responsible for the backend development and SDK writing of [[flows.network]].}
+
+\transclude{flows.network}
+
+\p{For backend server development work, I connect it with different platforms like GitHub, Telegram. I would read and study their documentation and then write the authentication and listening logic.}
+
+\ul{
+  \li{[GitHub server](https://github.com/flows-network/github-flows/tree/master/github-integration)}
+  \li{[Telegram server](https://github.com/flows-network/tg-flows/tree/master/tg-integration)}
+}
+
+\p{I also need to write SDK in rust for users of [[flows.network]] so that they can interact with the servers.}
+
+\p{Since the environment in which flows.network runs the program is [[WasmEdge]], the targets of the sdk are all \em{WASI}. I need to make a lot of trade-offs and workarounds specific to the wasi target.}
+
+\ul{
+  \li{[Notion SDK](https://github.com/flows-network/notion-flows/tree/master/sdk)}
+  \li{[Discord SDK](https://github.com/flows-network/discord-flows/tree/master/sdk)}
+}

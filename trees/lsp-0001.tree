@@ -1,0 +1,19 @@
+\title{the meaning of \em{accept} in the \code{textEdits} field description of inlay hints}
+\date{2024-06-19}
+\author{jinser}
+
+\p{LSP spec 中关于 inlay hints 请求的字段记录在[这里](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_inlayHint)。其中有一个字段是 \code{textEdits}，spec 对于其的描述是（我摘抄出来）：}
+
+\blockquote{%
+  \p{Optional text edits that are performed when accepting this inlay hint.}
+  \p{*Note* that edits are expected to change the document so that the inlay hint (or its nearest variant) is now part of the document and the inlay hint itself is now obsolete.}
+  \p{Depending on the client capability `inlayHint.resolveSupport` clients might resolve this property late using the resolve request.}
+}
+
+\p{看到这里的时候，我对 \em{accepting} 的理解出了差错，我将其误解为这里的 \code{textEdits} 会在编辑器 \em{received} 到 inlay hints 的时候应用。}
+
+\p{不是这样的。LSP spec 在这里也许是刻意模糊描述，这样的文本最终导致了各个编辑器对于 \em{accept} 的理解和实现各不相同。}
+
+\p{在所有人都喜欢的编辑器 VSCode 中，\em{accept} 的行为默认是通过双击 inlay hints 来应用的；在同样是所有人都喜欢的编辑器 [[neovim]] 中，这个行为还没有被定义和实现，不过按照 [[neovim]] 一般用户的习惯，通过鼠标双击来应用的方式也许不是那么适用。}
+
+\p{LSP 协议本来就不应该关心编辑器（客户端）如何发出请求到 LSP 服务器：从这个角度说得通。不论他们的默认行为是什么，编辑器总是有 api 来实际做这件事（检查 [[neovim]] 的类似 api \code{vim.lsp.codelens.run()}）。}

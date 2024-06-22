@@ -1,5 +1,8 @@
-\title{REDUNDANT}
-\date{2024-03-29}
+\title{support inlay hints for HLS}
 \author{jinser}
 
-\p{不小心复制了一份[上一棵树](hls-0004)}
+\p{I'm participating in GSOC as a [contibutor](https://summerofcode.withgoogle.com/programs/2024/projects/e6SOngyS) to add inlay hints support for HLS.}
+
+\ul{
+  \li{[Provide explicit import in inlay hints](https://github.com/haskell/haskell-language-server/pull/4235)}
+}

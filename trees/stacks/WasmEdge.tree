@@ -1,0 +1,7 @@
+\import{base-macros}
+
+\def\weicon{
+  \icon{https://wasmedge.org/docs/img/logo.svg}{ⱳ}
+}
+
+\title{\weicon WasmEdge}

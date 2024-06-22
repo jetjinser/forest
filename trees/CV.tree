@@ -1,28 +1,22 @@
-\title{CV de Jinser Kafka}
+\title{&'static CV}
 \author{jinser}
 
 \import{base-macros}
 
-\wip{complete it}
+\transclude{jinser}
 
 \subtree{
-  \title{教育经历}
-  \ul{
-    \li{\duration{2022}{2026} [[yeu]]}
-  }
+  \title{education}
+  \transclude{jsr-000D}
 }
 
 \subtree{
-  \title{工作经历}
-  \ul{
-    \li{\duration{2022.7}{2023.7} [[second-state]]}
-    \li{\duration{2023.9}{2024.7} [[rwlabs]]}
-  }
+  \title{work experience}
+  \transclude{jsr-000E}
+  \transclude{jsr-000F}
 }
 
 \subtree{
-  \title{其他经历}
-  \ul{
-    \li{\duration{2024.5}{2024.8} GSOC haskell-language-server}
-  }
+  \title{open source}
+  \transclude{hls-0005}
 }

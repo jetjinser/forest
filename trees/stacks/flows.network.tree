@@ -1,0 +1,7 @@
+\import{base-macros}
+
+\def\fnicon{
+  \icon{https://flows.network/logo.png}{ƒ}
+}
+
+\title{\fnicon flows.network}

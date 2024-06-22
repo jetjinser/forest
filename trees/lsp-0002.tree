@@ -1,0 +1,16 @@
+\title{What's the \code{command} of the label of inlay hints?}
+\date{2024-06-19}
+\author{jinser}
+
+\import{base-macros}
+
+\p{Inlay hints 的请求中，有一个字段为 \code{label: string | InlayHintLabelPart[];}，当他为 \code{string} 的时候，一切都很清晰：label 只是 inlay hints 实际上会显示出的内容；但当 \code{label} 为 \code{InlayHintLabelPart[]} 的时候，事情就开始变得模糊。}
+
+\p{不知道多个 \code{InlayHintLabelPart} 会怎么样，有待测试。}
+
+\p{更让人迷惑的是 \code{command?: Command} 这个字段，LSP spec 对其的描述只有一句话：}
+\blockquote{%
+  \p{An optional command for this label part.}
+}
+
+\p{我想这又是一个刻意模糊描述的例子，目的是让编辑器来决定如何执行这些 command。但这导致我难以得知现有的编辑器（例如 VSCode）是如何让用户来执行这些 command 的。另外，我同样不知道在主流的 LSP 服务器实现中，通过这些 command 提供了什么功能。}
