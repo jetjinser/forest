@@ -9,8 +9,8 @@
 
 \p{For backend server development work, I connect it with different platforms like GitHub, Telegram. I would read and study their documentation and then write the authentication and communicating logic. After encapsulation, it is written as a server according to the api requirements of [[flows.network]].}
 \ul{
-  \li{[GitHub server](https://github.com/flows-network/github-flows/tree/master/github-integration)}
-  \li{[Telegram server](https://github.com/flows-network/tg-flows/tree/master/tg-integration)}
+  \li{[GitHub Server](https://github.com/flows-network/github-flows/tree/master/github-integration)}
+  \li{[Telegram Server](https://github.com/flows-network/tg-flows/tree/master/tg-integration)}
 }
 
 \p{I also need to write SDK in \strong{Rust} for users of [[flows.network]] so that they can interact with the servers.}

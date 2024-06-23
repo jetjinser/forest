@@ -1,4 +1,4 @@
-\title{support inlay hints for HLS}
+\title{Google Summer Of Code Haskell project}
 \author{jinser}
 
 \p{I'm participating in GSOC as a [contributor](https://summerofcode.withgoogle.com/programs/2024/projects/e6SOngyS) to add inlay hints support for [haskell-language-server](https://github.com/haskell/haskell-language-server).}
