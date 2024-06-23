@@ -10,6 +10,8 @@
 
     flake-parts.url = "github:hercules-ci/flake-parts";
     devshell.url = "github:numtide/devshell";
+
+    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
   };
 
   outputs = inputs@{ flake-parts, ... }:
@@ -23,7 +25,10 @@
 
       imports = [
         inputs.devshell.flakeModule
+        inputs.pre-commit-hooks.flakeModule
+
         ./devshell.nix
+        ./hook.nix
       ];
     };
 }
