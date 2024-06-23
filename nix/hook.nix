@@ -5,6 +5,7 @@
       typos = {
         enable = true;
         settings.configPath = ".typos.toml";
+        verbose = true;
       };
     };
     devshells.default.devshell.startup.pre-commit-hook.text = config.pre-commit.installationScript;
