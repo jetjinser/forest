@@ -6,7 +6,7 @@
 \import{cat-0001}
 
 \ol{
-  \li{This definition is independent of any model of set theory. If we’re given a particuar model of set theory, we call \C small if ob\C and mor\C are sets.}
+  \li{This definition is independent of any model of set theory. If we’re given a particular model of set theory, we call \C small if ob\C and mor\C are sets.}
   \li{Some texts say #{f g} means #{f} followed by #{g} (we are not).}
   \li{Note that a morphism #{f} is an identity if and only if #{f g = g} and #{hf = h} whenever the compositions are defined so we could formulate the definitions entirely in terms of morphisms.}
 }

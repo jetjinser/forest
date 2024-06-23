@@ -4,6 +4,6 @@
 \tag{todo}
 \author{jinser}
 
-\p{[Julian/lean.nvim](https://github.com/Julian/lean.nvim) 能够在另外一个 tab 中显示当前环境的信息，每个 identifer 的类型，但是 env 的 range 是用 \code{(row, col)} 文字标记的，人类不太可读。}
+\p{[Julian/lean.nvim](https://github.com/Julian/lean.nvim) 能够在另外一个 tab 中显示当前环境的信息，每个 identifier 的类型，但是 env 的 range 是用 \code{(row, col)} 文字标记的，人类不太可读。}
 \p{想要每次 cursor 都能更新高亮一下目前的 env range。不过这样应该会拖累速度。}
 

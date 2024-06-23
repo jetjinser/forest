@@ -20,7 +20,7 @@
 
 \transclude{fst-0005}
 
-\p{从 grammer 看 \codedef 语法大致由三个部分组成：\code{ident}，\code{binder}，\code{arg}。考虑一个完整的 \codedef 实例：}
+\p{从 grammar 看 \codedef 语法大致由三个部分组成：\code{ident}，\code{binder}，\code{arg}。考虑一个完整的 \codedef 实例：}
 
 \transclude{fst-0004}
 

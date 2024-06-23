@@ -2,4 +2,4 @@
 \date{2024-05-18}
 \author{jinser}
 
-\p{Haskell 可以不显式地把所有 import 的符号都写出来，不写的时候相当于 open 某个 module。HLS 的 explict imports plugin 就是将这样隐式 import 的符号，把其中在代码中用到了的那些通过 code lens 显示在 import 语句上面。我做了一些工作，使用 inlay hints 的方式将这些符号直接显示在 import 语句后面，这样看起来会更好。}
+\p{Haskell 可以不显式地把所有 import 的符号都写出来，不写的时候相当于 open 某个 module。HLS 的 explicit imports plugin 就是将这样隐式 import 的符号，把其中在代码中用到了的那些通过 code lens 显示在 import 语句上面。我做了一些工作，使用 inlay hints 的方式将这些符号直接显示在 import 语句后面，这样看起来会更好。}
