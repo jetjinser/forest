@@ -1,4 +1,7 @@
 \import{rwlabs}
 
 \title{\rwicon RisingWave}
-\meta{external}{https://github.com/risingwavelabs/risingwave}
+\taxon{stack}
+\meta{github}{https://github.com/risingwavelabs/risingwave}
+
+\blockquote{RisingWave is a Postgres-compatible streaming database engineered to provide the simplest and most cost-efficient approach for processing, analyzing, and managing real-time event streaming data.}

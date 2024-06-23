@@ -7,5 +7,6 @@
 \title{\ssicon Second State}
 \taxon{institution}
 \meta{external}{https://www.secondstate.io/}
-\meta{external}{https://github.com/second-state/}
-\meta{external}{https://github.com/WasmEdge}
+\meta{github}{https://github.com/second-state/}
+
+\p{The company behind [[WasmEdge]] and [[flows.network]].}

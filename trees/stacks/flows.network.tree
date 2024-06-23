@@ -5,3 +5,10 @@
 }
 
 \title{\fnicon flows.network}
+\taxon{stack}
+\meta{external}{https://flows.network/}
+\meta{github}{https://github.com/flows-network/}
+
+\blockquote{Automate all your software tasks. Create GitOps, ChatOps, and DevOps automations using serverless functions!}
+
+\p{Serverless platform using [[WasmEdge]] as runtime. Developed by [[second-state]].}

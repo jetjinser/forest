@@ -5,3 +5,10 @@
 }
 
 \title{\weicon WasmEdge}
+\taxon{stack}
+\meta{external}{https://wasmedge.org/}
+\meta{github}{https://github.com/WasmEdge/WasmEdge}
+
+\blockquote{WasmEdge is a lightweight, high-performance, and extensible WebAssembly runtime for cloud native, edge, and decentralized applications. It powers serverless apps, embedded functions, microservices, smart contracts, and IoT devices. }
+
+\p{The [fastest WASM VM](https://ieeexplore.ieee.org/document/9214403) written in C++. Developed by [[second-state]].}

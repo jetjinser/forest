@@ -1,8 +1,9 @@
 \title{support inlay hints for HLS}
 \author{jinser}
 
-\p{I'm participating in GSOC as a [contibutor](https://summerofcode.withgoogle.com/programs/2024/projects/e6SOngyS) to add inlay hints support for HLS.}
+\p{I'm participating in GSOC as a [contibutor](https://summerofcode.withgoogle.com/programs/2024/projects/e6SOngyS) to add inlay hints support for [haskell-language-server](https://github.com/haskell/haskell-language-server).}
 
 \ul{
   \li{[Provide explicit import in inlay hints](https://github.com/haskell/haskell-language-server/pull/4235)}
+  \li{[add inlay hints lsp-test support](https://github.com/haskell/lsp/pull/575)}
 }

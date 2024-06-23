@@ -5,7 +5,9 @@
 
 \p{\duration{2023.9}{2024.7} I do a lot of testing and development on [[RisingWave]].}
 
-\p{I need to test the sink/source connection between [[RisingWave]] and various connectors, and also need to write connector e2e tests for CI.}
+\transclude{RisingWave}
+
+\p{I need to test the sink/source connection between [[RisingWave]] and various connectors, and need to write connector e2e tests for CI.}
 \ul{
   \li{[ci: add dynamodb integration test](https://github.com/risingwavelabs/risingwave/pull/17106)}
   \li{[ci: add pubsub integration test](https://github.com/risingwavelabs/risingwave/pull/16926)}
@@ -18,7 +20,7 @@
   \li{[feat(sink): add Google Pub/Sub support](https://github.com/risingwavelabs/risingwave/pull/16363)}
 }
 
-\p{In addition to connector-related work, I will also do some database kernel-related work, such as supporting a certain SQL statement, adding a certain built-in function, adding internal tables, etc.}
+\p{In addition to connector-related work, I will also do many database kernel-related work, such as supporting a certain SQL statement, adding a certain built-in function, adding internal tables, etc.}
 \ul{
   \li{[feat(telemetry): add streaming_job_count to meta telemetry report](https://github.com/risingwavelabs/risingwave/pull/14878)}
   \li{[feat(expr): implement <expr> [ NOT ] SIMILAR TO <pat> [ ESCAPE <esc_text> ]](https://github.com/risingwavelabs/risingwave/pull/14000)}
