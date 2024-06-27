@@ -1,0 +1,7 @@
+\title{将 theme 单独维护}
+\date{2024-06-27}
+\taxon{task}
+\tag{todo}
+\author{jinser}
+
+\p{还有一个 fedi-theme 的想法：但是从此需要服务器运行；而且不确定仅靠 theme 能否实现。}
