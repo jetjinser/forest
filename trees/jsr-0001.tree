@@ -15,5 +15,5 @@
 
 \scope{
   \put\transclude/title{task list}
-  \transclude{jsr-000B}
+  \p{Put a [task list](jsr-000B) here.}
 }

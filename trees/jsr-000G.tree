@@ -1,3 +1,58 @@
-\title{记一次面试}
+\let\thelang{\em{SOMELANG}}
+
+\title{记一次 \thelang 面试}
 \date{2024-06-28}
 \author{jinser}
+
+\import{base-macros}
+
+\wip{我需要对话或者 QA 样式}
+
+\p{如何了解到 \thelang，为什么对 \thelang 感兴趣，希望在 \thelang 做什么？}
+\p{: ...}
+
+\p{套近乎瞎聊时间：}
+\p{\thelang 的 \code{option} 语法糖，嵌套问题。}
+\p{: 单纯语法糖，可以嵌套。}
+\p{\thelang 的 \code{result} 语法糖，为什么在左边的是 \em{right}。}
+\p{: 习惯和口味问题，因为原来设计的是类似 rust 的 \code{Rusult<T, E>}，所以保留了顺序。}
+
+\p{\thelang 的错误处理作为二等公民，与 rust 这样的将错误处理作为一等公民的方式有何不同，在程序分析中有什么分别？还特别问了一个问题：在 rust 中，某函数的每一个分支都事实上会返回 \code{Ok(T)}，用什么方法能够确定这个函数其实应该返回 \code{T} 而不是 \code{Result<T, _>} 呢？}
+\p{: (根本不懂，胡扯了一下什么生存分析，什么不动点)。}
+\p{在 try catch 的方式中，抛出错误的点是明显的，方便程序分析。}
+
+\transclude{jsr-000H}
+
+\p{在 [[second-state]] 做了什么工作？}
+\p{: rust 库到 WASI 的移植。有时会通过 host function 的方式移植。}
+\p{host function 是什么？}
+\p{: 在 host 执行的 native 代码，...}
+
+\p{对 WASM 的提案有哪些了解和想法，如果有机会有没有想提的提案。}
+\p{: 提了一下 WASMGC 和 TCO。后面一个问题没回答。}
+
+\p{对 WASMGC 的了解和想法。}
+\p{: 不太了解。中间提到了 \code{i31}，可惜没有机会说出 \em{tagged pointer} 这个名词。\code{i31} 在 OCaml 中也存在。}
+
+\p{对 WASM 的控制流有什么想法，为什么用 \code{loop} \code{label} 的方式，而不是 \code{goto}？}
+\p{: 方便抽象更高的语言编译；方便 simd 优化。}
+\p{WASM 是栈机，\code{goto} 不容易保持栈平衡。}
+
+\p{希望在 \thelang 做什么工作？}
+\p{: 语法和特性，非优化和分析方面。}
+
+\p{偏好用什么 parser？}
+\p{: 小的用 parser combinator，大的手写，几乎不用 parser generator。最近写的是 pratt 的。}
+
+\p{LL, LR, L ..K 的区别（我完全不懂，听不明白）。}
+\p{: 不太了解。}
+
+\p{写 parser 遇到的心得体会？}
+\p{: 聊了一个 tokenizer 的 glue 问题：parser 期待的是两个 \code{:}，而因为 token 中存在 \code{::}，token stream 中来的也就是 \code{::}，在 parse 过程中判断困难。}
+
+\p{用 pratt 的优势？}
+\p{: 聊了一下 [matklad 的文章](https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html)。}
+
+\p{为什么大多数语言都不用 parser generator？手写的优势是什么？}
+\p{: 可能更好的性能；更好的报错信息。}
+
