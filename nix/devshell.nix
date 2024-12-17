@@ -23,6 +23,7 @@
             tex
 
             pkgs.nodePackages.pnpm
+            pkgs.vscode-langservers-extracted
           ];
 
         commands = [
