@@ -24,7 +24,9 @@ html.dark {
 }
 
 /* TODO: align icon with text horizonly */
-.custom-icon, .fa, .emojicon {
+.custom-icon,
+.fa,
+.emojicon {
   display: inline !important;
   vertical-align: middle;
   font-size: 13pt !important;
@@ -331,17 +333,17 @@ nav#toc a {
 }
 
 nav#toc .link {
- box-shadow: none;
- text-decoration: none;
+  box-shadow: none;
+  text-decoration: none;
 }
 
 nav#toc a.bullet {
- opacity: 0.7;
- margin-left: 0.4em;
- margin-right: 0.3em;
- padding-left: 0.2em;
- padding-right: 0.2em;
- text-decoration: none;
+  opacity: 0.7;
+  margin-left: 0.4em;
+  margin-right: 0.3em;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  text-decoration: none;
 }
 
 nav#toc h2 {
@@ -352,12 +354,12 @@ nav#toc ul {
   list-style-type: none;
 }
 
-nav#toc li > ul {
- padding-left: 1em;
+nav#toc li>ul {
+  padding-left: 1em;
 }
 
 nav#toc li {
- list-style-position: inside;
+  list-style-position: inside;
 }
 
 .block {
@@ -412,7 +414,7 @@ a.slug {
   box-shadow: none;
   text-decoration-line: underline;
   text-decoration-style: dotted;
- }
+}
 
 ninja-keys::part(ninja-action) {
   white-space: nowrap;
@@ -548,7 +550,7 @@ a.bullet:hover,
 }
 
 .link {
- cursor: pointer;
+  cursor: pointer;
 }
 
 a {
@@ -616,23 +618,25 @@ hr {
   height: 2px;
 }
 
-ul, ol {
- padding-bottom: .5em;
+ul,
+ol {
+  padding-bottom: .5em;
 }
 
 ol {
- list-style-type: decimal;
+  list-style-type: decimal;
 }
 
 ol li ol {
- list-style-type: lower-alpha;
+  list-style-type: lower-alpha;
 }
 
 ol li ol li ol {
- list-style-type: lower-roman;
+  list-style-type: lower-roman;
 }
 
-.error, .info {
+.error,
+.info {
   border-radius: 4pt;
   padding-left: 3pt;
   padding-right: 3pt;
@@ -642,12 +646,12 @@ ol li ol li ol {
 }
 
 .error {
- background-color: red;
- color: white;
+  background-color: red;
+  color: white;
 }
 
 
 .info {
- background-color: #bbb;
- color: white;
+  background-color: #bbb;
+  color: white;
 }
