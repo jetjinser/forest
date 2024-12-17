@@ -6,46 +6,23 @@
 \put\transclude/toc{false}
 \put\transclude/numbered{false}
 
+\let\query/tasking[q]{
+  \open\query
+  \isect{\author{jinser}}{\taxon{task}}{\tag{\q}}
+}
+
 \subtree{
   \title{TODO}
   \query{
-    \query/and{
-      \query/author{jinser}
-      \query/taxon{task}
-      \query/tag{todo}
-    }
+    \open\query
+    \tasking{todo}
   }
 }
 
 \subtree{
   \title{WIP}
   \query{
-    \query/and{
-      \query/author{jinser}
-      \query/taxon{task}
-      \query/tag{wip}
-    }
+    \open\query
+    \tasking{wip}
   }
 }
-
-% \subtree{
-%   \title{pending}
-%   \query{
-%     \query/and{
-%       \query/author{jinser}
-%       \query/taxon{task}
-%       \query/tag{pending}
-%     }
-%   }
-% }
-
-% \subtree{
-%   \title{cancelled}
-%   \query{
-%     \query/and{
-%       \query/author{jinser}
-%       \query/taxon{task}
-%       \query/tag{cancelled}
-%     }
-%   }
-% }

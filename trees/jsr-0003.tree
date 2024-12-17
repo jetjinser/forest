@@ -7,9 +7,6 @@
 \p{目前都是凑数的。}
 
 \query{
-  \query/and{
-    \query/author{jinser}
-    \query/tag{blog}
-    \query/tag{done}
-  }
+  \open\query
+  \isect{\author{jinser}}{\tag{blog}}{\tag{done}}
 }
