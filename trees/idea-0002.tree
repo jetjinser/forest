@@ -1,9 +1,0 @@
-\title{[[neovim]] instance change diff}
-\date{2024-03-22}
-\tag{neovim}
-\tag{lsp}
-\author{jinser}
-
-\p{每次补全触发 auto-import，或者使用 code action 时候，经常不知道代码中具体发生了什么改变。}
-\p{想要寻找或者编写一个这样的插件：在 lsp 触发类似 format，auto-import，code action，refactor 等事件的时候，instance 地提示一下什么代码被改变了。}
-\p{应该可以有几种方式通知：inline diff，message，... 其他的还没想到。}
