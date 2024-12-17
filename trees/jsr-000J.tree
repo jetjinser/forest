@@ -1,0 +1,7 @@
+\let\thelang{\em{SOMELANG}}
+
+\title{second \thelang 面试}
+\date{2024-07-17}
+\author{jinser}
+
+\p{non-tech interview.}

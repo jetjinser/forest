@@ -1,0 +1,9 @@
+\title{opening file \code{/nix/store/xxx-abc.lock}: Permission denied}
+\date{2024-07-17}
+\author{jinser}
+
+\import{base-macros}
+
+\hcode{bash}{%
+nix-store --delete /nix/store/xxx-abc.lock
+}
