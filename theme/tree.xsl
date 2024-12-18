@@ -249,6 +249,7 @@
           <xsl:apply-templates select="f:meta[@name='external']" />
           <xsl:apply-templates select="f:meta[@name='slides']" />
           <xsl:apply-templates select="f:meta[@name='video']" />
+          <xsl:apply-templates select="f:meta[@name='github']" />
         </ul>
       </div>
     </header>
