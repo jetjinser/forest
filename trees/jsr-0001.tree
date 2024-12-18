@@ -4,9 +4,11 @@
 
 \blockquote{土地测量员}
 
-\p{I am a \em{Sophomore Computer Science major} and a \em{fancier of programming languages}. There is my WIP [[CV]].}
+\p{I am a \em{Junior Computer Science major} and a \em{fancier of programming languages}. There is my WIP [[CV]].}
 
 \p{\strong{NOTE}: I always forget, so let me write it down here: Press the key \code{Ctrl + k} or \code{Cmd + k} to open ninja "telescope".}
+
+\p{正在为 IDEA 工作，实习开发 [[MoonBit]] 周边设施。}
 
 \scope{
   \put\transclude/title{blog posts}

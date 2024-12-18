@@ -4,17 +4,11 @@
 \tag{done}
 \author{jinser}
 
-\def\lam[x]{
-    \lambda\x\mathpunct{.}
-}
-\def\forester{
-    [ocaml-forester](https://git.sr.ht/~jonsterling/ocaml-forester)
-}
+\def\lam[x]{\lambda\x\mathpunct{.}}
+\def\forester{[ocaml-forester](https://git.sr.ht/~jonsterling/ocaml-forester)}
 \def\SubSup[arg1][arg2]{#{_{\arg1}^{\arg2}}}
 
-\def\codedef{
-    \code{\startverb\def\stopverb}
-}
+\def\codedef{\code{\startverb\def\stopverb}}
 
 \p{简单描述在 [[forester]] 中 \codedef 的使用方式。从语法开始。}
 
@@ -35,24 +29,24 @@
 
 \p{这个通过 \codedef 定义出的名为 \code{\startverb\lam\stopverb} 的宏被设计为在 #{\LaTeX} 环境中使用，使用 \code{\startverb ## {  } \stopverb} 进入。}
 \pre{\startverb
-    ##{
-        \begin{aligned}
-            \lam{x} \\
-            \lam{x y} \\
-            \lam{x}\lam{y} \\
-        \end{aligned}
-    }
+##{
+  \begin{aligned}
+    \lam{x} \\
+    \lam{x y} \\
+    \lam{x}\lam{y} \\
+  \end{aligned}
+}
 \stopverb}
 \p{可以注意到参数是如何传递给 \code{\startverb\lam\stopverb} 宏的，在宏后面写一对花括号，花括号中的任意字符都是会传递给该宏的参数。这里三次传递的参数分别是 \code{x}，\code{x y} 以及 \code{x} 和 \code{y}。}
 
 \pre{\startverb
-    ##{
-        \begin{aligned}
-            \lambda\x\mathpunct{.} \\
-            \lambda\x y\mathpunct{.} \\
-            \lambda\x\mathpunct{.}\lambda\y\mathpunct{.} \\
-        \end{aligned}
-    }
+##{
+  \begin{aligned}
+    \lambda\x\mathpunct{.} \\
+    \lambda\x y\mathpunct{.} \\
+    \lambda\x\mathpunct{.}\lambda\y\mathpunct{.} \\
+  \end{aligned}
+}
 \stopverb}
 \p{观察展开后的样子，可以看到这些参数分别出现在了各自原先 \code{\startverb\x\stopverb} 的位置，这可以看作一种重写或替换。}
 
@@ -83,14 +77,14 @@
 \p{在这个例子中，\code{binder} 被省略，这意味着这个宏不需要绑定参数。使用不需要参数的宏非常简单直接，只需要不写花括号提供参数。}
 
 \pre{\startverb
-    \forester is a experimental forest markup language.
+\forester is a experimental forest markup language.
 \stopverb}
 
 \p{会被展开成：}
 \pre{\startverb
-    [ocaml-forester](https://git.sr.ht/~jonsterling/ocaml-forester) is a experimental forest markup language.
+[ocaml-forester](https://git.sr.ht/~jonsterling/ocaml-forester) is a experimental forest markup language.
 \stopverb}
 
 \p{
-    \forester is a experimental forest markup language.
+\forester is a experimental forest markup language.
 }
