@@ -6,14 +6,6 @@
 
 \p{\code{swos} 是我在 [[nix]] system config 的 devshell 中使用的简单 \code{nix} 和 \code{nixos-rebuild}/\code{darwin-rebuild} 包装脚本。}
 
-\p{\code{swos} 首先是用 bash script 写的，或者说是糊的，因为 bash 实在太难写了，需要反复地尝试运行来猜测和验证它的行为。我确实不会写 bash script，所以当我遇到 zuo 的时候，我马上就萌生了用它来重写这个简单脚本的想法。除了不想写 bash 之外，另一个最主要的原因是：\em{sexp 很酷}。}
-
-\p{重写的 commit 可以在[这里](https://github.com/jetjinser/flake/commit/05e92bc90c2730cb1bca0cec68d7e7d2266058a7)找到。除了添加新的 \code{swos} 脚本之外，还稍微调整了一下 devshell 的结构，可以忽略。}
-
-\p{先记录一下当前的脚本代码，下次再解释。}
-
-\todo{explain \code{swos} code}
-
 \hcode{racket}{\startverb
 #!/usr/bin/env zuo
 #lang zuo
