@@ -310,9 +310,9 @@ If we swap the 3d node of tree1 and the 5th node of tree2, we get
 \title{总结}
 
 \tp{
-总而言之，定界延续非常有用。它们可以在任何 R5RS 方案系统中进行模拟；但如果它们本身受支持，性能会更好。Scheme48 本身就支持定界延续（[Martin Gasbichler and Michael Sperber, ICFP 2002](https://dl.acm.org/doi/proceedings/10.1145/581478)）。如果你最喜欢的 Scheme 系统默认没有提供它们，请向实现者投诉。支持哪个特定的定界延续运算符（shift、control、shift0、splitter、cupto 等）并不重要——所有这些的表达性都是相同的：
+总而言之，定界延续非常有用。可以在任何 R5RS scheme 系统中进行模拟；但如果它本身受支持，性能会更好。Scheme48 本身就支持定界延续（[Martin Gasbichler and Michael Sperber, ICFP 2002](https://dl.acm.org/doi/proceedings/10.1145/581478)）。如果你最喜欢的 Scheme 系统默认没有提供它们，请向实现者投诉。支持哪个特定的定界延续运算符（shift、control、shift0、splitter、cupto 等）并不重要——所有这些的表达性都是相同的：
 }{
-To conclude, delimited continuations are quite useful. They can be emulated in any R5RS Scheme system; yet it is better for performance if they are supported natively. Scheme48 does support delimited continuations natively (Martin Gasbichler and Michael Sperber, ICFP 2002). If your favorite Scheme system does not offer them by default, please complain to the implementors. It doesn't matter which particular delimited continuation operator (shift, control, shift0, splitter, cupto, etc) is supported -- all of them are equally expressible: 
+To conclude, delimited continuations are quite useful. They can be emulated in any R5RS Scheme system; yet it is better for performance if they are supported natively. Scheme48 does support delimited continuations natively (Martin Gasbichler and Michael Sperber, ICFP 2002). If your favorite Scheme system does not offer them by default, please complain to the implementors. It doesn't matter which particular delimited continuation operator (shift, control, shift0, splitter, cupto, etc) is supported -- all of them are equally expressible:
 }
 
 \ul{
