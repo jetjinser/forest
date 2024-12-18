@@ -170,4 +170,12 @@
     </li>
   </xsl:template>
 
+  <xsl:template match="f:meta[@name='original']">
+    <li class="meta-item">
+      <a class="link external" href="{.}" target="_blank">
+        <i class="fa fa-external-link"></i><xsl:text> Original</xsl:text>
+      </a>
+    </li>
+  </xsl:template>
+
 </xsl:stylesheet>
