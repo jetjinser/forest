@@ -28,17 +28,24 @@
 
         commands = [
           {
-            category = "forester";
+            category = "write";
             name = "build";
             command = ''
               ${foresterExe} build forest.toml
             '';
           }
           {
-            category = "forester";
+            category = "write";
             name = "new";
             command = ''
               ${foresterExe} new --dest=trees --prefix=''${1:-jsr}
+            '';
+          }
+          {
+            category = "deploy";
+            name = "upload";
+            command = ''
+              rsync -rv output/ pgs.sh:forest
             '';
           }
         ];
