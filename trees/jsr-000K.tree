@@ -1,0 +1,10 @@
+\title{[[MoonBit]] language technology consultant at [[IDEA]]}
+\author{jinser}
+
+\import{base-macros}
+
+\p{\duration{2024.11.10}{now} I develop [[MoonBit]]'s standard library and third-party libraries as needed.}
+
+\ul{
+  \li{[encoding](https://github.com/moonbitlang/x/pull/78)}
+}

@@ -1,7 +1,7 @@
 \import{base-macros}
 
 \def\rwicon{
-  \icon{https://docs.risingwave.com/img/logo.svg}{🌊}
+  \icon{https://risingwave.com/metadata/icon.svg}{🌊}
 }
 
 \title{\rwicon RisingWave Labs}
