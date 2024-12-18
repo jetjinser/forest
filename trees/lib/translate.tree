@@ -1,0 +1,24 @@
+\title{translate macros}
+\author{jinser}
+
+\import{base-macros}
+
+\def\details[summary][body]{
+  \<html:details>[class]{block}{
+    \<html:summary>{\summary}
+    \body
+  }
+}
+
+\def\declare[who][title]{
+  \blockquote{This article is translated from \who's article titled "\title".}
+  \blockquote{本文翻译自 \who 题为《\title》的文章}
+}
+
+\def\tp[ori][tra]{
+  \p{\details{\ori}{\pre{\tra}}}
+}
+
+\def\tpp[ori][tra][share]{
+  \p{\details{\ori\share}{\pre{\tra}}}
+}
