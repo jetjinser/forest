@@ -6,7 +6,7 @@
 
 \title{\mbticon MoonBit}
 \taxon{stack}
-\meta{github}{https://github.com/moonbitlang/moonbit-docs}
+\meta{github}{https://github.com/moonbitlang/moonbit-compiler}
 \meta{external}{https://www.moonbitlang.com/}
 
 \blockquote{MoonBit is an end-to-end programming language toolchain for cloud and edge computing using WebAssembly.}
