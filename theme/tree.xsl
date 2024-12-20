@@ -20,7 +20,7 @@
         <xsl:for-each select="f:tree/f:frontmatter/f:authors/f:author">
           <meta property="article:author" content="{f:link/@title}" />
         </xsl:for-each>
-        <meta property="og:description" content="{substring(normalize-space(/f:tree/f:mainmatter), 1, 139)}" />
+        <meta property="og:description" content="{substring(normalize-space(/f:tree/f:mainmatter), 1, 280)}" />
         <xsl:if test="/f:tree/f:frontmatter/f:date">
           <meta property="article:published_time" content="{/f:tree/f:frontmatter/f:date/f:year}-{/f:tree/f:frontmatter/f:date/f:month}-{/f:tree/f:frontmatter/f:date/f:day}" />
         </xsl:if>
