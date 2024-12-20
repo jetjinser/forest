@@ -77,6 +77,10 @@
 \def\br{
   \<html:br>{}
 }
+\def\sub[body]{
+  \<html:sub>{\body}
+}
+
 \def\nowrap[body]{\<html:span>[style]{white-space: nowrap}{\body}}
 \def\color[colorcode][body]{
   \<html:span>[style]{color:\colorcode}{\body}
@@ -101,6 +105,12 @@
   }
   \tex{\get\base/tex-preamble}{\body}
  }
+}
+
+% ===
+
+\def\percent[body]{
+  \body\verb!|%!
 }
 
 % ===

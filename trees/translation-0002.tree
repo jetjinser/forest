@@ -1,0 +1,587 @@
+\title{Baby’s First Garbage Collector}
+\date{2024-12-20}
+\author{Bob Nystrom}
+\author{jinser}
+\meta{original}{https://journal.stuffwithstuff.com/2013/12/08/babys-first-garbage-collector/}
+
+\import{base-macros}
+\import{translate}
+
+\let\c[code]{
+  \hcode{c}{\code}
+}
+
+\declare{Bob Nystrom}{Baby’s First Garbage Collector}
+\tips{Click on the translation to expand and view the original text. 点击译文可展开查看原文。}
+
+\tp{
+当我感到压力大、要做的事情太多时，我会产生一种矛盾的反应：通过找\em{其他}事情来逃避。通常这件事是一个我可以编写和完成的小型独立程序。
+}{
+When I get stressed out and have too much to do, I have this paradoxical reaction where I escape from that by coming up with another thing to do. Usually it’s a tiny self-contained program that I can write and finish.
+}
+
+\tp{
+一天早上，我正对[我正在写的书](http://gameprogrammingpatterns.com/)、[我在工作中必须做的事情](http://dart.dev/)以及[我正在为《Strange Loop》准备的演讲](https://www.infoq.com/presentations/dart-introduction/)感到害怕，突然间，我想，\ldq我应该写一个垃圾回收器。\rdq
+}{
+The other morning, I was freaking myself out about the book I’m working on (http://gameprogrammingpatterns.com/) and the stuff I have to do at work (http://dart.dev/) and a talk I’m preparing for Strange Loop (https://www.infoq.com/presentations/dart-introduction/), and all of the sudden, I thought, “I should write a garbage collector.”
+}
+
+\tp{
+是的，我意识到那段话让我看起来有多么疯狂。但我的搭错神经是编程语言实现基础的免费教程！在大约一百行常规 C 代码中，我成功地创建了一个基础的[标记清除](\verb!|https://en.wikipedia.org/wiki/Tracing_garbage_collection#Na%C3%AFve_mark-and-sweep!)，你知道的，垃圾回收。
+}{
+Yes, I realize how crazy that paragraph makes me seem. But my faulty wiring is your free tutorial on a fundamental piece of programming language implementation! In about a hundred lines of vanilla C, I managed to whip up a basic mark-and-sweep (\verb!|https://en.wikipedia.org/wiki/Tracing_garbage_collection#Na%C3%AFve_mark-and-sweep!) collector that actually, you know, collects.
+}
+
+\tp{
+垃圾回收被认为是编程中充满挑战的领域之一，但在这篇文章里，我会引导你走上一条相对平坦的道路。（路上仍然可能有坑，但至少会浅一点）
+}{
+Garbage collection is considered one of the more shark-infested waters of programming, but in this post, I’ll give you a nice kiddie pool to paddle around in. (There may still be sharks in it, but at least it will be shallower.)
+}
+
+\subtree{
+\title{少使用、物尽其用、循环再用 \sub{Reduce, reuse, recycle}}
+
+\tp{
+垃圾回收背后的基本思想是该语言（在大多数情况下）似乎可以访问无限的内存。开发者可以不断地分配、分配、分配，就像变魔术一样，内存永远不会用完。
+}{
+The basic idea behind garbage collection is that the language (for the most part) appears to have access to infinite memory. The developer can just keep allocating and allocating and allocating and, as if by magic, never run out.
+}
+
+\tp{
+当然，计算机并不具有无限的内存。因此，实现这个魔术的方式是，当它需要分配一些内存并意识到内存不足时，它会\em{回收垃圾}。
+}{
+Of course, machines don’t have infinite memory. So the way the implementation does this is that when it needs to allocate a bit of memory and it realizes it’s running low, it collects garbage.
+}
+
+\tp{
+在这个语境中，\ldq垃圾\rdq是指之前分配的，现在不再使用了的内存。为了让无限内存的幻觉发挥作用，语言需要非常安全地\ldq不再被使用\rdq。当你的程序试图访问随机对象，如果这时它们就开始被回收，那就不好玩了。
+}{
+“Garbage” in this context means memory it previously allocated that is no longer being used. For the illusion of infinite memory to work, the language needs to be very safe about “no longer being used”. It would be no fun if random objects just started getting reclaimed while your program was trying to access them.
+}
+
+\tp{
+为了可回收，该语言必须确保程序无法再次使用该对象。如果程序无法获取该对象的引用，那么它显然无法再次使用它。所以\ldq使用中\rdq的定义实际上非常简单：
+\ol{
+  \li{任何被仍在作用域中的变量引用的对象都正在使用中。}
+  \li{任何被另一个正在使用的对象引用的对象都在使用中。}
+}
+}{
+In order to be collectible, the language has to ensure there’s no way for the program to use that object again. If the program can’t get a reference to the object, then it obviously can’t use it again. So the definition of “in use” is actually pretty simple:
+  1. Any object being referenced by a variable still in scope is in use.
+  2. Any object referenced by another in-use object is in use.
+}
+
+\tp{
+第二条规则是递归规则。如果对象 A 被变量引用，并且它有一些引用对象 B 的字段，则 B 正在使用中，因为你可以通过 A 访问它。
+}{
+The second rule is the recursive one. If object A is referenced by a variable, and it has some field that references object B, then B is in use since you can get to it through A.
+}
+
+\tp{
+最后我们得到的是\em{可达}对象的图\em2dash可达对象即所有可以从一个变量开始，遍历其对象来到达的对象。任何不在可达对象图中的对象对于程序来说都是死的，它的内存已经时机成熟，可以被回收了。
+}{
+The end result is a graph of reachable objects—all of the objects in the world that you can get to by starting at a variable and traversing through objects. Any object not in that graph of reachable objects is dead to the program and its memory is ripe for a reaping.
+}
+}
+
+\subtree{
+\title{标记清除 \sub{Marking and sweeping}}
+
+\tp{
+有[很多不同的方法](https://en.wikipedia.org/wiki/Tracing_garbage_collection)可以实现查找和回收所有未使用对象的过程，但为此发明的最简单且第一个发明的算法称为\ldq标记清除\rdq。它是由 Lisp 和大胡子的发明者约翰·麦卡锡（John McCarthy）发明的，所以今天实现这个算法有点像与一位远古之神交流，希望不是以某种洛夫克拉夫特式的方式，否则你的思想和视网膜最终会被炸得一干二净。
+}{
+There are a bunch of different ways (https://en.wikipedia.org/wiki/Tracing_garbage_collection) you can implement the process of finding and reclaiming all of the unused objects, but the simplest and first algorithm ever invented for it is called “mark-sweep”. It was invented by John McCarthy, the man who invented Lisp and beards, so implementing today is like communing with one of the Elder Gods, but hopefully not in some Lovecraftian way that ends with you having your mind and retinas blasted clean.
+}
+
+\tp{
+该算法的工作原理几乎与我们对可达性的定义完全相同：
+\ol{
+  \li{从根开始，遍历整个对象图。每次到达一个对象时，将其上的\ldq标记\rdq位设置为 true。}
+  \li{完成后，找到所有未设置标记位的对象将其删除。}
+}
+}{
+The algorithm works almost exactly like our definition of reachability:
+  1. Starting at the roots, traverse the entire object graph. Every time you reach an object, set a “mark” bit on it to true.
+  2. Once that’s done, find all of the objects whose mark bits are not set and delete them.
+}
+
+\tp{
+就是这样。我知道，你本来可以想出这个的，对吧？如果你这么做了，你就会成为一篇被引用数百次的论文的作者。这件事给我们的教训是，要在 CS 领域出名，你不必想出真正晦涩难懂的东西，你只需\em{首先}想出明显的东西即可。
+}{
+That’s it. I know, you could have come up with that, right? If you had, you’d be the author of a paper cited hundreds of times. The lesson here is that to be famous in CS, you don’t have to come up with really obscure stuff, you just have to come up with obvious stuff first.
+}
+}
+
+\subtree{
+\title{一对对象 \sub{A pair of objects}}
+
+
+\tp{
+在我们开始实现这两个步骤之前，让我们先做一些准备工作。我们不会真正实现一种语言的解释器\em2dash没有语法分析器、字节码或任何弱智的东西\em2dash但我们确实需要一些最少量的代码来创建一些垃圾来回收。
+}{
+Before we can get to implementing those two steps, let’s get a couple of preliminaries out of the way. We won’t be actually implementing an interpreter for a language—no parser, bytecode, or any of that foolishness—but we do need some minimal amount of code to create some garbage to collect.
+}
+
+\tp{
+假设我们正在为一种小语言编写一个解释器。它是动态类型的，有两种类型的对象：整数（int）和对（pair）。这是一个用来标记对象类型的枚举：
+}{
+Let’s play pretend that we’re writing an interpreter for a little language. It’s dynamically typed, and has two types of objects: ints and pairs. Here’s an enum to identify an object’s type:
+}
+
+\c{%
+typedef enum {
+  OBJ_INT,
+  OBJ_PAIR
+} ObjectType;
+}
+
+\tp{
+一个对可以是一对任何东西，两个整数，一个整数和另一个对，等等。仅凭这一点，你就可以[走得更远](http://www.flickr.com/photos/raganwald/212588975/)。由于 VM 中的对象可以是其中任何一个，因此 C 中实现它的典型方法是使用[标签联合（tagged union）](http://en.wikipedia.org/wiki/Tagged_union)。我们这样定义它：
+}{
+A pair can be a pair of anything, two ints, an int and another pair, whatever. You can go surprisingly far (http://www.flickr.com/photos/raganwald/212588975/) with just that. Since an object in the VM can be either of these, the typical way in C to implement it is with a tagged union (http://en.wikipedia.org/wiki/Tagged_union). We define it thusly:
+}
+
+\c{%
+typedef struct sObject {
+  ObjectType type;
+
+  union {
+    /* OBJ_INT */
+    int value;
+
+    /* OBJ_PAIR */
+    struct {
+      struct sObject* head;
+      struct sObject* tail;
+    };
+  };
+} Object;
+}
+
+\tp{
+主要的 Object 结构中有一个 \code{type} 字段，用于标识它的值类型\em2dash整数或对。接着它有一个联合（union）来保存这个整数或对的数据。如果你的 C 很生疏，那么联合就是一个结构体，其中字段在内存中重叠。由于给定的对象只能是一个整数\em{或}一个对，因此没有理由在单个对象中同时为所有三个字段提供内存。联合就是这么做的。非常好。
+}{
+The main Object struct has a type field that identifies what kind of value it is—either an int or a pair. Then it has a union to hold the data for the int or pair. If your C is rusty, a union is a struct where the fields overlap in memory. Since a given object can only be an int or a pair, there’s no reason to have memory in a single object for all three fields at the same time. A union does that. Groovy.
+}
+}
+
+\subtree{
+\title{最小虚拟机 \sub{A minimal virtual machine}}
+
+\tp{
+现在我们可以在小虚拟机中使用这个数据类型。虚拟机在这个背景中的作用是拥有一个存储当前范围内的变量的堆栈。大多数语言的虚拟机要么是基于栈的（如 JVM 和 CLR），要么是基于寄存器的（如 Lua）。在这两种情况下，实际上都仍然存在栈。它用于存储表达式中间所需的局部变量和临时变量。我们明确而简单地建模，如下所示：
+}{
+Now we can use that datatype in a little virtual machine. The VM’s role in this story is to have a stack that stores the variables that are currently in scope. Most language VMs are either stack-based (like the JVM and CLR) or register-based (like Lua). In both cases, there is actually still a stack. It’s used to store local variables and temporary variables needed in the middle of an expression. We model that explicitly and simply like so:
+}
+
+\c{%
+#define STACK_MAX 256
+
+typedef struct {
+  Object* stack[STACK_MAX];
+  int stackSize;
+} VM;
+}
+
+\tp{
+现在已经有了基本的数据结构，让我们拼凑代码来创建一些东西。首先，编写一个创建并初始化虚拟机的函数：
+}{
+Now that we’ve got our basic data structures in place, let’s slap together a bit of code to create some stuff. First, let’s write a function that creates and initializes a VM:
+}
+
+\c{%
+VM* newVM() {
+  VM* vm = malloc(sizeof(VM));
+  vm->stackSize = 0;
+  return vm;
+}
+}
+
+\tp{
+一旦我们有了虚拟机，我们就需要能够操作它的栈：
+}{
+Once we have a VM, we need to be able to manipulate its stack:
+}
+
+\c{%
+void push(VM* vm, Object* value) {
+  assert(vm->stackSize < STACK_MAX, "Stack overflow!");
+  vm->stack[vm->stackSize++] = value;
+}
+
+Object* pop(VM* vm) {
+  assert(vm->stackSize > 0, "Stack underflow!");
+  return vm->stack[--vm->stackSize];
+}
+}
+
+\tp{
+现在我们可以将东西放入\ldq变量\rdq中，我们需要能够实际创建对象。首先，一个小辅助函数：
+}{
+Now that we can stick stuff in “variables”, we need to be able to actually create objects. First, a little helper function:
+}
+
+\c{%
+Object* newObject(VM* vm, ObjectType type) {
+  Object* object = malloc(sizeof(Object));
+  object->type = type;
+  return object;
+}
+}
+
+\tp{
+这会执行实际的内存分配并设置类型标记。我们稍后会重新讨论这个问题。使用这个函数，我们可以编写其他函数将每种类型的对象推送到虚拟机的堆栈上：
+}{
+That does the actual memory allocation and sets the type tag. We’ll be revisiting this in a bit. Using that, we can write functions to push each kind of object onto the VM’s stack:
+}
+
+\c{%
+void pushInt(VM* vm, int intValue) {
+  Object* object = newObject(vm, OBJ_INT);
+  object->value = intValue;
+  push(vm, object);
+}
+
+Object* pushPair(VM* vm) {
+  Object* object = newObject(vm, OBJ_PAIR);
+  object->tail = pop(vm);
+  object->head = pop(vm);
+
+  push(vm, object);
+  return object;
+}
+}
+
+\tp{
+这就是我们的小虚拟机。如果我们有一个语法分析器和一个解释器来调用这些函数，我们就拥有了一种对上帝诚实的语言。而且，如果我们有无限的内存，它甚至能够运行真正的程序。既然我们不这样做，那我们就开始回收一些垃圾吧。
+}{
+And that’s it for our little VM. If we had a parser and an interpreter that called those functions, we’d have an honest to God language on our hands. And, if we had infinite memory, it would even be able to run real programs. Since we don’t, let’s start collecting some garbage.
+}
+}
+
+\subtree{
+\title{标志标记 \sub{Marky mark}}
+
+\tp{
+第一阶段是\em{标记}。我们需要遍历所有可到达的对象并设置它们的标记位。我们需要的第一件事是向 \code{Object} 添加一个标记位：
+}{
+The first phase is marking. We need to walk all of the reachable objects and set their mark bit. The first thing we need then is to add a mark bit to Object:
+}
+
+\c{%
+typedef struct sObject {
+  unsigned char marked;
+  /* Previous stuff... */
+} Object;
+}
+
+\tp{
+当我们创建了这个新对象，我们还要修改 \code{newObject()} 以将 \code{marked} 初始化为零。
+}{
+When we create a new object, we modify newObject() to initialize marked to zero.
+}
+
+\tp{
+为了标记所有可到达的对象，我们从内存中的变量开始，这意味着遍历堆栈。看起来像这样：
+}{
+To mark all of the reachable objects, we start with the variables that are in memory, so that means walking the stack. That looks like this:
+}
+
+\c{%
+void markAll(VM* vm)
+{
+  for (int i = 0; i < vm->stackSize; i++) {
+    mark(vm->stack[i]);
+  }
+}
+}
+
+\tp{
+这又调用了 \code{mark}。我们将分阶段构建它。首先是：
+}{
+That in turn calls mark. We’ll build that in phases. First:
+}
+
+\c{%
+void mark(Object* object) {
+  object->marked = 1;
+}
+}
+
+\tp{
+这是字面上最重要的一点（bit）。我们已将对象本身标记为可达。但记住，我们还需要处理对象中的引用\em2dash可达性是\em{递归}的。如果该对象是一个对，则它的两个字段也是可达的。处理递归很简单：
+}{
+This is the most important bit, literally. We’ve marked the object itself as reachable. But remember we also need to handle references in objects—reachability is recursive. If the object is a pair, its two fields are reachable too. Handling that is simple:
+}
+
+\c{%
+void mark(Object* object) {
+  object->marked = 1;
+
+  if (object->type == OBJ_PAIR) {
+    mark(object->head);
+    mark(object->tail);
+  }
+}
+}
+
+\tp{
+你看到这里有一个 bug 了吗？我们现在正在递归，但我们没有检查成环。如果你有一堆在循环中相互指向的对，这将使 C 调用堆栈溢出并崩溃。
+}{
+There’s a bug here. Do you see it? We’re recursing now, but we aren’t checking for cycles. If you have a bunch of pairs that point to each other in a loop, this will overflow the C callstack and crash.
+}
+
+\tp{
+为了解决这个问题，我们只需要在到达已经处理过的对象时退出即可。所以完整的 \code{mark()} 函数是：
+}{
+To handle that, we simply need to bail out if we get to an object that we’ve already processed. So the complete mark() function is:
+}
+
+\c{%
+void mark(Object* object) {
+  /* If already marked, we're done. Check this first
+     to avoid recursing on cycles in the object graph. */
+  if (object->marked) return;
+
+  object->marked = 1;
+
+  if (object->type == OBJ_PAIR) {
+    mark(object->head);
+    mark(object->tail);
+  }
+}
+}
+
+\tp{
+现在我们可以调用 \code{markAll()}，它将正确标记内存中每个可达的对象。我们已经完成一半了！
+}{
+Now we can call markAll() and it will correctly mark every reachable object in memory. We’re halfway done!
+}
+}
+
+\subtree{
+\title{清楚清除 \sub{Sweepy sweep}}
+
+\tp{
+下一阶段是清除我们分配的所有对象并释放任何未标记的对象。但这里有一个问题：根据定义，所有未标记的对象都是无法访问的！我们无法获取他们！
+}{
+The next phase is to sweep through all of the objects we’ve allocated and free any of them that aren’t marked. But there’s a problem here: all of the unmarked objects are, by definition, unreachable! We can’t get to them!
+}
+
+\tp{
+我们的虚拟机已经实现了对象引用的\em{语言}语义，因此我们只在变量和对的字段中存储指向对象的指针。一旦其中一个对象不再指向某个对象，虚拟机就完全丢失了它，并且实际上泄漏了内存。
+}{
+The VM has implemented the language’s semantics for object references, so we’re only storing pointers to objects in variables and the pair fields. As soon as an object is no longer pointed to by one of those, the VM has lost it entirely and actually leaked memory.
+}
+
+\tp{
+解决这个问题的技巧是，虚拟机可以拥有\em{自己}的对象引用，与语言用户可见的语义不同。换句话说，我们可以自己追踪它们。
+}{
+The trick to solve this is that the VM can have its own references to objects that are distinct from the semantics that are visible to the language user. In other words, we can keep track of them ourselves.
+}
+
+\tp{
+最简单的方法是维护我们分配的每个对象的链表。我们将 \code{Object} 本身扩展为该链表中的一个节点：
+}{
+The simplest way to do this is to just maintain a linked list of every object we’ve ever allocated. We extend Object itself to be a node in that list:
+}
+
+\c{%
+typedef struct sObject {
+  /* The next object in the list of all objects. */
+  struct sObject* next;
+
+  /* Previous stuff... */
+} Object;
+}
+
+\tp{
+虚拟机追踪该链表的头节点：
+}{
+The VM keeps track of the head of that list:
+}
+
+\c{%
+typedef struct {
+  /* The first object in the list of all objects. */
+  Object* firstObject;
+
+  /* Previous stuff... */
+} VM;
+}
+
+\tp{
+在 \code{newVM()} 中，我们确保将 \code{firstObject} 初始化为 \code{NULL} 。每当我们创建一个对象时，我们都会将其添加到链表中：
+}{
+In newVM() we make sure to initialize firstObject to NULL. Whenever we create an object, we add it to the list:
+}
+
+\c{%
+Object* newObject(VM* vm, ObjectType type) {
+  Object* object = malloc(sizeof(Object));
+  object->type = type;
+  object->marked = 0;
+
+  /* Insert it into the list of allocated objects. */
+  object->next = vm->firstObject;
+  vm->firstObject = object;
+
+  return object;
+}
+}
+
+\tp{
+这样，即使\em{语言}找不到对象，但语言\em{实现}仍然可以。要扫描并删除未标记的对象，我们遍历列表：
+}{
+This way, even if the language can’t find an object, the language implementation still can. To sweep through and delete the unmarked objects, we traverse the list:
+}
+
+\c{%
+void sweep(VM* vm)
+{
+  Object** object = &vm->firstObject;
+  while (*object) {
+    if (!(*object)->marked) {
+      /* This object wasn't reached, so remove it from the list
+         and free it. */
+      Object* unreached = *object;
+
+      *object = unreached->next;
+      free(unreached);
+    } else {
+      /* This object was reached, so unmark it (for the next GC)
+         and move on to the next. */
+      (*object)->marked = 0;
+      object = &(*object)->next;
+    }
+  }
+}
+}
+
+\tp{
+由于指针指向指针，该代码读起来有点棘手，但如果你仔细阅读它，你会发现它非常简单。它只是遍历整个链表。每当它遇到未标记的对象时，它就会释放其内存并将其从链表中删除。完成操作后，我们会删除所有无法访问的对象。
+}{
+That code is a bit tricky to read because of that pointer to a pointer, but if you work through it, you can see it’s pretty straightforward. It just walks the entire linked list. Whenever it hits an object that isn’t marked, it frees its memory and removes it from the list. When this is done, we will have deleted every unreachable object.
+}
+
+\tp{
+恭喜！我们有了一个垃圾回收器！只剩下最后一个碎片：实际调用它。首先让我们将这两个阶段结合在一起：
+}{
+Congratulations! We have a garbage collector! There’s just one missing piece: actually calling it. First let’s wrap the two phases together:
+}
+
+\c{%
+void gc(VM* vm) {
+  markAll(vm);
+  sweep(vm);
+}
+}
+
+\tp{
+你找不到更清晰的标记清除实现了。最棘手的部分是要弄清楚什么时候真正调用它。\ldq内存不足\rdq到底意味着什么，尤其是在虚拟内存接近无限的现代计算机上？
+}{
+You couldn’t ask for a more obvious mark-sweep implementation. The trickiest part is figuring out when to actually call this. What does “low on memory” even mean, especially on modern computers with near-infinite virtual memory?
+}
+
+\tp{
+事实证明，这里没有精确的正确或错误答案。这实际上取决于你使用虚拟机的目的以及它运行的硬件类型。为了使这个示例简单，我们将在一定次数的分配后进行回收。这实际上就是某些语言实现的工作原理，而且很容易实现。
+}{
+It turns out there’s no precise right or wrong answer here. It really depends on what you’re using your VM for and what kind of hardware it runs on. To keep this example simple, we’ll just collect after a certain number of allocations. That’s actually how some language implementations work, and it’s easy to implement.
+}
+
+\tp{
+我们扩展 \code{VM} 来追踪我们创建了多少个：
+}{
+We extend VM to track how many we’ve created:
+}
+
+\c{%
+typedef struct {
+  /* The total number of currently allocated objects. */
+  int numObjects;
+
+  /* The number of objects required to trigger a GC. */
+  int maxObjects;
+
+  /* Previous stuff... */
+} VM;
+}
+
+\tp{
+然后初始化它们：
+}{
+And then initialize them:
+}
+
+\c{%
+VM* newVM() {
+  /* Previous stuff... */
+
+  vm->numObjects = 0;
+  vm->maxObjects = INITIAL_GC_THRESHOLD;
+  return vm;
+}
+}
+
+\tp{
+\code{INITIAL_GC_THRESHOLD} 将是我们启动\em{第一次} GC 时的对象数量。较小的数字在内存方面更加保守，较大的数字在垃圾回收上花费的时间较少。按个人口味调整。
+}{
+The INITIAL_GC_THRESHOLD will be the number of objects at which we kick off the first GC. A smaller number is more conservative with memory, a larger number spends less time on garbage collection. Adjust to taste.
+}
+
+\tp{
+我们每创建一个对象，都增加 \code{numObjects} 并在其达到最大值时进行一次回收：
+}{
+Whenever we create an object, we increment numObjects and run a collection if it reaches the max:
+}
+
+\c{%
+Object* newObject(VM* vm, ObjectType type) {
+  if (vm->numObjects == vm->maxObjects) gc(vm);
+
+  /* Create object... */
+
+  vm->numObjects++;
+  return object;
+}
+}
+
+\tp{
+我不会费心展示它，但我们还会调整 \code{sweep()} 以在每次释放时\em{减少} \code{numObjects}。最后我们修改 \code{gc()} 来更新最大值：
+}{
+I won’t bother showing it, but we’ll also tweak sweep() to decrement numObjects every time it frees one. Finally, we modify gc() to update the max:
+}
+
+\c{%
+void gc(VM* vm) {
+  int numObjects = vm->numObjects;
+
+  markAll(vm);
+  sweep(vm);
+
+  vm->maxObjects = vm->numObjects * 2;
+}
+}
+
+\tp{
+每次回收后，我们都会根据回收后剩余的\em{存活}对象数量更新 \code{maxObjects}。那里的乘数让我们的堆随着存活对象数量的增加而增长。同样，如果一堆对象最终被释放，它会自动收缩。
+}{
+After every collection, we update maxObjects based on the number of live objects left after the collection. The multiplier there lets our heap grow as the number of living objects increases. Likewise, it will shrink automatically if a bunch of objects end up being freed.
+}
+}
+
+\subtree{
+\title{简单 \sub{Simple}}
+
+\tp{
+你做到了！如果你跟着做了所有这些，那么你现在已经掌握了简单的垃圾回收算法。如果你想一次查看全部内容，在[这里参阅完整代码](https://github.com/munificent/mark-sweep)。我在这里强调一下，虽然这个收集器很简单，但它不是一个\em{玩具}。
+}{
+You made it! If you followed all of this, you’ve now got a handle on a simple garbage collection algorithm. If you want to see it all together, here’s the full code. Let me stress here that while this collector is simple, it isn’t a toy.
+}
+
+\tp{
+你可以在此基础上构建大量优化\em2dash在垃圾回收和编程语言中，优化占了 \percent{90} 的工作量\em2dash但这里的核心代码是合法的\em{真实}垃圾回收器。它与直到最近的 Ruby 和 Lua 中的回收器都非常相似。你可以发布使用这样回收器的生产代码。现在去构建一些很棒的东西吧！
+}{
+There are a ton of optimizations you can build on top of this—in GCs and programming languages, optimization is 90% of the effort—but the core code here is a legitimate real GC. It’s very similar to the collectors that were in Ruby and Lua until recently. You can ship production code that uses something exactly like this. Now go build something awesome!
+}
+}

@@ -22,3 +22,8 @@
 \def\tpp[ori][tra][share]{
   \p{\details{\ori\share}{\pre{\tra}}}
 }
+
+% reference: https://www.w3.org/TR/clreq/
+\def\em2dash{⸺} % U+2E3A
+\def\ldq{“} % U+201C
+\def\rdq{”} % U+201D
