@@ -166,10 +166,10 @@ The main Object struct has a type field that identifies what kind of value it is
 }
 
 \subtree{
-\title{最小虚拟机 \sub{A minimal virtual machine}}
+\title{迷你虚拟机 \sub{A minimal virtual machine}}
 
 \tp{
-现在我们可以在小虚拟机中使用这个数据类型。虚拟机在这个背景中的作用是拥有一个存储当前范围内的变量的堆栈。大多数语言的虚拟机要么是基于栈的（如 JVM 和 CLR），要么是基于寄存器的（如 Lua）。在这两种情况下，实际上都仍然存在栈。它用于存储表达式中间所需的局部变量和临时变量。我们明确而简单地建模，如下所示：
+现在我们可以在小虚拟机中使用这个数据类型。虚拟机在这个背景中的作用是拥有一个存储当前范围内的变量的栈。大多数语言的虚拟机要么是基于栈的（如 JVM 和 CLR），要么是基于寄存器的（如 Lua）。在这两种情况下，实际上都仍然存在栈。它用于存储表达式中间所需的局部变量和临时变量。我们明确而简单地建模，如下所示：
 }{
 Now we can use that datatype in a little virtual machine. The VM’s role in this story is to have a stack that stores the variables that are currently in scope. Most language VMs are either stack-based (like the JVM and CLR) or register-based (like Lua). In both cases, there is actually still a stack. It’s used to store local variables and temporary variables needed in the middle of an expression. We model that explicitly and simply like so:
 }
@@ -230,7 +230,7 @@ Object* newObject(VM* vm, ObjectType type) {
 }
 
 \tp{
-这会执行实际的内存分配并设置类型标记。我们稍后会重新讨论这个问题。使用这个函数，我们可以编写其他函数将每种类型的对象推送到虚拟机的堆栈上：
+这会执行实际的内存分配并设置类型标记。我们稍后会重新讨论这个问题。使用这个函数，我们可以编写其他函数将每种类型的对象推送到虚拟机的栈上：
 }{
 That does the actual memory allocation and sets the type tag. We’ll be revisiting this in a bit. Using that, we can write functions to push each kind of object onto the VM’s stack:
 }
@@ -282,7 +282,7 @@ When we create a new object, we modify newObject() to initialize marked to zero.
 }
 
 \tp{
-为了标记所有可到达的对象，我们从内存中的变量开始，这意味着遍历堆栈。看起来像这样：
+为了标记所有可到达的对象，我们从内存中的变量开始，这意味着遍历栈。看起来像这样：
 }{
 To mark all of the reachable objects, we start with the variables that are in memory, so that means walking the stack. That looks like this:
 }
@@ -326,7 +326,7 @@ void mark(Object* object) {
 }
 
 \tp{
-你看到这里有一个 bug 了吗？我们现在正在递归，但我们没有检查成环。如果你有一堆在循环中相互指向的对，这将使 C 调用堆栈溢出并崩溃。
+你看到这里有一个 bug 了吗？我们现在正在递归，但我们没有检查成环。如果你有一堆在循环中相互指向的对，这将使 C 调用栈溢出并崩溃。
 }{
 There’s a bug here. Do you see it? We’re recursing now, but we aren’t checking for cycles. If you have a bunch of pairs that point to each other in a loop, this will overflow the C callstack and crash.
 }
