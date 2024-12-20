@@ -13,6 +13,24 @@
         <link rel="stylesheet" href="style.css" />
         <link rel="stylesheet" href="katex.min.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+        <meta property="og:title" content="{/f:tree/f:frontmatter/f:title}" />
+        <meta property="og:site_name" content="Forest de Jinser Kafka" />
+        <meta property="og:type" content="article" />
+        <xsl:for-each select="f:tree/f:frontmatter/f:authors/f:author">
+          <meta property="article:author" content="{f:link/@title}" />
+        </xsl:for-each>
+        <meta property="og:description" content="{substring(normalize-space(/f:tree/f:mainmatter), 1, 139)}" />
+        <xsl:if test="/f:tree/f:frontmatter/f:date">
+          <meta property="article:published_time" content="{/f:tree/f:frontmatter/f:date/f:year}-{/f:tree/f:frontmatter/f:date/f:month}-{/f:tree/f:frontmatter/f:date/f:day}" />
+        </xsl:if>
+        <meta property="og:url" content="https://www.purejs.icu/{/f:tree/f:frontmatter/f:route}" />
+        <meta property="og:image" content="https://www.purejs.icu/open.png" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1800" />
+        <meta property="og:image:height" content="1800" />
+        <meta property="og:image:alt" content="forall world exists JK" />
+
         <script type="text/javascript">
           <xsl:if test="/f:tree/f:frontmatter/f:source-path">
             <xsl:text>window.sourcePath = '</xsl:text>
