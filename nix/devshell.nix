@@ -22,7 +22,8 @@
             forester
             tex
 
-            pkgs.nodePackages.pnpm
+            # pkgs.nodePackages.pnpm
+            pkgs.libxslt
             pkgs.vscode-langservers-extracted
           ];
 
