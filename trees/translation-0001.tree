@@ -57,7 +57,6 @@ news:<c2b7813c.0410230826.3b0f71f0@posting.google.com>...
   \li{选择 0 ...（节点数 - 1）之间的随机整数，在这个（整数索引的）节点进行交叉。}
 }
 }}{
-\pre{
 noelwelsh@gmail.com (Noel Welsh) wrote in message
 news:<c2b7813c.0410230826.3b0f71f0@posting.google.com>...
 I would like to do the crossover in a purely functional manner.  The
@@ -65,7 +64,6 @@ algorithm I envisage is:
   - Count the number of nodes for each of the two trees
   - Choose an random integer between 0 ... (number of nodes - 1)
     This is the node where crossover will take place.
-}
 }
 
 \tp{
