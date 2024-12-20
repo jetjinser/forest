@@ -1,6 +1,6 @@
 \title{Baby’s First Garbage Collector}
 \date{2024-12-20}
-\author{Bob Nystrom}
+\author{munificent}
 \author{jinser}
 \meta{original}{https://journal.stuffwithstuff.com/2013/12/08/babys-first-garbage-collector/}
 
@@ -11,7 +11,7 @@
   \hcode{c}{\code}
 }
 
-\declare{Bob Nystrom}{Baby’s First Garbage Collector}
+\declare{[[munificent]]}{Baby’s First Garbage Collector}
 \tips{Click on the translation to expand and view the original text. 点击译文可展开查看原文。}
 
 \tp{
