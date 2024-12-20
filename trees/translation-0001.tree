@@ -67,7 +67,7 @@ algorithm I envisage is:
 }
 
 \tp{
-正如上文指出的，我们不需要通过计数来从树中选择随机节点。选择节点后，我们可以使用 \code{eq?} 测试向下 zip 树中的该节点。然而，在下文中，为了简单起见，我们跳过随机选择，按深度优先顺序和节点索引选择节点。
+正如上文指出的，我们不需要通过计数来从树中选择随机节点。选择节点后，我们可以使用 \code{eq?} 测试来向下拉开树中的该节点。然而，在下文中，为了简单起见，我们跳过随机选择，按深度优先顺序和节点索引选择节点。
 }{
 As pointed out earlier, we don't need counting to select a random node from a tree. After we selected the node, we can zip down to that node in the tree using the eq? test. In the following however, we skip the random selection for simplicity and thus we shall be selecting nodes by their index in the depth-first order.
 }
@@ -166,7 +166,9 @@ As promised, zipper is indeed a manifestation of a delimited continuation.
 
 % FIXME: 没看懂双关
 \tp{
-我们应该指出，record \code{zipper} 和构造函数 \code{zip-tree} 都是 \em{generic} 的。它们本身既不依赖树的表示，也不依赖遍历策略。有关树数据结构及其遍历的所有信息都被封装在一个函数 \code{depth-first} 中。我们可以通过改变深度优先策略从深度优先策略切换到广度优先策略，或者从嵌套列表切换到树的嵌套向量实现。无论是 \code{zipper}、\code{zip-tree} 还是任何使用 \code{zipper} 的代码（见下文）都不需要任何修改。我们的 zipper 的这一特性与 Gerard Huet 的 zipper 导出形成了鲜明的对比。在 [Gerard Huet 的形式](https://www.st.cs.uni-saarland.de/edu/seminare/2005/advanced-fp/docs/huet-zipper.pdf)中，zipper 确实取决于数据类型的具体实现：zipper 是从数据类型 derived（双关语）的。不同的数据类型（以及抽象数据类型的不同实现）将具有不同的对应 zipper 结构。在我们的形式中，zipper 是遍历函数的 \code{generic} derivation（双关语）。zipper 是遍历函数的导数——实际上是机械导数。因此，shift/reset 可以视为遍历函数的导数运算符。
+\blockquote{（译者按：没看懂）}
+
+我们应该指出，record \code{zipper} 和构造函数 \code{zip-tree} 都是 \em{generic} 的。它们本身既不依赖树的表示，也不依赖遍历策略。有关树数据结构及其遍历的所有信息都被封装在一个函数 \code{depth-first} 中。我们可以通过改变深度优先策略从深度优先策略切换到广度优先策略，或者从嵌套列表切换到树的嵌套向量实现。无论是 \code{zipper}、\code{zip-tree} 还是任何使用 \code{zipper} 的代码（见下文）都不需要任何修改。我们的 zipper 的这一特性与 Gerard Huet 的 zipper 导出形成了鲜明的对比。在 [Gerard Huet 的形式](https://www.st.cs.uni-saarland.de/edu/seminare/2005/advanced-fp/docs/huet-zipper.pdf)中，zipper 确实取决于数据类型的具体实现：zipper（拉链）是从数据类型 derived（双关语，拉开）的。不同的数据类型（以及抽象数据类型的不同实现）将具有不同的对应 zipper 结构。在我们的形式中，zipper 是遍历函数的 \code{generic} derivation（双关语）。zipper 是遍历函数的导出——实际上是机械地导出。因此，shift/reset 可以被视为遍历函数的导出（派生）运算符。
 }{
 We should point out that both the zipper record and the constructor function zip-tree are _generic_. They by themselves depend neither on the representation of the tree nor on the traversal strategy. All the information about the tree data structure and its traversal is encapsulated in one single function depth-first. We can switch from depth-first to breadth-first strategy or from a nested list to a nested vector realization of trees just by changing depth-first. Neither zipper, nor zip-tree, nor any code that uses zipper (see below) will require any modifications. This property of our zipper is in a marked contrast with Gerard Huet's derivation of zipper. In Gerard Huet's formulation, zipper does depend on the concrete realization of the data type: zipper is derived (pun intended) from the data type. Different data types (and different realizations of an abstract data type) will have different corresponding zipper structures. In our formulation, zipper is a _generic_ derivation (pun intended) on the traversal function. Zipper is a derivative of the traversal function -- mechanical derivative at that. So, shift/reset can be considered traversal function derivative operators.
 }
