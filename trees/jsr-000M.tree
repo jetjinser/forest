@@ -1,0 +1,22 @@
+\title{radicle auto mirror from GitHub}
+\date{2024-12-22}
+\author{jinser}
+
+\import{base-macros}
+
+\p{TODO}
+
+\let\bash[src]{
+  \hcode{bash}{\src}
+}
+
+\base{%
+rad id update --title "allow jinser-mirror" \
+      --delegate did:key:z6Mkp43tRH5SCUKtjGSmzzzqeWh6vthCMosNwyX23Q6TAz4e
+rad sync -a
+}
+
+\base{%
+rad sync -f
+}
+
