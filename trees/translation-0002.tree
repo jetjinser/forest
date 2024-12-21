@@ -27,13 +27,13 @@ The other morning, I was freaking myself out about the book I’m working on (ht
 }
 
 \tp{
-是的，我意识到那段话让我看起来有多么疯狂。但我的搭错神经是编程语言实现基础的免费教程！在大约一百行常规 C 代码中，我成功地创建了一个基础的[标记清除](\verb!|https://en.wikipedia.org/wiki/Tracing_garbage_collection#Na%C3%AFve_mark-and-sweep!)，你知道的，垃圾回收。
+是的，我意识到那段话让我看起来有多么疯狂。但我的搭错神经带来的是编程语言实现基础的免费教程！在大约一百行常规 C 代码中，我成功地创建了一个基础的[标记清除](\verb!|https://en.wikipedia.org/wiki/Tracing_garbage_collection#Na%C3%AFve_mark-and-sweep!)，你知道的，垃圾回收。
 }{
 Yes, I realize how crazy that paragraph makes me seem. But my faulty wiring is your free tutorial on a fundamental piece of programming language implementation! In about a hundred lines of vanilla C, I managed to whip up a basic mark-and-sweep (\verb!|https://en.wikipedia.org/wiki/Tracing_garbage_collection#Na%C3%AFve_mark-and-sweep!) collector that actually, you know, collects.
 }
 
 \tp{
-垃圾回收被认为是编程中充满挑战的领域之一，但在这篇文章里，我会引导你走上一条相对平坦的道路。（路上仍然可能有坑，但至少会浅一点）
+一般认为，垃圾回收是编程中充满挑战的领域之一，不过在这篇文章里，我会引导你走上一条相对平坦的道路。（路上仍然可能有坑，但至少会浅一点）
 }{
 Garbage collection is considered one of the more shark-infested waters of programming, but in this post, I’ll give you a nice kiddie pool to paddle around in. (There may still be sharks in it, but at least it will be shallower.)
 }
