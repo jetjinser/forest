@@ -580,7 +580,7 @@ You made it! If you followed all of this, you’ve now got a handle on a simple 
 }
 
 \tp{
-你可以在此基础上构建大量优化\em2dash在垃圾回收和编程语言中，优化占了 \percent{90} 的工作量\em2dash但这里的核心代码是合法的\em{真实}垃圾回收器。它与直到最近的 Ruby 和 Lua 中的回收器都非常相似。你可以发布使用这样回收器的生产代码。现在去构建一些很棒的东西吧！
+你可以在此基础上构建大量优化\em2dash在垃圾回收和编程语言中，优化占了 \percent{90} 的工作量\em2dash但这里的核心代码是合法的\em{真实}垃圾回收器。它与直到最近的 Ruby 和 Lua 中的回收器都非常相似。你可以在生产代码中使用这样的代码。现在去构建一些很棒的东西吧！
 }{
 There are a ton of optimizations you can build on top of this—in GCs and programming languages, optimization is 90% of the effort—but the core code here is a legitimate real GC. It’s very similar to the collectors that were in Ruby and Lua until recently. You can ship production code that uses something exactly like this. Now go build something awesome!
 }
