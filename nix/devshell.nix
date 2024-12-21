@@ -46,6 +46,7 @@
             category = "deploy";
             name = "upload";
             command = ''
+              ./x.sh
               rsync -rv output/ pgs.sh:forest
             '';
           }
