@@ -1,0 +1,72 @@
+\title{Open source in installments: moonbit-compiler}
+\date{2024-12-21}
+\author{jinser}
+
+\import{base-macros}
+\let\ocaml[src]{
+  \hcode{ocaml}{\src}
+}
+\let\bash[src]{
+  \hcode{bash}{\src}
+}
+
+\p{[[MoonBit]] was open sourced on [GitHub](https://github.com/moonbitlang/moonbit-compiler) on December 18th. The current moonbit-compiler is unfortunately a specialized open-source version that is only a small portion of the complete moonbit compiler. This lack is primarily evident in that, out of the four targets supported by moonbit (wasm, wasmgc, js, native), the open-source moonbit-compiler only supports wasmgc.}
+
+\p{
+[\code{src/driver_util.ml#L44-L48}](https://github.com/moonbitlang/moonbit-compiler/blob/cd13d25e7cbc9663ab6239ec2ba038bf7af49994/src/driver_util.ml#L44-L48)
+\ocaml{%
+type target =
+  | Wasm_gc of {
+      clam_callback : clam_passes -> Clam.prog -> unit;
+      sexp_callback : W.t list -> unit;
+    }
+}
+Obviously, there is only one data constructor: \code{Wasm_gc}.
+}
+
+\p{But we can still give it a try. We can pass the parameter \code{--target wasm} to \code{moonc}, and it not only fails, but even reports an Internal Compiler Error (ICE).
+\bash{\verb!|
+> dune exec moonc build-package -- /path/to/source/main/main.mbt -is-main -o main.core -target wasm -std-path /path/to/lib/target/wasm/release/bundle
+                                        
+         --  --
+       /  //  / __--------_
+      /  //  /_/            \
+   ---      -                \ __
+  / X        /        ____   /   )
+  *_________/__/_____/______/ `--
+
+Oops, the compiler has encountered an unexpected situation.
+This is a bug in the compiler.
+
+A bug report containing the error description and relevant code would be
+greatly appreciated. You can submit the bug report here:
+
+  https://github.com/moonbitlang/moonbit-docs/issues/new?labels=bug,ICE
+
+Error: File "src/basic_config.ml", line 47, characters 60-66: Assertion failed
+
+Compiler args: _build/install/default/bin/moonc build-package /path/to/source/main/main.mbt -is-main -o main.core -target wasm -std-path /path/to/lib/target/wasm/release/bundle
+
+moonc version: v0.1.20241202+8756d160d
+!}
+Uh oh, I think this is an error that shouldn't occur. Let's look at what happens where the "Assertion failed" is thrown.\br
+[\code{src/basic_config.ml#47}](https://github.com/moonbitlang/moonbit-compiler/blob/cd13d25e7cbc9663ab6239ec2ba038bf7af49994/src/basic_config.ml#L47)
+\ocaml{%
+let parse_target_exn = function "wasm-gc" -> Wasm_gc | _ -> assert false
+}
+Now we know how "specialized" this open-source version is.
+}
+
+\p{
+By the way, the function \code{parse_target_exn} is called at the point where command-line arguments are parsed (naturally). But at this point, we can see remnants of the full moonbit compiler, which is why I say this is an error that shouldn't occur.\br
+[\code{src/driver_config.ml#L189-L195}](https://github.com/moonbitlang/moonbit-compiler/blob/cd13d25e7cbc9663ab6239ec2ba038bf7af49994/src/driver_config.ml#L189-L195)
+\ocaml{%
+( "-target",
+  Arg.Symbol
+    ( [ "wasm-gc"; "wasm"; "js"; "native" ],
+      fun target -> Config.target := Basic_config.parse_target_exn target
+    ),
+  "set compilation target. available targets: wasm, wasm-gc, js, native"
+);
+}
+}
