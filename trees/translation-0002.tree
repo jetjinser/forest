@@ -21,7 +21,7 @@ When I get stressed out and have too much to do, I have this paradoxical reactio
 }
 
 \tp{
-一天早上，我正对[我正在写的书](http://gameprogrammingpatterns.com/)、[我在工作中必须做的事情](http://dart.dev/)以及[我正在为《Strange Loop》准备的演讲](https://www.infoq.com/presentations/dart-introduction/)感到害怕，突然间，我想，\ldq我应该写一个垃圾回收器。\rdq
+一天早上，我正对[我正在写的书](http://gameprogrammingpatterns.com/)、[我在工作中必须做的事情](http://dart.dev/)以及[我正在为《Strange Loop》准备的演讲](https://www.infoq.com/presentations/dart-introduction/)感到害怕，突然间，我想，\dquote{我应该写一个垃圾回收器。}
 }{
 The other morning, I was freaking myself out about the book I’m working on (http://gameprogrammingpatterns.com/) and the stuff I have to do at work (http://dart.dev/) and a talk I’m preparing for Strange Loop (https://www.infoq.com/presentations/dart-introduction/), and all of the sudden, I thought, “I should write a garbage collector.”
 }
@@ -54,13 +54,13 @@ Of course, machines don’t have infinite memory. So the way the implementation 
 }
 
 \tp{
-在这个语境中，\ldq垃圾\rdq是指之前分配的，现在不再使用了的内存。为了让无限内存的幻觉发挥作用，语言需要非常安全地\ldq不再被使用\rdq。当你的程序试图访问随机对象，如果这时它们就开始被回收，那就不好玩了。
+在这个语境中，\dquote{垃圾}是指之前分配的，现在不再使用了的内存。为了让无限内存的幻觉发挥作用，语言需要非常安全地\dquote{不再被使用}。当你的程序试图访问随机对象，如果这时它们就开始被回收，那就不好玩了。
 }{
 “Garbage” in this context means memory it previously allocated that is no longer being used. For the illusion of infinite memory to work, the language needs to be very safe about “no longer being used”. It would be no fun if random objects just started getting reclaimed while your program was trying to access them.
 }
 
 \tp{
-为了可回收，该语言必须确保程序无法再次使用该对象。如果程序无法获取该对象的引用，那么它显然无法再次使用它。所以\ldq使用中\rdq的定义实际上非常简单：
+为了可回收，该语言必须确保程序无法再次使用该对象。如果程序无法获取该对象的引用，那么它显然无法再次使用它。所以\dquote{使用中}的定义实际上非常简单：
 \ol{
   \li{任何被仍在作用域中的变量引用的对象都正在使用中。}
   \li{任何被另一个正在使用的对象引用的对象都在使用中。}
@@ -88,7 +88,7 @@ The end result is a graph of reachable objects—all of the objects in the world
 \title{标记清除 \sub{Marking and sweeping}}
 
 \tp{
-有[很多不同的方法](https://en.wikipedia.org/wiki/Tracing_garbage_collection)可以实现查找和回收所有未使用对象的过程，但为此发明的最简单且第一个发明的算法称为\ldq标记清除\rdq。它是由 Lisp 和大胡子的发明者约翰·麦卡锡（John McCarthy）发明的，所以今天实现这个算法有点像与一位远古之神交流，希望不是以某种洛夫克拉夫特式的方式，否则你的思想和视网膜最终会被炸得一干二净。
+有[很多不同的方法](https://en.wikipedia.org/wiki/Tracing_garbage_collection)可以实现查找和回收所有未使用对象的过程，但为此发明的最简单且第一个发明的算法称为\dquote{标记清除}。它是由 Lisp 和大胡子的发明者约翰·麦卡锡（John McCarthy）发明的，所以今天实现这个算法有点像与一位远古之神交流，希望不是以某种洛夫克拉夫特式的方式，否则你的思想和视网膜最终会被炸得一干二净。
 }{
 There are a bunch of different ways (https://en.wikipedia.org/wiki/Tracing_garbage_collection) you can implement the process of finding and reclaiming all of the unused objects, but the simplest and first algorithm ever invented for it is called “mark-sweep”. It was invented by John McCarthy, the man who invented Lisp and beards, so implementing today is like communing with one of the Elder Gods, but hopefully not in some Lovecraftian way that ends with you having your mind and retinas blasted clean.
 }
@@ -96,7 +96,7 @@ There are a bunch of different ways (https://en.wikipedia.org/wiki/Tracing_garba
 \tp{
 该算法的工作原理几乎与我们对可达性的定义完全相同：
 \ol{
-  \li{从根开始，遍历整个对象图。每次到达一个对象时，将其上的\ldq标记\rdq位设置为 true。}
+  \li{从根开始，遍历整个对象图。每次到达一个对象时，将其上的\dquote{标记}位设置为 true。}
   \li{完成后，找到所有未设置标记位的对象将其删除。}
 }
 }{
@@ -216,7 +216,7 @@ Object* pop(VM* vm) {
 }
 
 \tp{
-现在我们可以将东西放入\ldq变量\rdq中，我们需要能够实际创建对象。首先，一个小辅助函数：
+现在我们可以将东西放入\dquote{变量}中，我们需要能够实际创建对象。首先，一个小辅助函数：
 }{
 Now that we can stick stuff in “variables”, we need to be able to actually create objects. First, a little helper function:
 }
@@ -478,7 +478,7 @@ void gc(VM* vm) {
 }
 
 \tp{
-你找不到更清晰的标记清除实现了。最棘手的部分是要弄清楚什么时候真正调用它。\ldq内存不足\rdq到底意味着什么，尤其是在虚拟内存接近无限的现代计算机上？
+你找不到更清晰的标记清除实现了。最棘手的部分是要弄清楚什么时候真正调用它。\dquote{内存不足}到底意味着什么，尤其是在虚拟内存接近无限的现代计算机上？
 }{
 You couldn’t ask for a more obvious mark-sweep implementation. The trickiest part is figuring out when to actually call this. What does “low on memory” even mean, especially on modern computers with near-infinite virtual memory?
 }

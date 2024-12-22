@@ -12,7 +12,7 @@
 }
 
 \declare{[[diegoolivier]]}{Using zippers to handle huge trees}
-\tips{Click on the translation to expand and view the original text. 点击译文可展开查看原文。原文有修复 typo。}
+\tips{Click on the translation to expand and view the original text. 点击译文可展开查看原文。有修复原文 typo。}
 
 \tp{
 嗨，
@@ -59,7 +59,7 @@ Zippers are a simple way to handle huge (in fact infinite) trees.
 \title{zipper 的解释 \sub{Explanation of zippers}}
 
 \tp{
-zipper 可以被视为一种\ldq函数式指针\rdq，因为它能够提供：
+zipper 可以被视为一种\dquote{函数式指针}，因为它能够提供：
 \ul{
   \li{\ruby{纯}{purely}的函数式和类型化的操作}
   \li{\code{O(1)} 的访问指针元素}
@@ -182,7 +182,7 @@ G. Huet. The Zipper. J. Functional Programming, 7 (5), Sept 1997, pp. 549--554.
 }
 
 \tp{
-他在例子中使用了 n 叉树和二叉树。这两者主要的区别在于，在二叉树中，指针的组织方式不同（他的\ldq左\rdq操作在 Baire 中是 \code{(left o up)}）。
+他在例子中使用了 n 叉树和二叉树。这两者主要的区别在于，在二叉树中，指针的组织方式不同（他的\dquote{左}操作在 Baire 中是 \code{(left o up)}）。
 \br（译者按：[Baire](https://web.archive.org/web/20030609000151/http://www.edite-de-paris.com.fr/~fernandz/Caml/Baire/index.html) 是 [[diegoolivier]] 开发的 [Caml](https://caml.inria.fr/) 的数据结构库。）
 }{
 He uses n-ary trees and binary trees in his examples. The main

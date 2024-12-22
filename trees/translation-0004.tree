@@ -1,0 +1,121 @@
+\title{guile's reader, in guile}
+\date{2024-12-22}
+\author{wingo}
+\author{jinser}
+\meta{original}{https://wingolog.org/archives/2021/04/11/guiles-reader-in-guile}
+
+\import{base-macros}
+\import{translate}
+
+\declare{[[wingo]]}{guile's reader, in guile}
+\tips{Click on the translation to expand and view the original text. 点击译文可展开查看原文。}
+
+\tp{
+晚上好！今天的简短（大概？）记录是一些关于 guile \ruby{书呆子}{nargery}的内容。
+}{
+Good evening! A brief note today about some Guile nargery.
+}
+
+\subtree{
+\title{历史的弧线 \sub{the arc of history}}
+
+\tp{
+就像在你打开收音机并期望听到\ruby{[威豹乐队](\verb!|https://zh.wikipedia.org/wiki/%E5%A8%81%E8%B1%B9%E4%B9%90%E9%98%9F!)}{Def Leppard}时开始出现的许多语言实现一样，Guile 也有下半部分和上半部分。下半部分是用 C 编写的，暴露了一个共享库和一个可执行文件，而上半部分是用语言本身（在 Guile 的情况下是\dquote{Scheme}）编写的，并在语言实现开始时由 C 代码以某种方式加载。
+}{
+Like many language implementations that started life when you could turn on the radio and expect to hear Def Leppard, Guile has a bottom half and a top half. The bottom half is written in C and exposes a shared library and an executable, and the top half is written in the language itself (Scheme, in the case of Guile) and somehow loaded by the C code when the language implementation starts.
+}
+
+\tp{
+自2010年左右以来，我们一直在努力将用C语言编写的部分改用 Scheme 编写。上周的信件讨论了[动态链接的实现的替换](https://wingolog.org/archives/2021/04/08/sign-of-the-times)，从使用\code{libltdl}库替换为在低级\code{dlopen}包装器之上的 Scheme 实现。我以前写过关于[在 Scheme 中重写 \code{eval}](https://wingolog.org/archives/2009/12/09/in-which-our-protagonist-forgoes-modesty) 的内容，更近期则谈到[在 Scheme 中实现与 C 语言实现相同性能的道路有时是漫长的](https://wingolog.org/archives/2020/02/07/lessons-learned-from-guile-the-ancient-spry)。
+}{
+Since 2010 or so we have been working at replacing bits written in C with bits written in Scheme. Last week's missive was about replacing the implementation of dynamic-link from using the libltdl library to using Scheme on top of a low-level dlopen wrapper. I've written about rewriting eval in Scheme, and more recently about how the road to getting the performance of C implementations in Scheme has been sometimes long.
+}
+
+\tp{
+这些重写有\ruby{堂吉诃德式}{quixotic}的一面。我内心深处有一些关于正确与错误的感觉，并且我从根本上知道从 C 转向 Scheme 是正确的事情。很多时候这种感觉都是完全不理性的，在许多情况下也显得不合时宜\em2dash比如，如果你有一项需要为客户完成的任务，你需要坐下来思考从这里到目标的最小步骤，而直觉对于你如何到达那里并没有多大作用。但有一个项目可以让你按照自己喜欢的方式做某件事是美好的，即使这需要 10 年，那也没关系。
+}{
+These rewrites have a quixotic aspect to them. I feel something in my gut about rightness and wrongness and I know at a base level that moving from C to Scheme is the right thing. Much of it is completely irrational and can be out of place in a lot of contexts -- like if you have a task to get done for a customer, you need to sit and think about minimal steps from here to the goal and the gut doesn't have much of a role to play in how you get there. But it's nice to have a project where you can do a thing in the way you'd like, and if it takes 10 years, that's fine.
+}
+
+\tp{
+不过除了难以言表的动机之外，用 Scheme 重写一些东西还是有具体的好处的。我发现 Scheme 代码更容易维护，嗯，而且[相比 C 的常见\ruby{陷阱}{pitfall}，Scheme 显然更安全](https://noncombatant.org/2021/04/09/prioritizing-memory-safety-migrations/)。如果有一天我重写 Guile 的垃圾收集器，这会减少我的工作量。而且，Scheme 代码还具有 C 语言所没有的功能：\ruby{尾部调用}{tail call}、\ruby{可恢复的分隔延续}{resumable continuations}、\ruby{运行时检测}{run-time instrumentation}等等。
+}{
+But besides the ineffable motivations, there are concrete advantages to rewriting something in Scheme. I find Scheme code to be more maintainable, yes, and more secure relative to the common pitfalls of C, obviously. It decreases the amount of work I will have when one day I rewrite Guile's garbage collector. But also, Scheme code gets things that C can't have: tail calls, resumable delimited continuations, run-time instrumentation, and so on.
+}
+
+\tp{
+以\ruby{定界延续}{delimited continuations}为例，大约五年前，我为 Guile 编写了一个[以并行并发 ML 为模型的轻量级并发设施](https://wingolog.org/archives/2017/06/29/a-new-concurrent-ml)。它允许数百万条 fibers 存在于系统上。当一个 fiber 需要阻塞 I/O 操作（读或写）时，它会暂停其延续，并在操作变得可能时安排重启它。
+}{
+Taking delimited continuations as an example, five years ago or so I wrote a lightweight concurrency facility for Guile, modelled on Parallel Concurrent ML. It lets millions of fibers to exist on a system. When a fiber would need to block on an I/O operation (read or write), instead it suspends its continuation, and arranges to restart it when the operation becomes possible.
+}
+
+\tp{
+为了让这一切成真，Guile 必须做出很多改变。首先是定界延续本身。后来是 Scheme 中 ports 设施上半部分的完全重写，以允许 port 操作挂起和恢复。可恢复 fibers 的许多障碍已被消除，但 Fibers 手册仍然列出了相当多的障碍。
+}{
+A lot had to change in Guile for this to become a reality. Firstly, delimited continuations themselves. Later, a complete rewrite of the top half of the ports facility in Scheme, to allow port operations to suspend and resume. Many of the barriers to resumable fibers were removed, but the Fibers manual still names quite a few.
+}
+}
+
+\subtree{
+\title{Scheme read, in Scheme}
+
+\tp{
+这给带来了我们今天的记录：我刚刚在 Scheme 中也重写了 Guile 的 reader！reader 是获取字符流并将其解析为 S 表达式的部分。以前是C语言，现在是 Scheme。
+}{
+Which brings us to today's note: I just rewrote Guile's reader in Scheme too! The reader is the bit that takes a stream of characters and parses it into S-expressions. It was in C, and now is in Scheme.
+}
+
+\tp{
+这样做的主要动机之一是希望使 read 可挂起。通过此更改，现在可以在 fibers 上实现 REPL（读取-评估-打印循环）。
+}{
+One of the primary motivators for this was to allow read to be suspendable. With this change, read-eval-print loops are now implementable on fibers.
+}
+
+\tp{
+另一个动机是最终修复 Guile 无法记录某些数据源位置的 bug。Guile 过去会使用[\ruby{弱键}{weak-key}哈希表](https://www.gnu.org/software/guile/manual/html_node/Weak-References.html)来使从 read 返回的数据与源位置相关联。但这仅适用于 fresh value，不适用于小整数或字符等立即数，也不适用于 keyword 和 symbol 等全局唯一的非立即数。因此对于这些，我们就没有任何源位置。
+}{
+Another motivation was to finally fix a bug in which Guile couldn't record source locations for some kinds of datums. It used to be that Guile would use a weak-key hash table to associate datums returned from read with source locations. But this only works for fresh values, not for immediate values like small integers or characters, nor does it work for globally unique non-immediates like keywords and symbols. So for these, we just wouldn't have any source locations.
+}
+
+\tp{
+该问题的一个可靠解决方案是返回带\ruby{注解}{annotation}的对象，而不是使用另外的表。由于 Scheme 的宏扩展器已经被设置为与带注解的对象（[语法对象](https://www.gnu.org/software/guile/manual/html_node/Syntax-Transformer-Helpers.html)）一起使用，因此一个新的 read-syntax 接口会非常好用。
+}{
+A robust solution to that problem is to return annotated objects rather than using a side table. Since Scheme's macro expander is already set to work with annotated objects (syntax objects), a new read-syntax interface would do us a treat.
+}
+
+\tp{
+在 C 语言中实现 \code{read} 很难做到。但在 Scheme 中实现 \code{read} 则毫无问题。不过，调整扩展器以期望在语法对象内包含源位置有些繁琐，且源位置信息的增加使得输出文件的大小增大了几个百分比\em2dash这在部分上是 \code{.debug_lines} DWARF 数据的增加带来的，但也和宏中语法对象的序列化源位置有关。
+}{
+With read in C, this was hard to do. But with read in Scheme, it was no problem to implement. Adapting the expander to expect source locations inside syntax objects was a bit fiddly, though, and the resulting increase in source location information makes the output files bigger by a few percent -- due somewhat to the increased size of the .debug_lines DWARF data, but also due to serialized source locations for syntax objects in macros.
+}
+
+\tp{
+速度方面，目前切换到 Scheme 的 \code{read} 是一个\ruby{退步}{regression}。旧的 reader 在这台笔记本电脑上记录源位置时每秒大概可以解析 15 或 16 MB，或者关闭源位置，那么有 22 或 23 MB/s。新的 reader 在旧模式下，使用弱键侧表记录源位置的解析速度大概为 10.5 MB/s，关闭位置时为 13.5 MB/s。新的 \code{read-syntax} 速度大约是 12 MB/s。我们将在未来几个月继续优化这些性能，但与原来的 reader 编写时的情况不同的是，现在的 reader 主要在编译时使用。（它在读取 s 表达式作为数据时仍然有用，因此仍然有理由提升其速度。）
+}{
+Speed-wise, switching to read in Scheme is a regression, currently. The old reader could parse around 15 or 16 megabytes per second when recording source locations on this laptop, or around 22 or 23 MB/s with source locations off. The new one parses more like 10.5 MB/s, or 13.5 MB/s with positions off, when in the old mode where it uses a weak-key side table to record source locations. The new read-syntax runs at around 12 MB/s. We'll be noodling at these in the coming months, but unlike when the original reader was written, at least now the reader is mainly used only at compile time. (It still has a role when reading s-expressions as data, so there is still a reason to make it fast.)
+}
+
+\tp{
+与 [\code{eval}](https://wingolog.org/archives/2016/01/11/the-half-strap-self-hosting-and-guile) 的情况一样 ，在加载 Scheme 版本之前，我们仍然有一个 C 版本的 reader 可用于引导目的。这次重写令人高兴的是，我能够从 C reader 中删除与非默认词法语法相关的所有缺陷，很好地简化了未来的维护。
+}{
+As is the case with eval, we still have a C version of the reader available for bootstrapping purposes, before the Scheme version is loaded. Happily, with this rewrite I was able to remove all of the cruft from the C reader related to non-default lexical syntax, which simplifies maintenance going forward.
+}
+
+\tp{
+尝试\ruby{逐个 bug}{bug-for-bug} 重写的一个有趣方面是你会发现 bug 和意外行为。比如，事实证明，从出现以来，Guile 总是不需要终止分隔符地 read \code{#t} 和 \code{#f}，因此 read \code{"(#t1)"} 将得到列表 \code{(#t 1)}。很奇怪，对吧？更奇怪的是，当 \code{#true} 和 \code{#false} 别名被添加到语言中，Guile 决定默认支持它们，但以一种奇怪的向后兼容的方式\ellipsis所以 \code{"(#false1)"} 读作 \code{(#f 1)} 但 \code{"(#falsa1)"} 读作 \code{(#f alsa1)}。诸如此类的事还有不少。
+}{
+An interesting aspect of attempting to make a bug-for-bug rewrite is that you find bugs and unexpected behavior. For example, it turns out that since the dawn of time, Guile always read #t and #f without requiring a terminating delimiter, so reading "(#t1)" would result in the list (#t 1). Weird, right? Weirder still, when the #true and #false aliases were added to the language, Guile decided to support them by default, but in an oddly backwards-compatible way... so "(#false1)" reads as (#f 1) but "(#falsa1)" reads as (#f alsa1). Quite a few more things like that.
+}
+
+\tp{
+总的来说，这次重写似乎是成功的，没有引入新的行为，甚至产生了相同的错误。然而，对于\ruby{回溯}{backtrace}而言，情况并非如此，因为回溯可以暴露出 read 函数的内部实现，而之前由于 C 栈对 Scheme 是不透明的，这种情况并不会发生。因此，我们可能需要在调用 read 的地方添加更合理的错误处理，因为回溯信息无论如何都不是一个好的面向用户的错误反馈。
+}{
+All in all it would seem to be a successful rewrite, introducing no new behavior, even producing the same errors. However, this is not the case for backtraces, which can expose the guts of read in cases where that previously wouldn't happen because the C stack was opaque to Scheme. Probably we will simply need to add more sensible error handling around callers to read, as a backtrace isn't a good user-facing error anyway.
+}
+
+\tp{
+好吧，今晚的闲聊已经够多了。祝大家 happy hacking，晚安！
+}{
+OK enough rambling for this evening. Happy hacking to all and to all a good night!
+}
+}

@@ -117,6 +117,7 @@
 
 % ===
 
+\def\id[body]{\body}
 \def\percent[body]{
   \body\verb!|%!
 }

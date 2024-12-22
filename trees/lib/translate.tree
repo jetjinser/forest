@@ -27,3 +27,6 @@
 \def\em2dash{⸺} % U+2E3A
 \def\ldq{“} % U+201C
 \def\rdq{”} % U+201D
+\def\ellipsis{…}
+
+\def\dquote[body]{\ldq\body\rdq}
