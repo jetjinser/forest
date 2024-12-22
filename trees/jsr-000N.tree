@@ -1,0 +1,9 @@
+\title{translations}
+\parent{jsr-0001}
+
+\p{翻译文章的列表。}
+
+\query{
+  \open\query
+  \isect{\author{jinser}}{\taxon{translation}}
+}

@@ -16,6 +16,11 @@
 }
 
 \scope{
+  \put\transclude/title{translations}
+  \transclude{jsr-000N}
+}
+
+\scope{
   \put\transclude/title{task list}
   \p{Put a [task list](jsr-000B) here.}
 }
