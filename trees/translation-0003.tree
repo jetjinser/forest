@@ -1,0 +1,389 @@
+\title{Using zippers to handle huge trees}
+\date{2024-12-22}
+\author{diegoolivier}
+\author{jinser}
+\meta{original}{https://caml.inria.fr/pub/ml-archives/caml-list/2003/04/d9701aacd4580cf3feb60ae8cd7a1836.xml}
+
+\import{base-macros}
+\import{translate}
+
+\let\ocaml[src]{
+  \hcode{ocaml}{\src}
+}
+
+\declare{[[diegoolivier]]}{Using zippers to handle huge trees}
+\tips{Click on the translation to expand and view the original text. 点击译文可展开查看原文。原文有修复 typo。}
+
+\tp{
+嗨，
+}{
+Bonjour,
+}
+
+\tp{
+2003年4月9日星期三，Yang Shouxun 写道：
+\blockquote{
+我不知道如何编写尾递归版本来构建树。如果连续属性不多且数据集也不是很大，那树会在堆栈溢出之前停止生长。
+}
+（译者按：连续属性是指其在数据集中可以取无限多值，通常是实数，例如身高、温度等。）
+}{
+On Wednesday, 09 Apr 2003, Yang Shouxun wrote:
+
+> I don't know how to write a tail recursive version to build trees.
+> If there are not that many continuous attributes and the dataset is
+> not so large, the tree stops growing before stack overflow.
+}
+
+\tp{
+2003 年 4 月 9 日星期三，Markus Mottl 写道：
+\blockquote{
+这里的诀窍是使用延续传递风格（CPS）：传递一个包含后续计算所需的所有内容的函数闭包（延续）。子函数不返回结果，而是使用结果调用延续，这使得函数成为尾递归。
+}
+}{
+On Wednesday 09 April 2003, Markus Mottl wrote:
+
+> The trick is to use continuation passing style (CPS): you pass a
+> function closure (continuation) containing everything that's needed
+> in subsequent computations.  Instead of returning a result, the
+> sub-function calls the continuation with the result, which makes the
+> functions tail-recursive.
+}
+
+\tp{
+zipper 是一种处理巨大（实际是无限）tree 的简单方法。
+}{
+Zippers are a simple way to handle huge (in fact infinite) trees.
+}
+
+\subtree{
+\title{zipper 的解释 \sub{Explanation of zippers}}
+
+\tp{
+zipper 可以被视为一种\ldq函数式指针\rdq，因为它能够提供：
+\ul{
+  \li{\ruby{纯}{purely}的函数式和类型化的操作}
+  \li{\code{O(1)} 的访问指针元素}
+  \li{\code{O(1)} 的指针移动}
+}
+}{
+Zippers may be seen as 'functional pointers' since they offer :
+- purely functional and typed operations
+- O(1) access to the pointed element
+- O(1) pointer movements
+}
+
+\tp{
+限制是数据结构只允许有一个指针，且每次指针移动都会分配内存。
+}{
+The restrictions are that only one pointer is allowed by data structure and every pointer movement allocates memory.
+}
+
+\tp{
+采用二叉搜索树的经典类型声明
+}{
+Take a classical type declaration for binary search trees
+}
+
+\ocaml{%
+type 'a tree = E | N of 'a tree * 'a * 'a tree * int
+}
+
+\tp{
+考虑一棵二叉搜索树和一个你想要指向的内部节点。要对指向的子树进行 \code{O(1)} 访问，它必须可以直接从数据结构的基础中获取。然后，树的其余部分必须保存在单独的地方。我们将沿着从根到指向的节点的路径来解构它
+}{
+Consider a binary search tree and an inner node to which you want to
+point. To have a 0(1) access to the pointed subtree, it has to be
+directly available from the base of the data structure. Then, the
+rest of the tree must be kept in a separate place. We will deconstruct
+it along the path from the root to the pointed node
+}
+
+\ocaml{%
+type 'a path =
+  | Root
+  | Left of 'a * 'a tree * 'a path
+  | Right of 'a tree * 'a * 'a path
+
+type 'a zipper = 'a tree * 'a path
+}
+
+\tp{
+zipper \ruby{约束}{constraints}声明如下：
+\ul{
+  \li{指向的子树}
+  \li{沿着通往根的路径断开的树 的其余部分}
+}
+}{
+The zipper constraint as announced :
+- the pointed subtree
+- the rest of the tree breaked along the path to the root
+}
+
+\tp{
+接着我们定义指针的移动（数据结构中的每个指针各一个）：
+}{
+Then we define the pointer movements (one for each pointer in the data structure) :
+}
+
+\ocaml{%
+exception Bottom
+
+(* To be replaced by a balancing constructor *)
+let makeDTree = fun l v r -> N (l, v, r, 0)
+
+let move_left = fun (tree, path) ->
+  match tree with
+    | E -> raise Bottom
+    | N (l, v, r, _) -> (l, Left (v, r, path))
+
+let move_right = fun (tree, path) ->
+  match tree with
+    | E -> raise Bottom
+    | N (l, v, r, _) -> (r, Right (l, v, path))
+
+let move_up = fun (tree, path) ->
+  match path with
+    | Root -> raise Top
+    | Left (v, r, tail) -> (makeDTree tree v r, tail)
+    | Right (l, v, tail) -> (makeDTree l v tree, tail)
+}
+
+\tp{
+现在我们可以通过以下过程构建任意大的树：
+\ul{
+  \li{构建一棵有界深度的树}
+  \li{选择下一个要发展的节点}
+  \li{移动当前指针到那个节点}
+  \li{继续构建这课树}
+}
+}{
+Now we can build an arbitrary large tree by the following procedure :
+- build a tree of bounded depth
+- choose the node which will be developed next
+- move the current pointer to that node
+- continue building the tree
+}
+
+\tp{
+该过程使用有界的堆栈空间。
+}{
+This procedure uses a bounded stack space
+}
+}
+
+\subtree{
+\title{相关工作 \sub{Related work}}
+
+\tp{
+zipper 由 Gérard Huet 提出。JFP 上有一篇论文：[G. Huet. The Zipper. J. Functional Programming, 7 (5), Sept 1997, pp. 549--554](huet-1997)。
+}{
+Zippers were invented by Gérard Huet. There is a paper on the JFP
+G. Huet. The Zipper. J. Functional Programming, 7 (5), Sept 1997, pp. 549--554.
+}
+
+\tp{
+他在例子中使用了 n 叉树和二叉树。这两者主要的区别在于，在二叉树中，指针的组织方式不同（他的\ldq左\rdq操作在 Baire 中是 \code{(left o up)}）。
+\br（译者按：[Baire](https://web.archive.org/web/20030609000151/http://www.edite-de-paris.com.fr/~fernandz/Caml/Baire/index.html) 是 [[diegoolivier]] 开发的 [Caml](https://caml.inria.fr/) 的数据结构库。）
+}{
+He uses n-ary trees and binary trees in his examples. The main
+difference is that in binary trees the pointers are not organized in
+the same way (his 'left' operation is what in Baire is (left o up))
+}
+
+\tp{
+Ralf Hinze 试图为函数指针提供一个通用框架，称之为\ruby{网}{web}（你提供数据结构和基本转换，数据结构完成其余的工作）。
+}{
+Ralf Hinze has tried to give a general framework for functional
+pointers named a web (you give your data structure and the basic
+transformations and the data structure does the rest)
+}
+
+\tp{
+[Ralf Hinze and Johan Jeuring. Functional Pearl: Weaving a Web. Journal of Functional Programming, 11(6):681-689, November 2001](hinze-jeuring-2001)。
+}{
+Ralf Hinze and Johan Jeuring. Functional Pearl: Weaving a Web. Journal
+of Functional Programming, 11(6):681-689, November 2001.
+}
+
+\tp{
+这篇文章可以通过 Hinze 的主页在网上获取。在我看来，他的文章并没有真正令人信服，也不是很清楚。
+}{
+Available on the net via Hinze's home page.
+In my opinion his article is not really convincing and not very clear.
+}
+
+\tp{
+一些已经使用 zipper 的库：
+\ul{
+  \li{[Zen](https://gitlab.inria.fr/huet/Zen) ([[gerardhuet]], Caml) 使用 zipper 处理非循环自动机最小化}
+  \li{SML/NJ Standard library (John Reppy) 使用 zipper 处理红黑树中的删除}
+  \li{MetaPRL (Caml) 使用 zipper 处理伸展树和红黑树中的插入和删除}
+  \li{Grammatical Framework (Aarne Ranta, Haskell) 使用 zipper 来在 n 叉树中导航}
+}
+所有这些代码都可以在网络上找到。
+}{
+Several libraries already use zippers
+
+- Zen (Gérard Huet, Caml) uses zippers to handle acyclic automata
+minimization
+
+- SML/NJ Standard library (John Reppy) uses zippers to handle deletion
+in red-black trees
+
+- MetaPRL (Caml) uses zippers to handle insertion and deletion in
+splay and red-black trees
+
+- Grammatical Framework (Aarne Ranta, Haskell) uses zippers to
+navigate through n-ary trees.
+
+All this code is available on the web.
+}
+}
+
+\subtree{
+\title{代码示例 \sub{Examples of code}}
+
+\tp{
+以下是从 Baire 中提取的一些常用二叉搜索树操作的示例（\code{insert}，\code{delete}，\code{move_pointer_to}，...）（当前版本 11 avril 2003，大量错误和损坏的代码，您可以在 Baire 的下载页面中找到它） :
+\br（译者按：Baire 相关资源基本已不可用。）
+}{
+Here are some examples of usual binary search trees operations made
+with zippers (insert, delete, move_pointer_to, ...) extracted from
+Baire (current version 11 avril 2003, plenty of bugs and breaked
+code, you will find it in Baire's download pages) :
+}
+
+\p{（译者按：使用 \code{ocamlformat} 重新格式化，与原文的格式稍有不同。）
+\ocaml{%
+let rec move_to_top = function
+  | (tree, path) as pointer ->
+    (match path with
+     | Root -> pointer
+     | Left (v, r, tail) -> move_to_top (makeDTree tree v r, tail)
+     | Right (l, v, tail) -> move_to_top (makeDTree l v tree, tail))
+;;
+
+let rec move_to x = function
+  | (tree, path) as pointer ->
+    (match tree with
+     | E ->
+       (match path with
+        | Right (_, rv, _) when x <= rv -> move_to x (move_up pointer)
+        | Left (lv, _, _) when x >= lv -> move_to x (move_up pointer)
+        | _ -> pointer)
+     | N (_, v, _, _) ->
+       (match compare x v with
+        | n when n < 0 ->
+          (match path with
+           | Right (_, rv, _) when x < rv -> move_to x (move_up pointer)
+           | Right _ | Root | Left _ -> move_to x (move_left pointer))
+        | n when n > 0 ->
+          (match path with
+           | Left (lv, _, _) when x > lv -> move_to x (move_up pointer)
+           | Left _ | Root | Right _ -> move_to x (move_right pointer))
+        | _ -> pointer))
+;;
+
+let rec member_path x = function
+  | Right (l, v, tail) ->
+    (match compare x v with
+     | n when n < 0 -> member x l
+     | 0 -> true
+     | _ -> member_path x tail)
+  | Left (v, r, tail) ->
+    (match compare x v with
+     | n when n > 0 -> member x r
+     | 0 -> true
+     | _ -> member_path x tail)
+  | Root -> false
+;;
+
+let rec zipper_member x = function
+  | tree, path ->
+    (match tree with
+     | E -> member_path x path
+     | N (l, v, r, _) ->
+       (match compare x v with
+        | n when n < 0 ->
+          (match path with
+           | Right (_, rv, _) when x <= rv -> member_path x path
+           | Right _ | Root | Left _ -> member x l)
+        | n when n > 0 ->
+          (match path with
+           | Left (lv, _, _) when x >= lv -> member_path x path
+           | Left _ | Root | Right _ -> member x r)
+        | _ -> true))
+;;
+
+let current_tree = function
+  | tree, _ -> tree
+;;
+
+let current_value = function
+  | tree, _ ->
+    (match tree with
+     | E -> None
+     | N (_, v, _, _) -> Some v)
+;;
+
+let current_value' = function
+  | tree, _ ->
+    (match tree with
+     | E -> raise Empty
+     | N (_, v, _, _) -> v)
+;;
+
+let rec zipper_insert x = function
+  | (tree, path) as pointer ->
+    (match tree with
+     | E ->
+       (match path with
+        | Right (_, rv, _) when x <= rv -> zipper_insert x (move_up pointer)
+        | Left (lv, _, _) when x >= lv -> zipper_insert x (move_up pointer)
+        | _ -> makeTree E x E, path)
+     | N (_, v, _, _) ->
+       (match compare x v with
+        | n when n < 0 ->
+          (match path with
+           | Right (_, rv, _) when x < rv -> zipper_insert x (move_up pointer)
+           | Right _ | Root | Left _ -> zipper_insert x (move_left pointer))
+        | n when n > 0 ->
+          (match path with
+           | Left (lv, _, _) when x > lv -> zipper_insert x (move_up pointer)
+           | Left _ | Root | Right _ -> zipper_insert x (move_right pointer))
+        | _ -> pointer))
+;;
+
+let rec zipper_delete x = function
+  | (tree, path) as pointer ->
+    (match tree with
+     | E ->
+       (match path with
+        | Right (_, rv, _) when x <= rv -> zipper_delete x (move_up pointer)
+        | Left (lv, _, _) when x >= lv -> zipper_delete x (move_up pointer)
+        | _ -> pointer)
+     | N (l, v, r, _) ->
+       (match compare x v with
+        | n when n < 0 ->
+          (match path with
+           | Right (_, rv, _) when x < rv -> zipper_delete x (move_up pointer)
+           | Right _ | Root | Left _ -> zipper_delete x (move_left pointer))
+        | n when n > 0 ->
+          (match path with
+           | Left (lv, _, _) when x > lv -> zipper_delete x (move_up pointer)
+           | Left _ | Root | Right _ -> zipper_delete x (move_right pointer))
+        | _ -> move_to x (appendB l r, path)))
+;;
+
+let rec path_to_list result = function
+  | Root -> result
+  | Left (v, r, path) -> path_to_list (result @ (v :: to_ordered_list r)) path
+  | Right (l, v, path) -> path_to_list (to_ordered_list_rec (v :: result) l) path
+;;
+
+let zipper_to_list = function
+  | tree, path -> path_to_list (to_list tree) path
+;;
+}
+}
+}

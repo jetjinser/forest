@@ -10,13 +10,13 @@
   \hcode{bash}{\src}
 }
 
-\base{%
+\bash{\verb!|%
 rad id update --title "allow jinser-mirror" \
       --delegate did:key:z6Mkp43tRH5SCUKtjGSmzzzqeWh6vthCMosNwyX23Q6TAz4e
 rad sync -a
-}
+!}
 
-\base{%
+\bash{%
 rad sync -f
 }
 

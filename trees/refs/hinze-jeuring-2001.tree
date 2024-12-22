@@ -1,0 +1,19 @@
+\title{Weaving a web}
+\author{ralfhinze}
+\author{johanjuering}
+\taxon{reference}
+\date{2001-11}
+\meta{bibtex}\verb!!|
+@article{HINZE_JEURING_2001,
+  title={Weaving a web},
+  volume={11},
+  DOI={10.1017/S0956796801004129},
+  number={6},
+  journal={Journal of Functional Programming},
+  author={HINZE, RALF and JEURING, JOHAN}, year={2001},
+  pages={681–689}
+}
+!!
+\meta{doi}{10.1017/S0956796897002864}
+
+\p{Suppose, you want to implement a structured editor for some term type, so that the user can navigate through a given term and perform edit actions on subterms. In this case you are immediately faced with the problem of how to keep track of the cursor movements and the user's edits in a reasonably efficient manner. In a previous pearl, Huet (1997) introduced a simple data structure, the Zipper, that addresses this problem – we will explain the Zipper briefly in section 2. A drawback of the Zipper is that the type of cursor locations depends on the structure of the term type, i.e. each term type gives rise to a different type of location (unless you are working in an untyped environment). In this pearl, we present an alternative data structure, the web, that serves the same purpose, but that is parametric in the underlying term type. Sections 3–6 are devoted to the new data structure. Before we unravel the Zipper and explore the web, let us first give a taste of their use.}
