@@ -2,7 +2,7 @@
 \date{2024-12-22}
 \taxon{translation}
 \author{diegoolivier}
-\author{jinser}
+\contributor{jinser}
 \meta{original}{https://caml.inria.fr/pub/ml-archives/caml-list/2003/04/d9701aacd4580cf3feb60ae8cd7a1836.xml}
 
 \import{base-macros}

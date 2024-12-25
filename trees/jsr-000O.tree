@@ -2,7 +2,7 @@
 \date{2024-12-18}
 \taxon{translation}
 \author{oleg}
-\author{jinser}
+\contributor{jinser}
 \meta{original}{https://okmij.org/ftp/Scheme/zipper-in-scheme.txt}
 
 \import{base-macros}
