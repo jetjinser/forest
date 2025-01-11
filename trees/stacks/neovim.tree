@@ -1,10 +1,10 @@
 \import{base-macros}
 
-\def\nvimicon{
-  \icon{https://raw.githubusercontent.com/neovim/neovim.github.io/e4dc3c1c992b16817b5e85f4c956dad3e5c0651b/logos/neovim-mark.svg}{🖊}
+\def\nvimicon[body]{
+  \icon{https://raw.githubusercontent.com/neovim/neovim.github.io/e4dc3c1c992b16817b5e85f4c956dad3e5c0651b/logos/neovim-mark.svg}{🖊}{\body}
 }
 
-\title{\nvimicon Neovim}
+\title{\nvimicon{Neovim}}
 \taxon{stack}
 
-\p{The Neovim icon \nvimicon is from [neovim/neovim.github.io](https://github.com/neovim/neovim.github.io), under a [MIT License](https://github.com/neovim/neovim.github.io/blob/master/LICENSE).}
+\p{The Neovim icon \nvimicon{} is from [neovim/neovim.github.io](https://github.com/neovim/neovim.github.io), under a [MIT License](https://github.com/neovim/neovim.github.io/blob/master/LICENSE).}

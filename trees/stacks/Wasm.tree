@@ -1,10 +1,10 @@
 \import{base-macros}
 
-\def\wasmicon{
-  \icon{https://raw.githubusercontent.com/WebAssembly/meetings/e749f955698c55e5c72048c0d58edef40ebd6c0c/wasi/2021/presentations/2021-03-25-gohman-io-types/WebAssembly_Logo.svg}{山}
+\def\wasmicon[body]{
+  \icon{https://raw.githubusercontent.com/WebAssembly/meetings/e749f955698c55e5c72048c0d58edef40ebd6c0c/wasi/2021/presentations/2021-03-25-gohman-io-types/WebAssembly_Logo.svg}{山}{\body}
 }
 
-\title{\wasmicon WebAssembly}
+\title{\wasmicon{WebAssembly}}
 \taxon{stack}
 \meta{external}{https://webassembly.org/}
 \meta{github}{https://github.com/webassembly}

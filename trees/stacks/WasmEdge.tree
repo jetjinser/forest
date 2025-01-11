@@ -1,10 +1,10 @@
 \import{base-macros}
 
-\def\weicon{
-  \icon{https://wasmedge.org/docs/img/logo.svg}{ⱳ}
+\def\weicon[body]{
+  \icon{https://wasmedge.org/docs/img/logo.svg}{ⱳ}{\body}
 }
 
-\title{\weicon WasmEdge}
+\title{\weicon{WasmEdge}}
 \taxon{stack}
 \meta{external}{https://wasmedge.org/}
 \meta{github}{https://github.com/WasmEdge/WasmEdge}

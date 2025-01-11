@@ -1,10 +1,10 @@
 \import{base-macros}
 
-\def\fnicon{
-  \icon{https://flows.network/logo.png}{ƒ}
+\def\fnicon[body]{
+  \icon{https://flows.network/logo.png}{ƒ}{\body}
 }
 
-\title{\fnicon flows.network}
+\title{\fnicon{flows.network}}
 \taxon{stack}
 \meta{external}{https://flows.network/}
 \meta{github}{https://github.com/flows-network/}

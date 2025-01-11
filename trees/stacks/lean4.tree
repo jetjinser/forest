@@ -1,8 +1,8 @@
 \import{base-macros}
 
-\def\lean4icon{
-  \icon{https://lean-lang.org/static/lean_logo.svg}{L∃∀N}
+\def\lean4icon[body]{
+  \icon{https://lean-lang.org/static/lean_logo.svg}{L∃∀N}{\body}
 }
 
-\title{\lean4icon Lean4}
+\title{\lean4icon{Lean4}}
 \taxon{stack}

@@ -23,15 +23,16 @@ html.dark {
   font-size: 1.15em !important;
 }
 
-/* TODO: align icon with text horizonly */
-.custom-icon,
-.fa,
-.emojicon {
-  display: inline !important;
-  vertical-align: middle;
-  font-size: 13pt !important;
-  width: 10pt;
-  height: auto;
+span.with-icon :is(i, img) {
+  display: inline-block !important;
+}
+
+span.with-icon i {
+  font-size: 1cap;
+}
+
+span.with-icon img {
+  height: 1cap;
 }
 
 .duration {
@@ -169,11 +170,11 @@ body {
 }
 
 math {
- font-size: 1.12em;
+  font-size: 1.12em;
 }
 
 mrow:hover {
- background-color: rgba(0, 100, 255, 0.04);
+  background-color: rgba(0, 100, 255, 0.04);
 }
 
 .logo {

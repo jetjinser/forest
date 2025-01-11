@@ -1,6 +1,6 @@
 \import{rwlabs}
 
-\title{\rwicon RisingWave}
+\title{\rwicon{RisingWave}}
 \taxon{stack}
 \meta{github}{https://github.com/risingwavelabs/risingwave}
 

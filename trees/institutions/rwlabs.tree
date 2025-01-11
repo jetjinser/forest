@@ -1,10 +1,10 @@
 \import{base-macros}
 
-\def\rwicon{
-  \icon{https://risingwave.com/metadata/icon.svg}{🌊}
+\def\rwicon[body]{
+  \icon{https://risingwave.com/metadata/icon.svg}{🌊}{\body}
 }
 
-\title{\rwicon RisingWave Labs}
+\title{\rwicon{RisingWave Labs}}
 \taxon{institution}
 \meta{external}{https://risingwave.com/}
 \meta{external}{https://github.com/risingwavelabs/}

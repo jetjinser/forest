@@ -13,14 +13,21 @@
 \def\hcode[lang][body]{
   \<html:pre>[class]{highlight}[lang]{\lang}{\body}
 }
-\def\icon[path][alt]{
-  \<html:img>[class]{custom-icon}[src]{\path}[alt]{\alt}{}
+
+\let\with-icon[body]{
+  \<html:span>[class]{with-icon}{\body}
 }
-\def\fa[icon]{
-  \<html:i>[class]{fa fa-\icon}{}
+\def\icon[path][alt][body]{
+  \with-icon{
+    \<html:img>[class]{custom-icon}[src]{\path}[alt]{\alt}{}
+    \body
+  }
 }
-\def\emojicon[body][delta]{
-  \<html:span>[class]{emojicon}{\body}
+\def\fa[icon][body]{
+  \with-icon{
+    \<html:i>[class]{fa fa-\icon}{}
+    \body
+  }
 }
 
 % fancy style

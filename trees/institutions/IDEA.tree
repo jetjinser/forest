@@ -1,11 +1,11 @@
 \import{base-macros}
 
 % from linkedin
-\def\ideaicon{
-  \icon{https://media.licdn.com/dms/image/v2/C560BAQGmIgrJgMt7gQ/company-logo_200_200/company-logo_200_200/0/1631621453974}{IDEA}
+\def\ideaicon[body]{
+  \icon{https://media.licdn.com/dms/image/v2/C560BAQGmIgrJgMt7gQ/company-logo_200_200/company-logo_200_200/0/1631621453974}{IDEA}{\body}
 }
 
-\title{\ideaicon IDEA}
+\title{\ideaicon{IDEA}}
 \taxon{institution}
 \meta{external}{https://www.idea.edu.cn/}
 

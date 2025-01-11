@@ -1,10 +1,10 @@
 \import{base-macros}
 
-\def\mbticon{
-  \icon{https://www.moonbitlang.com/img/logo.png}{🐰}
+\def\mbticon[body]{
+  \icon{https://www.moonbitlang.com/img/logo.png}{🐰}{\body}
 }
 
-\title{\mbticon MoonBit}
+\title{\mbticon{MoonBit}}
 \taxon{stack}
 \meta{github}{https://github.com/moonbitlang/moonbit-compiler}
 \meta{external}{https://www.moonbitlang.com/}

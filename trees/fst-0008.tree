@@ -16,7 +16,7 @@
   </span>
 }
 
-\p{因为 icon \rwicon 前没有文字，所有第一个 \code{a} tag 的内容是空的。}
+\p{因为 icon \rwicon{} 前没有文字，所以第一个 \code{a} tag 的内容是空的。}
 
 \p{理想情况下应该渲染成这样：}
 
@@ -29,4 +29,6 @@
   </span>
 }
 
-\p{前者不是只会体现在 HTML 的问题，交互中同样会有影响，\code{img} tag 并不在 \code{a} tag 中，也即 icon \rwicon 是不可点击的。}
+\p{前者不是只会体现在 HTML 的问题，交互中同样会有影响，\code{img} tag 并不在 \code{a} tag 中，也即 icon \rwicon{} 是不可点击的。}
+
+\p{2025-01-11 已修复。}

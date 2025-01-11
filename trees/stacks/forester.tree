@@ -1,8 +1,8 @@
 \import{base-macros}
 
-\def\forestericon{
-  \fa{tree}
+\def\forestericon[body]{
+  \fa{tree}{\body}
 }
 
-\title{\forestericon Forester}
+\title{\forestericon{Forester}}
 \taxon{stack}
