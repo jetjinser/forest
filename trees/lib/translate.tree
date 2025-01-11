@@ -3,13 +3,6 @@
 
 \import{base-macros}
 
-\def\details[summary][body]{
-  \<html:details>[class]{block}{
-    \<html:summary>{\summary}
-    \body
-  }
-}
-
 \def\declare[who][title]{
   \blockquote{This article is translated from \who's article titled "\title".}
   \blockquote{本文翻译自 \who 题为《\title》的文章}
@@ -22,11 +15,3 @@
 \def\tpp[ori][tra][share]{
   \p{\details{\ori\share}{\pre{\tra}}}
 }
-
-% reference: https://www.w3.org/TR/clreq/
-\def\em2dash{⸺} % U+2E3A
-\def\ldq{“} % U+201C
-\def\rdq{”} % U+201D
-\def\ellipsis{…}
-
-\def\dquote[body]{\ldq\body\rdq}

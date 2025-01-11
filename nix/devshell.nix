@@ -15,6 +15,7 @@
                 pgf tikz-cd spath3
                 mathtools amsfonts stmaryrd
                 standalone
+                tabularray simplebnf
                 ;
             });
           in

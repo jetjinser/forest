@@ -88,11 +88,25 @@
     \<html:rp>{\verb!|)!}
   }
 }
+\def\details[summary][body]{
+  \<html:details>[class]{block}{
+    \<html:summary>{\summary}
+    \body
+  }
+}
+\def\aside[body]{
+  \<html:aside>{\body}
+}
 
 \def\nowrap[body]{\<html:span>[style]{white-space: nowrap}{\body}}
+
 \def\color[colorcode][body]{
-  \<html:span>[style]{color:\colorcode}{\body}
+  \<html:span>[style]{color: \colorcode}{\body}
 }
+\def\hi[body]{
+  \color{orange}{\body}
+}
+
 \def\duration[from][to]{
   \<html:span>[class]{duration}{
     % \<html:time>[datetime]{\from-dt}{\from} - \<html:time>[datetime]{\to-dt}{\to}
@@ -115,12 +129,33 @@
  }
 }
 
+\def\texbnf[body]{
+ \scope{
+  \put?\base/tex-preamble{
+   \latex-preamble/bnf
+  }
+  \tex{\get\base/tex-preamble}{
+   \begin{bnf}
+   \body
+   \end{bnf}
+  }
+ }
+}
+
 % ===
 
 \def\id[body]{\body}
 \def\percent[body]{
   \body\verb!|%!
 }
+
+% reference: https://www.w3.org/TR/clreq/
+\def\em2dash{⸺} % U+2E3A
+\def\ldq{“} % U+201C
+\def\rdq{”} % U+201D
+\def\ellipsis{…}
+
+\def\dquote[body]{\ldq\body\rdq}
 
 % ===
 

@@ -289,3 +289,7 @@
     initial text=$ $,
   }
 }
+
+\def\latex-preamble/bnf{
+ \usepackage{simplebnf}
+}

@@ -1,0 +1,192 @@
+\title{[[MoonBit]] 字符串的 [[Wasm]] 漂流}
+\date{2024-12-24}
+\author{jinser}
+
+\import{base-macros}
+
+\let\moonbit[src]{
+  \hcode{moonbit}{\src}
+}
+\let\json[src]{
+  \hcode{json}{\src}
+}
+\let\wat[src]{
+  \hcode{scheme}{\src}
+}
+\let\guile[src]{
+  \hcode{scheme}{\src}
+}
+\let\bash[src]{
+  \hcode{bash}{\src}
+}
+
+\p{写这篇文章的起因来自和群友 A、B 的一次闲聊。群友 A 尝试使用 [wasmtime](https://github.com/bytecodealliance/wasmtime) 调用某个 [[MoonBit]] 编译出的 [[Wasm]] 函数，这个函数最终会返回一个字符串，他没有得到预期的结果，而是得到了一个看起来像是指针的数字。我检查编译结果后发现 [[MoonBit]] 在 [[Wasm]] 中返回的字符串实际上是一个作为 memory table offset 的 i32 常数。群友 B 指出其中的问题：一个 i32 只表示了位置，没有长度信息；他继而考虑这也许是 C 式字符串（使用 \code{\startverb\0\stopverb} 标记字符串结尾）。但如果我们仔细观察 [[MoonBit]] 编译出的 WAT 文件，很容易发现 memory data 看起来并不像 C 式字符串\em2dash也确实不是，我写下这篇文章作为探索其编码的备忘录。}
+
+\subtree{
+\title{Bonjour, \code{foo}!}
+
+\p{
+为了探索字符串在 [[Wasm]] 里的样子，我们需要一段足够简单的 [[MoonBit]] 程序以便观察。于是我们有以下代码：
+\br\code{[src/lib/foo.mbt](https://todo.com)}
+\moonbit{%
+pub fn foo() -> String {
+  "AB"
+}
+}
+保持简单，所以我们只是使用字符串 \code{"AB"}。
+}
+
+\p{
+为了导出函数 \code{foo}， 我们只需要更新[包配置](https://docs.moonbitlang.com/zh-cn/latest/toolchain/moon/package.html)：
+\br\code{[src/lib/moon.pkg.json](https://todo.com)}
+\json{%
+{
+  "link": {
+    "wasm": {
+      "exports": [ "foo" ]
+    }
+  }
+}
+}
+不言而喻，我们只关心 [[Wasm]] 后端的 \code{foo} 函数导出。
+}
+}
+
+\subtree{
+\title{我们的 WAT}
+
+\p{
+[[Wasm]] 被设计为两种不同的表示，一种是利于压缩和网络传输的 [Webassembly Binary format](https://webassembly.github.io/spec/core/binary/conventions.html)，一种是便于人类阅读的 [WAT (\strong{W}eb\strong{a}ssembly \strong{T}extual format)](https://webassembly.github.io/spec/core/text/conventions.html)；这两种格式是等价的。我们关心 [[Wasm]] 后端编译结果的细节，因此 WAT 是更合适的选择。
+\aside{\blockquote{下文提到的 WAT 既指 WAT 格式，又指 WAT 格式的文件，由上下文决定。}}
+}
+
+\p{
+通过构建工具 \code{moon} 编译 [[MoonBit]] 到 WAT：
+\bash{%
+> moon build --target wasm --output-wat
+}
+在 \code{target/wasm/release/build/lib/lib.wat} 可以找到 WAT 文件。
+}
+
+\p{
+现在我们得到了编译产物，在查看之前，先用 \code{wasmtime} 跑跑看。传递参数 \code{--invoke foo} 表示调用 \code{lib.wat} 中导出的 \code{foo} 函数：
+\bash{%
+> wasmtime --invoke foo target/wasm/release/build/lib/lib.wat
+10000
+}
+看起来 \code{foo} 返回了一个数字，但我们想要的是一个字符串，这是什么？
+}
+
+\p{
+让我们来看看 WAT 的内容，好在 WAT 相当短（鉴于源代码也相当短且简单，这是预期中的），只需要扫一眼，马上就能明白发生了什么。
+\br\code{target/wasm/release/build/lib/lib.wat}
+\wat{\verb!|
+(data (memory $moonbit.memory) (offset (i32.const 10000))
+      "\FF\FF\FF\FF\F3\02\00\00A\00B\00\00\00\00\03\00\00\00\00\00\00\00\00")
+(memory $moonbit.memory 1)
+(table $moonbit.global 0 0 funcref )
+(elem (table $moonbit.global) (offset (i32.const 0))
+      funcref)
+(func $jinser/tour-of-moonbit-string/lib.foo (result i32) (; #2 ;)
+  (i32.const 10000)) (; #3 ;)
+(export "foo" (func $jinser/tour-of-moonbit-string/lib.foo)) (; #1 ;)
+(start $*init*/1)
+(func $*init*/1)
+!}
+这里发生的事情是，函数 \code{$jinser/tour-of-moonbit-string/lib.foo} 被导出为 \code{"foo"}（#1），该函数的返回值类型为 \code{i32}（#2），是一个常数值 \code{10000}（#3）。
+}
+
+\p{
+这虽然很好地解释了 \code{wasmtime} 为何返回这个数字，但还没有解释这个数字是什么。不用多说，我想你已经注意到了 WAT 第一行的可疑指令。看来我们又找到线索了！要使猜测更有说服力，让我们来试着解释一下这句指令做了什么。
+}
+
+\p{
+根据 [[Wasm]] spec 中对 [data segment](https://webassembly.github.io/spec/core/syntax/modules.html#data-segments) 的描述，参考其形式化定义
+\blockquote{##{%
+\begin{array}{llll}
+\phantom{data segment} & data &::=&
+  \{ \text{init}~vec(byte), \text{mode}~datamode \} \\
+\phantom{data segment mode} & \text{datamode} &::=&
+  passive \\&&|&
+  active~\{ \text{mem}~memidx, \text{offset}~expr \} \\
+\end{array}
+}}
+
+得到以下信息：
+\ul{
+  \li{#{data} \code{(data mode init)} 此指令用于声明一段数据。这里是 active data segment ，意味着复制 init 到 WebAssembly 模块的线性内存中。}
+  \li{#{datamode (active~\{\text{mem}\})} \code{(memory $moonbit.memory)} 指定数据要放置的内存段，这里引用了名为 \code{$moonbit.memory} 的内存。}
+  \li{#{datamode (active~\{\text{offset}\})} \code{(offset (i32.const 10000))} 指定了数据在内存中应该存放位置的偏移量，这里使用的是 \code{(i32.const 10000)}，表示将数据放置在内存地址 10000。}
+  \li{#{\text{init}} \code{\verb!|"\FF\FF\FF\FF\F3\02\00\00A\00B\00\00\00\00\03\00\00\00\00\00\00\00\00"!} 这是要写入到内存中的字节序列。每个 \code{\verb!|\XX!} 表示一个字节，使用十六进制表示法。}
+}
+看起来，\code{foo} 返回的值 \code{10000}，就是这段数据的 offset 了。
+}
+}
+
+\subtree{
+\title{从哪里开始，到哪里结束？}
+
+\p{现在我们拿到了这段数据，但我们的字符串 \code{"AB"} 呢？}
+
+\p{
+在与字节序列互盯之前，有必要让它变得好看点。将其格式化为每行 8 个 \em{u8}，用合适的空格分隔，继续使用十六进制表示。
+\pre{%
+FF FF FF FF F3 02 00 00
+A  00 B  00 00 00 00 03
+00 00 00 00 00 00 00 00
+}
+由于 A 和 B 两个字母都在 ASCII 范围内，因此我们能够直接从这段字节序列的数据里看到我们想要的字符串，现在的问题只剩下一个了：如何取出？或者用另一个问法：如何确定字符串的头尾？
+}
+
+\p{
+到了这一步，已经能够确定 [[MoonBit]] 在 [[Wasm]] 导出的字符串并不是 C 式字符串了。如果用 \code{\verb!|\0!} 标记字符串的结尾，那么我们还没有得到 A 或 B，就已经在第 7 个 byte 处停止了；更别说这 7 个 byte 都不是我们想要的了。
+}
+
+\p{
+那么它是如何编码的呢？我们再编译几个不同的字符串看看：
+\br\code{"A"}
+\pre{%
+FF FF FF FF F3 01 00 00
+A  00 00 01 00 00 00 00
+}
+
+\br\code{"AA"}
+\pre{%
+FF FF FF FF F3 02 00 00
+A  00 A  00 00 00 00 03
+00 00 00 00 00 00 00 00
+}
+
+\br\code{"ABC"}
+\pre{%
+FF FF FF FF F3 02 00 00
+A  00 B  00 C  00 00 01
+00 00 00 00 00 00 00 00
+}
+
+\br\code{"ABCDEFGHIJKLMNOPQRSTUVWXYZ"}
+\pre{%
+FF FF FF FF F3 0E 00 00
+A  00 B  00 C  00 D  00
+E  00 F  00 G  00 H  00
+I  00 J  00 K  00 L  00
+M  00 N  00 O  00 P  00
+Q  00 R  00 S  00 T  00
+U  00 V  00 W  00 X  00
+Y  00 Z  00 00 00 00 03
+00 00 00 00 00 00 00 00
+}
+
+可以发现，这些字节序列都有相似的模式，很容易从中识别出 header：前 8 个 byte \code{FF FF FF FF F3 XX 00 00}；标记为 \code{XX} 的 byte 看起来像是字符串的长度，但如果多对比几个结果，似乎又不总是长度。这很奇怪。
+}
+
+\p{
+我们识别出了 header，也就是说我们知道字符串从哪里开始了（offset + 8），但我们还不知道字符串到哪里结束，这个不稳定的长度 byte 似乎让我们陷入了困境。
+}
+}
+
+\subtree{
+\title{试试打印它}
+
+\p{\em{TODO}}
+}
