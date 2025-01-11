@@ -1,12 +1,12 @@
 \title{修复 theme bug: [[forester]] link 的 xsl template 渲染出多个 a tag}
 \date{2024-05-23}
 \taxon{task}
-\tag{todo}
+\tag{done}
 \author{jinser}
 
 \import{rwlabs}
 
-\p{在 title 里加上复杂一些的 tag，比如 icon：[[rwlabs]]。这样在前面加入一个 \code{img} tag，导致 \code{links.xsl} 里的 \code{f:link} template将 title 里的内容错误渲染 transfer 成多个分开的 \code{a} tag。}
+\p{在 title 里加上复杂一些的 tag，比如 icon：[[rwlabs]]。这样在前面加入一个 \code{img} tag，导致 \code{links.xsl} 里的 \code{f:link} template 将 title 里的内容错误渲染 transfer 成多个分开的 \code{a} tag。}
 
 \pre{
   <span class="link local">
@@ -31,4 +31,4 @@
 
 \p{前者不是只会体现在 HTML 的问题，交互中同样会有影响，\code{img} tag 并不在 \code{a} tag 中，也即 icon \rwicon{} 是不可点击的。}
 
-\p{2025-01-11 已修复。}
+\p{2025-01-11 已修复。 尽管还是会多一个前置的空白 a tag，但无关紧要。}
