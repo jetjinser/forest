@@ -1,8 +1,7 @@
 \import{base-macros}
 
-% from linkedin
 \def\ideaicon[body]{
-  \icon{https://media.licdn.com/dms/image/v2/C560BAQGmIgrJgMt7gQ/company-logo_200_200/company-logo_200_200/0/1631621453974}{IDEA}{\body}
+  \icon{https://www.idea.edu.cn/favicon.ico}{IDEA}{\body}
 }
 
 \title{\ideaicon{IDEA}}
