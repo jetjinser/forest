@@ -1,0 +1,47 @@
+\title{state handler}
+\date{2025-03-03}
+\taxon{example}
+\author{jinser}
+
+\let\deef{\stackrel{\mathbf{def}}{=}}
+\let\fnk[arg]{\mathbf{fun}\;\arg\mapsto}
+\let\fn[arg][body]{\fnk{\arg}\body}
+\let\ret[body]{\mathbf{return}\;\body}
+
+\p{Example of inference computation #{\mathtt{plus1}} using #{\mathtt{state}} handler. Definition from [[pretnar-2015]].}
+
+\p{Definition of #{\mathtt{state}}.}
+##{
+  \begin{align*}
+    \mathtt{state} \deef \mathbf{handler}\,\{ & \mathtt{get}(\_;k) \mapsto \fn{ s}{(k\;s )\;s} \\
+                                              & \mathtt{set}(s;k)  \mapsto \fn{\_}{(k\;())\;s} \\
+                                              & \ret{x}            \mapsto \fn{\_}{\ret{x}   } \}
+  \end{align*}
+}
+
+\p{Definition of #{\mathtt{plus1}}.}
+##{
+  \begin{align*}
+    \mathtt{plus1} \deef \mathbf{fun}\;() \mapsto\;& \mathbf{do}\; n \gets \mathtt{get} \;()\; \mathbf{in} \\
+                                                 & \mathtt{set}\;n + 1
+  \end{align*}
+}
+
+\p{Usage.}
+##{
+  (\mathbf{with}\;\mathtt{state}\;\mathbf{handle}\;\mathtt{plus1})\;41
+}
+
+\p{Expansion.}
+\p{...}
+
+\p{Reduce.}
+##{
+  \begin{align*}
+    (\fnk{s} (\fnk{\_} \;& (\fnk{\_} \ret{x})\; (s + 1 ))\; s )\;41 \\
+             (\fnk{\_} \;& (\fnk{\_} \ret{x})\; (41 + 1))\; 41      \\
+                         & (\fnk{\_} \ret{x})\; (41 + 1)            \\
+                         & (41 + 1)                                 \\
+                         & 42
+  \end{align*}
+}

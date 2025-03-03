@@ -1,0 +1,25 @@
+\title{An Introduction to Algebraic Effects and Handlers. Invited tutorial paper}
+\author{matija-pretnar}
+\taxon{reference}
+\date{2015-12}
+\meta{bibtex}\verb!!|
+@article{pretnar_introduction_2015,
+  title = {An {Introduction} to {Algebraic} {Effects} and {Handlers}. {Invited} tutorial paper},
+  volume = {319},
+  copyright = {https://www.elsevier.com/tdm/userlicense/1.0/},
+  issn = {15710661},
+  url = {https://linkinghub.elsevier.com/retrieve/pii/S1571066115000705},
+  doi = {10.1016/j.entcs.2015.12.003},
+  abstract = {This paper is a tutorial on algebraic eﬀects and handlers. In it, we explain what algebraic eﬀects are, give ample examples to explain how handlers work, deﬁne an operational semantics and a type \& eﬀect system, show how one can reason about eﬀects, and give pointers for further reading.},
+  language = {en},
+  urldate = {2025-02-25},
+  journal = {Electronic Notes in Theoretical Computer Science},
+  author = {Pretnar, Matija},
+  month = dec,
+  year = {2015},
+  pages = {19--35},
+}
+!!
+\meta{doi}{10.1016/j.entcs.2015.12.003}
+
+\p{This paper is a tutorial on algebraic effects and handlers. In it, we explain what algebraic effects are, give ample examples to explain how handlers work, define an operational semantics and a type & effect system, show how one can reason about effects, and give pointers for further reading. }
