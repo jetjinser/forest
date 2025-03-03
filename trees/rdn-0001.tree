@@ -1,6 +1,6 @@
 \title{state handler}
 \date{2025-03-03}
-\taxon{example}
+\taxon{thought}
 \author{jinser}
 
 \let\deef{\stackrel{\mathbf{def}}{=}}
@@ -8,7 +8,7 @@
 \let\fn[arg][body]{\fnk{\arg}\body}
 \let\ret[body]{\mathbf{return}\;\body}
 
-\p{Example of inference computation #{\mathtt{plus1}} using #{\mathtt{state}} handler. Definition from [[pretnar-2015]].}
+\p{Inference of computation #{\mathtt{plus1}} using #{\mathtt{state}} handler. Definition from [[pretnar-2015]].}
 
 \p{Definition of #{\mathtt{state}}.}
 ##{
