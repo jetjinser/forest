@@ -25,3 +25,5 @@ server
 .data/
 .direnv/
 .pre-commit-config.yaml
+
+_tmp/
