@@ -2,5 +2,5 @@
 trees = ["trees"]
 assets = ["assets"]
 theme = "theme"
-root = "jsr-0001"
+home = "jsr-0001"
 base_url = "https://www.purejs.icu"
