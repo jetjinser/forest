@@ -24,7 +24,7 @@
 
 \def\references[body]{
   \subtree{
-    \title{参考 \sub{References}}
+    \title{引用 \sub{References}}
     \body
   }
 }
