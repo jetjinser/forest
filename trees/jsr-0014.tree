@@ -1,0 +1,120 @@
+\title{Python Negatypes}
+\date{2025-03-05}
+\taxon{translation}
+\author{hillel}
+\contributor{jinser}
+\meta{original}{https://www.hillelwayne.com/negatypes/}
+
+\import{base-macros}
+\import{translate}
+
+\def\python[src]{\hcode{python}{\src}}
+
+\declare{[[hillel]]}{Python Negatypes}
+\tips{Click on the translation to expand and view the original text. 点击译文可展开查看原文。}
+\blockquote{Translated according to the version last updated on Sep 26, 2019.}
+\blockquote{根据2019年9月26日更新的版本翻译。}
+
+\subtree{%
+\title{正文}
+\tp{
+[2007年](https://www.python.org/dev/peps/pep-3119/)，Python 添加了[\ruby{抽象基类}{Abstract Base Classes}](https://docs.python.org/3/library/abc.html)，旨在用作接口：
+}{
+Back in 2007 Python added Abstract Base Classes, which were intended to be used as interfaces:
+}
+
+\python{%
+from abc import ABC
+
+class AbstractIterable(ABC):
+
+    @abstractmethod
+    def __iter__(self):
+        while False:
+            yield None
+
+    def get_iterator(self):
+        return self.__iter__()
+}
+
+\tp{
+ABC 被添加来稍微增强\ruby{鸭子类型}{duck typing}。如果你继承了 \code{AbstractIterable}，那么所有人都能知道你有一个实现了的 \code{__iter__} 方法，可以适当地对其处理。
+}{
+ABCs were added to strengthen the duck typing a little. If you inherited AbstractIterable, then everybody knew you had an implemented __iter__ method, and could handle that appropriately.
+}
+
+\tp{
+不出所料，这个想法从未流行起来。人们更喜欢\dquote{请求原谅而不是请求许可}，然后将对 \code{__iter__} 的调用包装在 \code{try} 块中。这对静态类型检查\em{可以}很有用，但实际上 Mypy 并不使用它。如果你想进行类型检查，发现它有 \code{__iter__}，但某人\em{没有}从 \code{AbstractIterable} 继承，该怎么办？Mypy 团队改用[\ruby{协议}{protocols}](https://mypy.readthedocs.io/en/latest/protocols.html)，它由 ABC \ruby{引导}{bootstrapped}，但对用户隐藏了这个细节。
+}{
+Unsurprisingly, this idea never caught on. People instead preferred “better ask forgiveness than permission” and wrapped calls to __iter__ in a try block. This could be useful for static type checking, but in practice Mypy doesn’t use it. What if you wanted to typecheck it had __iter__ but the person did not inherit from AbstractIterable? The Mypy team instead uses protocols, which is bootstrapped off ABCs but hides that detail from the user.
+}
+
+\tp{
+但 ABC 旨在\ruby{向后兼容}{backwards compatible}。而且已经存在具有 \code{__iter__} 方法的类。我们如何将它们纳入我们的 \code{AbstractIterable} ABC 中？为了解决这个问题，Python 团队添加了一个特殊的 ABC 方法：
+}{
+But ABC was intended to be backwards compatible. And there were already existing classes that had a iter method. How could we include them under our AbstractIterable ABC? To handle this, the Python team added a special ABC method:
+}
+
+\python{%
+class AbstractIterable(ABC):
+
+    @classmethod
+    def __subclasshook__(cls, C):
+        return hasattr(C, "__iter__")
+}
+
+\tp{
+\code{__subclasshook__} 是使某些类算作这个 ABC 的子类的运行时条件。如果 \code{OurClass} 具有 \code{__iter__} 属性，那么 \code{isinstance(OurClass(), AbstractIterable)} 就为真，\em{即使它不是从 \code{AbstractIterable} 继承的}。
+}{
+__subclasshook__ is the runtime conditions that makes something count as a child of this ABC. isinstance(OurClass(), AbstractIterable) is true if OurClass has a iter attribute, even if it didn’t inherit from AbstractIterable.
+}
+
+\tp{
+这个函数是一个运行时函数。我们可以在其中放入任意代码。它传入的是对象的类，而不是对象本身，因此我们无法检查特定对象的\ruby{属性}{properties}。但我们仍然可以做一些奇怪的事情：
+}{
+That function is a runtime function. We can put arbitrary code in it. It passes in the object’s class, not the object itself, so we can’t inspect the properties of the specific object. We can still do some weird stuff:
+}
+
+\python{%
+class PalindromicName(ABC):
+
+  @classmethod
+  def __subclasshook__(cls, C):
+    name = C.__name__.lower()
+    return name[::-1] == name
+}
+
+\tp{
+任何名字是回文的类，像是\dquote{Noon}，都将被视为 \code{PalindromicName} 的子类。我们可以更进一步：既然可以跳下去，为什么还要\ruby{凝视深渊}{gaze into the abyss}呢？
+}{
+Any class with a palindromic name, like “Noon”, will counts as a child class of PalindromicName. We can push this even further: why gaze into the abyss when you can jump in?
+}
+
+\python{%
+class NotIterable(ABC):
+
+    @classmethod
+    def __subclasshook__(cls, C):
+        return not hasattr(C, "__iter__")
+}
+
+\tp{
+这是所有\em{不可}迭代的类型。比如 \code{isinstance(5, NotAString)} 之类的。我们创建了一个\ruby{负类型}{negatype}：一种仅指定它\em{不是}什么的类型。我们可以将其作为\ruby{正类型}{positive types}集减去给定类型的子集，剩下的那部分。没有什么可以阻止我们为\dquote{不是字符串的可迭代对象}或\dquote{返回的对象与同一可调用对象不相同的可调用对象}创建 ABC。
+}{
+This is the type of everything that isn’t iterable. We have isinstance(5, NotAString), etc. We’ve created a negatype: a type that only specifies what it isn’t. We can include this as part of a set of positive types, subtracting out a subset of a given type. There’s nothing stopping us from making an ABC for “iterables that aren’t strings”, or “callable objects that don’t return an object of the same callable”.
+}
+} % subtree
+
+\subtree{
+\title{这有什么用？\sub{How is this useful? }}
+
+\tp{不知道。}{No idea.}
+
+\tp{
+ABCs 不是作为[方法解析顺序](https://docs.python.org/3/glossary.html?highlight=mro#term-method-resolution-order)的一部分进行检查的，因此你不能使用它来\ruby{补丁}{patch}属性。Mypy 无法检查 \code{__subclasshook__}。如果你想使用它进行运行时检查，编写函数会比创建 ABC 更简单、更可移植。唯一不同的情况是[\ruby{单分派}{single-dispatch}函数](https://docs.python.org/3/library/functools.html#functools.singledispatch)，它可以在 virtual ABC 上分派。但仅此而已。
+}{
+ABCs aren’t checked as part of the method resolution order, so you can’t use this to patch in properties. Mypy can’t check __subclasshook__. If you want it for runtime-checks, writing a function would be simpler and more portable than creating an ABC. Just about the only case where there is a difference is with single-dispatch functions, which can dispatch on virtual ABCs. But that’s about it.
+}
+
+\tp{但它很酷！}{It’s pretty cool, though!}
+} % subtree
