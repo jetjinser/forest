@@ -1,0 +1,45 @@
+\title{竞赛问题 \sub{Contest problem}}
+\parent{jsr-000U}
+
+\import{base-macros}
+\import{translate}
+\import{jsr-000U}
+
+\tp{
+\blockquote{\pre{
+大多数候选人都无法解决这个面试问题：
+
+输入： "aaaabbbcca"
+输出： [("a",4), ("b", 3), ("c", 2), ("a", 1)]
+
+写一个将输入转换为输出的函数
+
+我在视频面试中提出这个问题，给予 25 分钟时间
+你会如何解决？
+}}
+Alexey Grigorev (@Al_Grigor) February 3, 2021 (Twitter)
+}{
+Most candidates cannot solve this interview problem:
+
+Input: "aaaabbbcca"
+Output: [("a",4), ("b", 3), ("c", 2), ("a", 1)]
+
+Write a function that converts the input to the output
+
+I ask it in the screening interview and give it 25 minutes
+How would you solve it?
+
+Alexey Grigorev (@Al_Grigor) February 3, 2021 (Twitter)
+}
+
+\references{
+\tp{
+该问题的说明引用自 Lobsters 上发布的网页：\br
+A Random Job Interview Challenge In Clojure. Feb 4 2021 by Savo Djuric\br
+[<https://savo.rocks/posts/a-random-job-interview-challenge-in-clojure/>](https://savo.rocks/posts/a-random-job-interview-challenge-in-clojure/)
+}{
+The statement of the problem is quoted from the web page posted on Lobsters:
+A Random Job Interview Challenge In Clojure. Feb 4 2021 by Savo Djuric
+<https://savo.rocks/posts/a-random-job-interview-challenge-in-clojure/> 
+}
+}

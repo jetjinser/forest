@@ -1,0 +1,48 @@
+\title{结论：编程和自然语言，软件和文学}
+\parent{jsr-000U}
+
+\import{base-macros}
+\import{translate}
+\import{jsr-000U}
+
+\tp{
+前面引用的一条评论一针见血：要描述一种算法，就需要\ruby{词汇表}{vocabulary}。编程的很大一部分是\ruby{构建}{building}（\ruby{学习}{learning}或\ruby{构造}{constructing}）词汇来讨论常见的（子）问题，例如\ruby{游程编码}{\strong{R}un-\strong{L}ength \strong{E}ncoding}、groupBy、\ruby{映射}{mapping}、\ruby{累积}{accumulating}、\ruby{过滤}{filtering}等。学习、寻找和命名\dquote{正确}的抽象是数学的核心活动\em2dash正如\dquote{符号作为思维工具}中所阐述的那样。
+}{
+A comment cited earlier hits the nail on the head: to describe an algorithm, one needs vocabulary. A large part of programming is building -- learning or constructing -- vocabulary to talk about common (sub)problems, e.g., run-length-encoding, groupBy, mapping, accumulating, filtering, etc. Learning, finding and naming the `right' abstractions is the core mathematical activity -- as explicated in the `Notation as a tool of thought'.
+}
+
+\tp{
+自然语言也是一种思维工具。建立词汇表并理解何时以及如何使用某个词是学习一门语言最难的部分。自然语言和形式语言有很多共同之处，这一观点由来已久\em2dash\ruby{蒙塔古}{Montague}在 20 世纪 70 年代就曾对此作出著名而有力的阐述。在之前引用过的 \ruby{基思\mdot斯迈利}{Keith Smillie} 关于数组语言的论文中，他进一步指出，编程教学应该借鉴外语教学最好的理念。
+}{
+A natural language is also a tool of thought. Building vocabulary and understanding when and how to use a particular word is the hardest part of learning a language. That natural and formal languages have a lot in common is the idea with a long pedigree -- famously and forcefully articulated by Montague in 1970s. Keith Smillie, in his paper about array languages cited earlier further argues that teaching programming ought to adapt the best ideas of teaching foreign languages.
+}
+
+\tp{
+无论是编程语言还是自然语言，人们都可以相对较快地掌握基础知识。流利掌握则需要几十年的时间。似乎没有什么比不断练习、说和听、写和重写更好。我想起\ruby{欧内斯特\mdot海明威}{Ernest Hemingway}和\ruby{乔治\mdot普林普顿}{George Plimpton}（\book{Interviewer}杂志的创始人和编辑）之间那次著名访谈的结尾（\book{\ruby{巴黎评论}{Paris Review}}第 18 期，1958 年春季）：
+}{
+Both in programming and natural languages, one can acquire basics relatively quickly. Fluency takes decades. There doesn't seem to be anything better than constant practice, speaking and listening, writing and rewriting. The ending of the famous interview between Ernest Hemingway and George Plimpton (the `Interviewer', the magazine's founder and editor) (Paris Review, issue 18, Spring 1958) comes to mind:
+}
+
+\blockquote{
+\tp{
+\p{\strong{采访者} 你在读到前一天停下的地方时会重写吗？还是等到全部完成后再重写？}
+\p{\strong{海明威} 我总是每天重写到我停下的地方。都完成后，你自然会再看一遍。在别人打字时，你会在干净的排版中看到它，这也是另一个修改和重写的机会。最后在校样中你还有最后的机会。你会对这几次不同的机会心怀感激。}
+\p{\strong{采访者} 你进行了多少次重写？}
+\p{\strong{海明威} 看情况。\book{\ruby{永别了，武器}{A Farewell to Arms}}的结尾，也就是最后一页，我重写了三十九次才满意。}
+\p{\strong{采访者} 是有什么技术问题吗？什么问题难住了你？}
+\p{\strong{海明威} 用正确的词。}
+}{
+INTERVIEWER
+    Do you do any rewriting as you read up to the place you left off the day before? Or does that come later, when the whole is finished?
+HEMINGWAY
+    I always rewrite each day up to the point where I stopped. When it is all finished, naturally you go over it. You get another chance to correct and rewrite when someone else types it, and you see it clean in type. The last chance is in the proofs. You’re grateful for these different chances.
+INTERVIEWER
+    How much rewriting do you do?
+HEMINGWAY
+    It depends. I rewrote the ending to Farewell to Arms, the last page of it, thirty-nine times before I was satisfied.
+INTERVIEWER
+    Was there some technical problem there? What was it that had stumped you?
+HEMINGWAY
+    Getting the words right.
+}
+}

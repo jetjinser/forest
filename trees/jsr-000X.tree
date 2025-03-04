@@ -1,0 +1,91 @@
+\title{评论 \sub{Comments}}
+\parent{jsr-000U}
+
+\import{base-macros}
+\import{translate}
+\import{jsr-000U}
+
+\tp{
+Lobsters 竞赛的一个特色是参与者对自己和他人的解法的评论。以下是几条值得注意的评论，它们进一步证明了我在本次演讲中的观点。
+}{
+A particular feature of the Lobsters' contest is comments of the participants, about their and others' solutions. Below are several notable comments, which go on to make my point in this talk.
+}
+
+\tp{
+一位评论者想知道：
+}{
+One commenter wondered:
+}
+
+\tp{
+\blockquote{
+阅读 Clojure 解法需要跟着作者的思维过程。阅读等效的 Go 解法几乎没有认知开销。\br
+Clojure 程序员如何编写代码，才能不仅在作者眼中简洁优雅，而且还可以让其他人快速阅读而无需花费时间进行脑力劳动？
+}
+}{
+``Reading the Clojure solution involves following the thought process of how the author ended up there. Reading the equivalent Go solution has very little cognitive overhead.
+How does Clojure programmers write code that is not just brief and elegant in the eyes of the author, but can also be read quickly by others without time consuming mental gymnastics?''
+}
+
+\tp{
+另一人回答：
+}{
+and another replied:
+}
+
+\tp{
+\blockquote{我想这只是你的习惯的问题。我发现上面的两种 Go 解法都很难理解，因为你必须遵循算法并在脑海中构建它的功能。而在大多数 Clojure 解法中，代码会直接告诉你发生了什么。}
+}{
+I guess it's just a matter of what you're used to. I find both Go solutions above arduous to understand because you have to follow the algorithm and construct what it functionally does in your head. Whereas in most of the clojure solutions the code directly tells you what's happening.
+}
+
+\tp{
+\blockquote{例如，带有注释的最高帖子：}
+}{
+Eg. the top post with comments:
+}
+
+\clojure{%
+; threading macro (take input, then do stuff to it in steps)
+(->> "aaaabbbcca"
+     ; split into lists of consecutive same character
+     (partition-by identity)
+     ; map each item (list of chars) with a function
+     (map
+       ; return list of outputs of functions
+       (juxt
+         ; first character as string
+         (comp str first)
+         ; count of characters
+         count)))
+}
+
+\tp{
+\blockquote{该信息更加密集。如果你擅长阅读它，你可以一目了然地理解它。}
+}{
+The information is much more dense. If you are good at reading it, you understand it at a glance.
+}
+
+\tp{
+\blockquote{我相信 APL 解法也是如此。我看不到它们，但是确实有清楚看到算法的人。}
+}{
+I believe the same is true for the APL solutions. I can't read them, but someone who does sees the algorithm clearly.''
+}
+
+\tp{
+另一位评论者同意：
+}{
+Yet another commenter concurred:
+}
+
+\tp{
+\blockquote{我也是；他们的[Go 解法]似乎超级繁琐和低级。就像你给要编译器灌输基本的东西，而不是自然地描述算法一样。}
+}{
+``Same here; they [Go solutions] just seem super tedious and low-level; like you're spoon-feeding the compiler on basic things instead of just describing the algorithm naturally.
+}
+
+\tp{
+\blockquote{如果你没有词汇来描述算法，那么当然低级版本会更容易阅读，就像刚刚学习英语的人会发现\dquote{简化英语}维基百科比经常使用专业术语的常规维基百科更容易理解一样。但如果你每天都使用算法，你就应该投资学习这些术语！}
+}{
+If you don't have the vocabulary to describe an algorithm, of course the low-level version is going to be easier to read, much like someone who is only just learning English will find the `Simplified English' wikipedia more accessible than the regular one that often uses specialized jargon. But if you work with algorithms every day, you owe it to yourself to invest in learning the jargon!''
+}

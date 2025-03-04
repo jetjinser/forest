@@ -1,0 +1,94 @@
+\title{Grasping `all-the-apples-at-once'}
+\date{2025-03-03}
+\taxon{translation}
+\author{oleg}
+\contributor{jinser}
+\meta{original}{https://okmij.org/ftp/Algorithms/grasping-all-apples-at-once.html}
+
+\import{base-macros}
+\import{translate}
+
+% TODO: macro
+\def\clojure[src]{\hcode{clojure}{\src}}
+\def\rubyy[src]{\hcode{ruby}{\src}}
+\def\apl[src]{\hcode{apl}{\src}}
+\def\go[src]{\hcode{go}{\src}}
+\def\racket[src]{\hcode{racket}{\src}}
+\def\raku[src]{\hcode{raku}{\src}}
+\def\erlang[src]{\hcode{erlang}{\src}}
+\def\python[src]{\hcode{python}{\src}}
+\def\rust[src]{\hcode{rust}{\src}}
+\def\julia[src]{\hcode{julia}{\src}}
+\def\haskell[src]{\hcode{haskell}{\src}}
+\def\ocaml[src]{\hcode{ocaml}{\src}}
+
+\def\references[body]{
+  \subtree{
+    \title{参考 \sub{References}}
+    \body
+  }
+}
+
+\declare{[[oleg]]}{Grasping `all-the-apples-at-once'}
+\tips{Click on the translation to expand and view the original text. 点击译文可展开查看原文。}
+\blockquote{Translated according to the version last updated on June 3, 2024.}
+\blockquote{根据2024年6月3日更新的版本翻译。}
+
+\subtree{
+\title{介绍 \sub{Introduction}}
+
+\tp{
+这是一次轻松的讨论，内容是对一次即兴编程竞赛的分析：参与者使用自选的编程语言解决一个简单但现实的问题。结果显示，那些明显正确且用恰当语言表达出的解决方案，都不是用我预期的语言写成的。这个讨论记录了令人不安的观察和几个意想不到的鼓励，同时也反思了常见的编程语言教学及讨论方式。
+}{
+This is a light talk with the analysis of an impromptu programming contest: solving a simple but realistic problem in a language of participants' choice. It turns out that the solutions that were obviously right, expressed in just the right words were written not in the languages I have expected. This talk notes the unsettling observations and a few unexpected encouragements, along with a reflection on the common way of teaching and arguing about programming languages.
+}
+
+\tp{
+这场竞赛发生在一个以计算机为中心的社区 [Lobsters](https://lobste.rs/)。Lobsters 有点像 [HN](https://news.ycombinator.com/)，也是一个论坛，会员们会提交和讨论各种文章，从学术期刊论文到博客文章、公告和视频。这个社区可以被称为\dquote{主流 IT}：包括嵌入式系统到 Web 的开发人员，系统管理员，学生，计算机爱好者以及少数学者。
+}{
+The contest happened at a computer-focused community Lobsters. Somewhat like HN, Lobsters is a forum for its members to submit and discuss articles: from journal papers to blog posts, announcements and videos. The community is what one may call the `mainstream IT': developers, from embedded systems to the Web, system administrators as well as students, computer hobbyists, and a few academics.
+}
+
+\tp{
+某天，一篇关于常见工作面试问题的文章被发布出来以供讨论。随后，成员们自发地开始提交他们用自己选择的编程语言编写的解决方案。他们还对自己的和其他人的解决方案进行了评论。
+}{
+One day an article about a common job interview question was posted for discussion. Spontaneously, members started submitting their own solutions, in their language of choice. They also commented on their own and others solutions.
+}
+
+\tp{
+令我惊讶的是，无论它们是使用什么编程语言编写的，是否是函数式语言（如 Haskell、Erlang、Clojure）或命令式语言（如 Go、Ruby、Raku），这些解决方案被整齐地分成了两类。我现在才意识到，递归不是只在理论上才是迭代的对偶，就像循环一样，它是 low-level 的：一次选择一个苹果。同样，\dquote{纯函数式}的状态处理和命令式的状态处理也是如此。
+}{
+It has struck me how the the solutions neatly fall into two classes -- irrespective of the language they are written in, be it a functional (such as Haskell, Erlang or Clojure) or imperative (Go, Ruby, Raku). Only now I realized that recursion is dual to iteration not just in theory. Like loops, it is low-level: selecting one apple at a time. Likewise is the `pure-functional' and imperative handling of state.
+}
+
+\tp{
+我们如何一次抓住所有苹果？就像在自然语言的学习和教学中一样，我们是否应该少关注语法，而更多地关注对话和讲故事？
+}{
+How do we grasp all the apples at once? As in learning and teaching of natural languages, should we focus less on grammar and more on conversation and storytelling?
+}
+
+\tp{
+该演讲是在 2021年7月1日 的 IFIP WG 2.1 线上会议进行的。
+}{
+The talk was given at an online meeting of IFIP WG 2.1 on July 1, 2021.
+}
+
+\references{
+\tp{
+Lobsters 上竞赛的讨论串。2021年2月。
+[<https://lobste.rs/s/zpqrpc/random_job_interview_challenge_clojure>](https://lobste.rs/s/zpqrpc/random_job_interview_challenge_clojure)
+}{
+The Lobsters thread with the contest. February 2021.
+<https://lobste.rs/s/zpqrpc/random_job_interview_challenge_clojure>
+}
+}
+} % Introduction end
+
+\transclude{jsr-000V} % Contest problem
+\transclude{jsr-000W} % Sample solutions
+\transclude{jsr-000X} % Comments
+\transclude{jsr-000Y} % The apples analogy
+\transclude{jsr-000Z} % Observations
+\transclude{jsr-0010} % Pleasant surprises
+\transclude{jsr-0011} % Conclusion
+\transclude{jsr-0012} % Epilogue

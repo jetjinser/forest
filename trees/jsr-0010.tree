@@ -1,0 +1,84 @@
+\title{惊喜 \sub{Pleasant surprises}}
+\parent{jsr-000U}
+
+\import{base-macros}
+\import{translate}
+\import{jsr-000U}
+
+\tp{
+第一个惊喜是 Group I（即使用 \ruby{一次所有苹果}{all-the-apples-at-once} 解法）的人数众多\em2dash而且当今使用的语言也具有足够的能力来表达这些解决方案。
+}{
+The first pleasant surprise was the notable number of Group I, that is, all-the-apples-at-once solutions -- and the number of languages in use today with the adequate facilities to express these solutions.
+}
+
+\tp{
+引发此次竞赛的 Savo Djuric 的博客文章也描述了一个解法，值得引用。
+}{
+The blog post by Savo Djuric that prompted the contest has also described a solution, which is worth quoting.
+}
+
+\blockquote{
+\tp{
+由于我最近才开始学习 Clojure，而且我经常做 4clojure 练习，所以这个问题激起了我的兴趣，我决定立即尝试解决它。我启动了我的 REPL，几分钟后，我写出了：
+}{
+Since I recently started learning Clojure, and I regularly do 4clojure exercises, this problem seemed intriguing, so I decided to try to solve it immediately. I fired up my REPL, and within several minutes i came up with:
+}
+
+\clojure{%
+(interleave
+ (map str (map first (partition-by identity "aaaabbbcca")))
+ (map count (partition-by identity "aaaabbbcca")))
+=> ("a" 4 "b" 3 "c" 2 "a" 1)
+}
+
+\tp{
+耶！这有用！但它并不完全符合要求。可以说，它也不是很\dquote{干净}。这个解法最让我困扰的是重复的代码，所以我决定用 let:... 来解决这个问题。
+}{
+Yaay! It works! But it is not exactly what was asked for. Nor is it very ‘clean’, so to say. What bothers me the most in this solution is that i have repetitive code, so I decided to solve that with let:...
+}
+
+\clojure{%
+(defn chop-chop [coll]
+  (let [x (partition-by identity coll)]
+    (map list (map (comp str first) x)
+                (map count x))))
+}
+
+\tp{
+我必须说，在几分钟之内解决问题感觉很棒（尽管这并不难），因为我只是刚开始 Clojure 的旅程。
+}{
+I must say that it felt great to solve a problem within several minutes (albeit it was not that hard), since I'm only at the beginning of my journey with Clojure.
+}
+}
+
+\tp{
+这篇博文展示了我认为的解决问题的理想方法：把握问题的本质\em2dash\code{groupBy}，或 Clojure 中的\code{partition-by}\em2dash设计解法原型，理解其缺陷并希望做得更好，采取措施改进。我认为作者作为程序员前途光明。
+}{
+The blog post shows the ideal, to me, way to solve the problem: grasping its nature -- groupBy, or partition-by in Clojure, -- prototyping the solution, understanding its imperfections and wanting to do better, taking steps to improve. I think the author has a bright future as a programmer.
+}
+
+
+\tp{
+我从他的博客中得知，作者从未上过大学，偶然进入编程领域（但受到他才华横溢的兄弟的启发），并且一直在自学编程语言（现在是 Clojure）。也许这就是（他能做到这件事的）秘密。
+}{
+From his blog I learned that the author never went to college, got into programming by accident (but prompted by his talented brother), and has been studying programming languages (now, Clojure) entirely on his own. May be that's the secret.
+}
+
+\tp{
+另一个惊喜是看到了我眼中理想的解法：
+}{
+Another pleasant surprise was seeing the solution that in my eyes is ideal:
+}
+
+\python{%
+[(k, len(list(g))) for k, g in itertools.groupby("aaaabbbcca")]
+}
+
+\tp{
+这个 Python 解法本质上是用常规的数学符号来表达的，每个人都可以读懂（与 APL 不同）。更重要的是，它在语言上很经济\em2dash同样，与 APL 不同。它只使用两个直接相关的功能：\code{groupBy} 和 comprehension。符号在这里显然是思维的工具。
+}{
+This Python solution is expressed in what is essentially the conventional mathematical notation, readable by everyone (unlike APL). More importantly, it is linguistically economical -- again, unlike APL. It uses just the two directly relevant facilities: groupBy and comprehension. Notation is clearly here the tool of thought.
+}
+
+
+

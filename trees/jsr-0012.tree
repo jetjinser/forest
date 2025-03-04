@@ -1,0 +1,339 @@
+\import{base-macros}
+
+\title{尾声：我的\dquote{苹果流}解决方案}
+\parent{jsr-000U}
+
+\import{translate}
+\import{jsr-000U}
+
+\tp{
+我该如何解决这个问题？我第一次看到它时，我脑海中浮现的第一个想法是：\code{groupBy}，这是对序列中连续元素进行分组的操作的通用名称。然后我们需要以 (group-element, counter) 对的形式呈现这些组。
+}{
+How would I solve the problem? When I first saw it, the very first thought that came to mind was: groupBy, which is the common name for the operation to group consecutive elements of a sequence. We then need to present the groups in the form of (group-element, counter) pairs.
+}
+
+\tp{
+为了正确性（以及其他很快就会清楚的原因），我将使用 OCaml。假设我们有以下操作
+}{
+I will use OCaml for concreteness (and for other reasons that should be clear soon). Suppose we have the operation
+}
+
+\ocaml{%
+group : 'a list -> 'a list list
+}
+
+\tp{
+它将列表中（根据某些标准）相等的连续元素分组到它们自己的列表中，并返回这些组的列表（组不能为空）。然后，该问题解法的第一个近似写法如下，非常接近上面的第一个 Clojure 解决方案：
+}{
+which groups equal (according to some criterion) consecutive elements of a list in their own list, and returns the list of such groups. (A group cannot be empty). Then the first approximation to the solution is as follows, quite close to the first Clojure solution above:
+}
+
+\ocaml{%
+let rll (group : char list -> char list list) : char list -> (char * int) list =
+  group >> List.(map (fun g -> (hd g, length g)))
+}
+
+\tp{
+类型注释是可选的，但我倾向于写下它们（一个使用 Ocaml 的理由就是类型：不花哨，但没有过多细节，足够可视地展示数据的转移）。由于组是假设的，它作为\ruby{参数}{parameter/argument}出现。这里的 \code{(>>)} 是从左到右的函数组合（就像 F#）。将输入视为\ruby{序列}{sequence}（例如列表）很方便。但字符串在 OCaml 中不是列表\em2dash不过可以借助几个标准库函数轻松地将其转换为列表：
+}{
+Type annotations are optional, but I prefer to write them. (One reason to use OCaml is types: not fancy, but sufficient to visualize data transformations, without too many details.) Since group is the assumption, it appears as the parameter (argument). Here, (>>) is the left-to-right functional composition (as in F#). It is convenient to think of input as a sequence, such as list. But a string is not a list in OCaml -- but can be easily turned into one, with the help of a couple standard library functions:
+}
+
+\ocaml{%
+let rll (group : char list -> char list list) : string -> (char * int) list =
+  String.to_seq >> List.of_seq >> group >> List.(map (fun g -> (hd g, length g)))
+}
+
+\tp{
+使用 APL 中经常使用的 fork 组合器（但是 left-to-write 版本）：
+}{
+With the fork combinator, so frequent in APL (but a left-to-write version):
+}
+
+\ocaml{%
+let fork : ('a -> 'b) -> ('a -> 'c) -> ('b -> 'c -> 'd) -> 'a -> 'd = fun f g h -> fun x -> h (f x) (g x)
+}
+
+\tp{
+这个解法甚至可以写得更清楚些：
+}{
+the solution can be written even cleaner:
+}
+
+\ocaml{%
+let rll (group : char list -> char list list) : string -> (char * int) list =
+  String.to_seq >> List.of_seq >> group >> List.(map (fork hd length pair))
+}
+
+\tp{
+我们只需要 \code{group} 本身的实现即可运行此代码。可惜的是，OCaml 标准库目前不提供分组操作。我当然可以编写它。但让我更详细地重新表述这种方式。
+}{
+We only need the implementation of group itself to run this code. Alas, the OCaml standard library at present does not provide a grouping operation. I can of course write it. But let me rephrase this approach in more detail.
+}
+
+\tp{
+我们从头开始，逐步开发解法，强调越来越紧地\dquote{\ruby{抓住}{grasping}}数据流。重点在于理解数据流，而不是编写循环或递归函数，与终止条件和边缘情况作斗争。我们也不会沉迷于状态：它在需要时自然而然地出现。分组也是自然而然的，而且更简单。当我们找到解法时，只要一看就能知道它一定是正确的。确实如此。它也相当高效。它甚至可以稍后机械地重铸成 C 以提高效率\em2dash不是通常手写的那种 C，而是正确且没有问题的。
+}{
+Let us start from scratch and develop the solution in smaller steps, emphasizing tighter and tighter `grasping' of the data flow. The stress is on understanding data flow, rather than on writing loops or recursive functions and struggling with termination conditions and edge cases. We won't obsess about state either: it comes naturally when needed. Grouping also comes naturally, and simpler. When we reach the solution, one look at it will tell that it must be right. It is. It is also reasonably efficient. It can even be later mechanically recast into C for better efficiency -- not the sort of C one typically writes by hand, but correct and problem-free.
+}
+
+\tp{
+首先从问题陈述中，我们很快就能明白我们面临的是一个\ruby{顺序}{sequential}问题：将字符序列转换为其他序列（成对的），这是\em{\ruby{局部}{locally}}进行的。实际上，向示例输入 \code{"aaaabbbcca"} 添加更多字符不会影响示例输出的前缀 \code{("a",4), ("b", 3), ("c", 2)}。一旦理解了这个顺序特性，其余的东西几乎是自然而然的。
+}{
+First, from the problem statement one quickly understands that we are facing a sequential problem: transforming a sequence of characters into some other sequence (of pairs), locally. Indeed, appending more characters to the sample input "aaaabbbcca" will not affect the prefix ("a",4), ("b", 3), ("c", 2) of the sample output. Once this sequential character is understood, the rest follows almost automatically.
+}
+
+\tp{
+为了思考和开发解法，我们需要一个\ruby{词汇表}{vocabulary}，我们在过程中不断建立它。首先，我们需要一个表示序列的词。我们称之为 \code{'a seq}：元素类型为 \code{'a} 的序列类型。现在我们先不要担心它是如何实现的，而是将其视为抽象类型。由于输入是字符串，我们显然需要操作
+}{
+To think about and develop the solution, we need a vocabulary, which we build up as we go along. First we need a word for a sequence. Let's call it 'a seq: a type of a sequence of elements of type 'a. Let us not worry for now how it is actually implemented and treat it as an abstract type. Since the input is given as string, we obviously need the operation
+}
+
+\ocaml{%
+of_string : string -> char seq
+}
+
+\tp{
+来将字符串\ruby{转换}{transform}为（或\ruby{渲染}{render}为）字符序列。同样假设它已给定。再次重申，现在重要的是代表数据流的类型。
+}{
+to transform (or, render) a string as a sequence of characters. Assume it is given. Again, what is important for now is the type, which represents the data flow.
+}
+
+\tp{
+接着我们必须处理如何将相邻字符分组在一起，这本质上是\ruby{有状态的}{stateful}：字符属于哪个组取决于上下文，即取决于之前或之后的字符。我们采取后者，假设操作
+}{
+Next we have to deal with grouping of neighboring characters, which is inherently stateful: which group the character belongs to depends on the context, that is, on the character that came before, or follows next. Let's go with the latter and assume the operation
+}
+
+\ocaml{%
+look_ahead : 'a seq -> ('a * 'a option) seq
+}
+
+\tp{
+将序列的当前元素与下一个元素配对。下一个元素可能不存在（如果序列结束），所以使用 \code{'a option}，允许缺失值。
+}{
+that pairs the current element of sequence with the element that comes next. The next element may be absent (if the sequence is about to end), hence the 'a option type, allowing for the missing value.
+}
+
+\tp{
+然后，通过查看下一个元素，分组本身会插入分组中断：
+}{
+The grouping itself is then inserting group breaks, determined by peeking at the next element:
+}
+
+\ocaml{%
+type 'a annot = Plain of 'a | Break of 'a
+let group : ('a * 'a option) seq -> 'a annot seq = 
+  map @@ function
+        | (x,Some next) when x = next -> Plain x
+        | (x,_)                       -> Break x
+}
+
+\tp{
+也就是说，我们将\ruby{前瞻序列}{looked-ahead sequence}转换为用\ruby{组边界}{group boundaries}注释的元素序列：\code{Plain x} 表示当前组继续，\code{Break x} 表示 \code{x} 是其组中的最后一个元素。如果有下一个元素，开始一个不同的组。（\code{'a annot}类型可以以不同的方式实现，比如一个对 \code{'a * bool}。）我们还假设\ruby{映射}{mapping}操作存在
+}{
+That is, we transform a looked-ahead sequence into a sequence of elements annotated with group boundaries: Plain x means the current group continues, Break x means x is the last element in its group. The next element (if any) begins a different group. (The 'a annot type could have been realized differently, as a pair 'a * bool.) We have also assumed the existence of the mapping operation
+}
+
+\ocaml{%
+map : ('a -> 'b) -> 'a seq -> 'b seq
+}
+
+\tp{
+最后，我们必须计数，这再次需要状态（当前组中元素的数量）并在组边界\ruby{发出}{emit}元组：
+}{
+Finally, we have to count, which again requires state (the count of elements in the current group) and emit the tuples at the group boundary:
+}
+
+\ocaml{%
+let count : 'a annot seq -> ('a * int) seq =
+  map_accum_filter 0 @@ fun cnt -> function
+    | Plain x -> (None, cnt+1)
+    | Break x -> (Some (x,cnt+1), 0)
+}
+
+\tp{
+分组中断标记强制输出（描述刚刚结束的组）并重置计数器。我们假设存在 accumulating map-filter，流处理中相当流行的操作：
+}{
+The group break forces the output (describing the group that has just ended) and resets the counter. We assumed the existence of accumulating map-filter, a rather popular operation in stream processing:
+}
+
+\ocaml{%
+map_accum_filter : 'state -> ('state -> 'a -> 'b option * 'state) -> 'a seq -> 'b seq
+}
+
+\tp{
+映射 \code{('state -> 'a -> 'b option * 'state)} 接受当前状态和当前元素，并返回可能转换的元素和新状态的元组。如果可能转换的元素为 None，则输出流中不会发出任何内容；但状态会继续前进。从类型来看，\code{map_accum_filter} 看起来是\dquote{\ruby{纯}{pure}}的，是函数式的状态传递。记住这个想法。
+}{
+The mapping ('state ->'a -> 'b option * 'state) takes the current state and the current element and returns a tuple of a possibly transformed element and the new state. If the possibly transformed element is None, nothing is emitted in the output stream; the state advances nevertheless. From the type of it, map_accum_filter looks `pure', with functional-state passing. Hold that thought.
+}
+
+\tp{
+就是这样。问题的解法，即游程编码的字符序列，就是我们到现在开发的操作的组合：
+}{
+That is it. The solution to the problem, the run-length-encoded sequence of characters, is then the composition of what we have developed so far:
+}
+
+\ocaml{%
+let rll = of_string >> look_ahead >> group >> count
+}
+
+\tp{
+它以简洁且明显正确的方式表达了问题。我们只需要在链中添加一个观察操作，将结果 \code{(char * int) seq} 转换为列表，或者直接将其打印出来。
+}{
+which expresses the problem in the concise and obviously correct way. We only need to add to our chain an observation operation, to transform the resulting (char * int) seq to a list, or to print it out.
+}
+
+\tp{
+我们解法的一个优点是易于修改。例如，如果源字符串是 UTF-8 编码的，我们只需要在管道中添加一个操作：UTF-8 解码和\ruby{字素聚类}{grapheme clustering}：
+}{
+One advantage of our solution is the ease of modification. For example, if the source string is UTF-8 encoded, we only need to add to the pipeline one more operation: UTF-8 decoding and grapheme clustering:
+}
+
+\ocaml{%
+utf_decode : char seq -> uchar seq
+}
+
+\tp{
+留给读者作为练习。
+}{
+We leave this as an exercise to the reader.
+}
+
+\tp{
+要真正运行 \code{rll} 程序，我们必须履行承诺：为 \code{'a seq} 选择一个具体表示并实现我们为其假设的操作。用 OCaml 术语来说，我们必须实现以下签名：
+}{
+To actually run the rll program, we have to fulfill our promises: to pick a concrete representation for 'a seq and implement the operations that we assumed for it. In OCaml terms, we have to implement the following signature:
+}
+
+\ocaml{%
+module type simple_seq = sig
+  type 'a seq
+  val of_string : string -> char seq
+  val map : ('a -> 'b) -> 'a seq -> 'b seq
+  val look_ahead : 'a seq -> ('a * 'a option) seq
+  val map_accum_filter : 'state -> ('state ->'a -> 'b option * 'state) -> 'a seq -> 'b seq
+  val iter : ('a -> unit) -> 'a seq -> unit
+  val to_list : 'a seq -> 'a list
+end
+}
+
+\tp{
+事实证明，OCaml 标准库几乎拥有我们需要的一切：\code{Seq.t} 数据类型以及映射、字符串/列表转换等操作。缺少的是 \code{map_accum_filter} 和 \code{look_ahead}。不过，标准库提供了序列上的 \code{filter_map}。我们要做的只是添加状态，实现为可变状态：
+}{
+It turns out that the OCaml standard library has almost everything we need: the Seq.t data type and the mapping, string/list conversion, etc. operations on it. What is missing is map_accum_filter and look_ahead. However, the standard library provides filter_map on sequences. We merely need to add state, realized as mutable state:
+}
+
+\ocaml{%
+let map_accum_filter : 'state -> ('state -> 'a -> 'b option * 'state) -> 'a seq -> 'b seq =
+  fun init f seq ->
+    let stat = ref init in
+    seq |> Seq.filter_map (fun a -> let (bo,st) = f !stat a in stat := st; bo)
+}
+
+\tp{
+总体而言，\code{map_accum_filter} 确实有一个具有显式\ruby{状态传递}{state-passing}的\dquote{函数式}接口；但实现是命令式的。明确的规范和快速的实现之间没有内在冲突。剩下的 \code{look_ahead} 很容易通过 \code{map_accum_filter} 来表达（我们将实现留给读者\em2dash或者参见随附的代码）。
+}{
+The overall map_accum_filter does have a `functional' interface with the explicit state-passing; the implementation is imperative however. There is no inherent conflict between a clear specification and a fast implementation. The remaining look_ahead turns out easily expressed via map_accum_filter (we leave the implementation to the reader -- or see the accompanying code).
+}
+
+\tp{
+回顾我们的解法，我们注意到所有状态最终都被封装了。\ruby{前瞻}{look-ahead}的状态被封装在 \code{look_ahead} 中。分组本身变成了无状态的。计数需要多一个状态。每个操作都保留其所需的状态，而无需了解或干涉其他操作的状态。
+}{
+Looking back at our solution, we notice that all state ends up encapsulated. The state for look-ahead is encapsulated in look_ahead. The grouping per se turned out stateless. Counting requires one more piece of state. Each operation keeps the state it needs, without knowing or interfering with the state of others.
+}
+
+\tp{
+我们还注意到这里没有循环或递归函数。我们也不必处理终止条件。这是所有 Group I 解决方案的特点，在 APL 中明确阐述：指定如何更改集合的内容或其形状，但不要浪费时间思考如何获取元素或将它们放在哪里。
+}{
+We also notice that there are no loops or recursive functions. Neither did we have to deal with termination conditions. That is the feature of all Group I solutions, clearly articulated back in APL: specify how to change the content of a collection or its shape, but don't waste time thinking how to get the elements or where to put them.
+}
+
+\tp{
+我们的 \code{'a seq} 也可以实现为\ruby{迭代器}{iterator}/\ruby{生成器}{generator}，通过 \code{for} 循环进行组合，拥有良好的性能。即使是 OCaml 的 \code{Seq.t} 也设计为了一定的\ruby{融合}{fusion}（尽管不完整：仍有中间数据结构，但大小恒定）。但如果你使用如 [strymonas](https://github.com/strymonas/strymonas-ocaml) 这样的库就可以实现完美的融合，还能生成C代码。
+}{
+Our 'a seq can also be realized as iterator/generator, to be composed via for-loops -- with good performance. Even OCaml Seq.t fuses by design (albeit incompletely: there are still intermediate data structures, but of constant size). Perfect fusion is achievable, if one uses, say, strymonas, which also permits the generation of C code. Here it is.
+}
+
+\ocaml{\startverb
+void rll(const int64_t * aa_1,const int64_t al_2)
+{
+   int64_t v_3 = 0;
+   int64_t v_4 = 0;
+   bool v_5 = 0;
+   int64_t v_6 = 0;
+   while (v_6 <= al_2)
+   {
+      int64_t t_7;
+      t_7 = v_6;
+      v_6++;
+      if (t_7 < al_2)
+      {
+         int64_t t_9;
+         t_9 = aa_1[t_7];
+         if (v_5)
+         {
+            int64_t t_10;
+            t_10 = v_4;
+            v_4 = t_9;
+            if (!(t_10 == t_9))
+            {
+               int64_t t_11;
+               t_11 = v_3;
+               v_3 = 0;
+               printf("%ld\n",(long)t_10);
+               printf("%ld\n",(long)(t_11 + 1));
+            }
+            else {
+                    v_3++;
+            }
+         }
+         else {
+                 v_4 = t_9;
+                 v_5 = 1;
+         }
+      }
+      else {
+              if (v_5)
+              {
+                 int64_t t_8;
+                 t_8 = v_3;
+                 v_3 = 0;
+                 printf("%ld\n",(long)v_4);
+                 printf("%ld\n",(long)(t_8 + 1));
+              }
+      }
+   }}
+\stopverb}
+
+\tp{
+还有一件事：第一次尝试就成功了。
+}{
+One more thing: it all worked on the first try.
+}
+
+\references{
+\tp{
+[apples.ml](https://okmij.org/ftp/Algorithms/apples.ml) [4K]\br
+完整的源码
+}{
+apples.ml [4K]
+The complete source code
+}
+
+\tp{
+[apples.c](https://okmij.org/ftp/Algorithms/apples.c) [2K]\br
+strymonas 解法：生成出的 C 代码。有关生成器，请参阅 strymonas 发行中的 \code{examples/run-length-encoding} 目录。
+}{
+apples.c [2K]
+The strymonas solution: generated C code. For the generator, see the directory examples/run-length-encoding in the strymonas distribution.
+}
+
+\tp{
+[Incremental, Linear Pretty-printing](https://okmij.org/ftp/continuations/PPYield/index.html#pp)
+\ruby{分步式}{stepwise}的\ruby{管道}{pipeline}开发可以走得很远。上述参考资料开发了一种相当\ruby{不平凡}{non-trivial}的算法，具有最理想的、难以实现的性能。
+}{
+Incremental, Linear Pretty-printing
+The stepwise pipeline development can be taken quite far. The above reference develops a rather non-trivial algorithm with the optimal, difficult to achieve performance.
+}
+}

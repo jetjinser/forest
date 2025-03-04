@@ -161,8 +161,12 @@
 \def\ldq{“} % U+201C
 \def\rdq{”} % U+201D
 \def\ellipsis{…}
+\def\lab{《} % U+300A LEFT DOUBLE ANGLE BRACKET
+\def\rab{》} % U+300B RIGHT DOUBLE ANGLE BRACKET
+\def\mdot{·} % U+00B7 MIDDLE DOT
 
 \def\dquote[body]{\ldq\body\rdq}
+\def\book[body]{\lab\body\rab}
 
 % ===
 

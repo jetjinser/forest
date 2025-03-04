@@ -1,0 +1,260 @@
+\title{解法样本 \sub{Sample solutions}}
+\parent{jsr-000U}
+
+\import{base-macros}
+\import{translate}
+\import{jsr-000U}
+
+\tp{
+提交到 Lobsters 供讨论的博客文章描述了在 Clojure 中的一个解决方案。但不知为何，这促使会员们用自己选择的编程语言来解决这个问题并发布结果。于是这就形成了一场即兴竞赛。
+}{
+The blog post submitted to Lobsters for discussion described one solution, in Clojure. Somehow it prompted the members to solve the problem in their language of choice, and post the results. Hence there developed an impromptu contest.
+}
+
+\tp{
+以下是已发布的解法样本。这些解决方案由不同的人用不同的编程语言编写\em2dash然而不知为何，它们分成了两组，我暂时称之为 Group I 和 Group II。我稍后会告诉你这些组的意义\em2dash请让我卖个关子。
+}{
+Below is a sample of posted solutions. They are written in various languages by various people -- yet somehow fall into two groups, which I call for now Group I and Group II. I'll tell what they mean only later -- I hope you'd allow me a bit of suspense.
+}
+
+\subtree{
+\title{Clojure (Group I)}
+
+\p{
+\clojure{%
+(->> "aaaabbbcca"
+     (partition-by identity)
+     (map (juxt (comp str first) count)))
+}
+}
+
+\tpp{
+提交者还提供了另一个解法：\dquote{有点繁琐，但更清晰}：
+}{\verb!!|
+The submitter also gave another solution, ``a bit chattier but also more legible:''
+!!}{
+\clojure{%
+(for [p (partition-by identity "aaaabbbcca" )]
+  [(-> p first str) (count p)])
+}
+}
+
+\tp{
+值得注意的是， \code{comp} 是\ruby{函数组合}{functional composition}，而 \code{juxt} 粗略的类型是 \code{(a -> b * a -> c) -> a -> (b * c)}，这是一个组合子，它接收一个函数二元组和一个值，对该值应用两个函数并返回由两个函数返回值组成的元组。
+}{
+It is worth noting that comp is the functional composition, and juxt, with the rough type (a->b * a->c) -> a -> (b * c), is the combinator that takes a tuple of functions and a value, applies each function to it and returns the results as a tuple.
+}
+} % subtree
+
+\subtree{
+\title{Ruby (Group I)}
+\tp{
+Ruby 有三种解法\em2dash都是单行的，而且很相似。第一个可能是最容易理解的。
+}{
+There were three solutions in Ruby -- all one-liners, and rather similar. The first is probably the easiest to understand.
+}
+
+\rubyy{"aaaabbbcca".split("").chunk_while {|a,b| a==b}.map {|a| [a.first, a.size]}}
+\rubyy{"aaaabbbcca".chars.slice_when {|c,n| c != n }.map {|s| [s[0], s.size]}}
+\rubyy{'aaaabbbcca'.chars.chunk(&:itself).map{|x,y| [x, y.size]}}
+} % subtree
+
+\subtree{
+\title{APL (Group I)}
+
+\tp{
+两个 APL 解法：
+}{
+Two APL solutions:
+}
+
+\apl{\verb!!|(((1∘+ +\) ⊢ ≠ ¯1∘⌽) (((⊃,≢) ⊢) ⌸) ⊢) 'aaaabbbcca'!!}
+
+\apl{\verb!!|
+f←(⊃,≢)¨⊢⊆⍨1+(+\0,2≠/⊢)
+⊢x←f'aaaabbbcca'
+!!}
+} % subtree
+
+\subtree{
+\title{GO (Group II)}
+
+\tp{
+\blockquote{我知道这是一个 Clojure 的帖子，但是出于好奇，我用 Go 编写了它（我最近一直在使用 Go）。只是为了看看是否可以快速解决。我花了大约 10 分钟，减去 3-4 分钟与 runes 战斗的时间。 这不是特别优雅，但能工作。}
+}{
+``I know this is a Clojure post, but out of curiosity I wrote it in Go (what I've been working in lately) just to see if I could solve it quickly. Took about 10 minutes, subtract 3-4 for fighting with runes. It's not particularly elegant, but it works.''
+}
+
+\go{\startverb
+type result struct {
+        letter string
+        count  int
+        }
+
+func main() {
+   const input = "aaaabbbcca"
+   var ret []result
+
+   currentLetter := string(input[0])
+   countCurrentLetter := 1
+
+   for _, elem := range input[1:] {
+           elemAsString := string(elem)
+           if currentLetter == elemAsString {
+                   countCurrentLetter++
+           } else {
+                   ret = append(ret, result{currentLetter, countCurrentLetter})
+                   currentLetter = elemAsString
+                   countCurrentLetter = 1
+           }
+   }
+   ret = append(ret, result{currentLetter, countCurrentLetter})
+   fmt.Printf("%+v", ret)
+}
+\stopverb}
+
+\tp{
+该解法与类似解法的显著特征是明确的迭代：\code{for} 循环。
+}{
+The salient feature of this and similar solutions is explicit iteration: the for loop.
+}
+} % subtree
+
+\subtree{
+\title{Racket (Group II)}
+
+\racket{%
+(for/fold ([p #f]
+           [cnt 0]
+           [counts null]
+           #:result (cdr (reverse (cons `(,p ,cnt) counts))))
+          ([c (in-string "aaaabbbcca")])
+  (if (equal? p c)
+      (values c (add1 cnt) counts)
+      (values c 1 (cons `(,p ,cnt) counts))))
+}
+
+\tp{
+该解法是纯函数式的\em2dash但与上面 GO 的解决方案非常相似。
+}{
+The solution is pure functional -- yet closely resembling the Go solution above.
+}
+} % subtree
+
+
+\subtree{
+\title{Raku (Group I)}
+
+\raku{"aaaabbbcca".subst( /(.) $0*/ , {"({$0},{$/.chars})" }, :g )}
+
+\tp{
+Raku 是前身为 Perl 6 的艺术品。Perl 一直以其（非常）正则表达式而闻名，威力可见一斑。
+}{
+Raku is the artist formerly known as Perl 6. Perl has always been known for its (ir)regular expressions, whose power is on display.
+}
+} % subtree
+
+\subtree{
+\title{Erlang (Group II)}
+
+\erlang{%
+L = "aaaabbbcca",
+lists:reverse(lists:foldl(
+    fun
+        (Elt, [ {[Elt], N} | R ]) -> [ {[Elt], N + 1} | R];
+        (Elt, Acc) -> [{[Elt], 1} | Acc]
+    end,
+    [],
+    L
+)).
+}
+
+\tp{
+与 Racket 解法相似。我们看到了 Erlang \ruby{非线性模式匹配}{non-linear pattern matching}的特征：在第一个模式中变量 \code{Elt} 出现了两次。
+}{
+It is rather similar to the Racket solution. We see the characteristic for Erlang non-linear pattern matching: the variable Elt appears twice in the first pattern.
+}
+} % subtree
+
+\subtree{
+\title{Python (Group I)}
+\python{[(k, len(list(g))) for k, g in itertools.groupby("aaaabbbcca")]}
+} % subtree
+
+\subtree{
+\title{Rust (Group II)}
+\rust{%
+fn run_length_encode(ins: &str) -> Vec<(char, usize)> {
+    let mut out = vec![];
+    let mut i = ins.chars();
+    if let Some(mut c) = i.next() {
+        let mut count = 1;
+        for new_c in i {
+            if new_c == c {
+                count += 1;
+            } else {
+                out.push((c, count));
+                count = 1;
+                c = new_c;
+            }
+        }
+        out.push((c, count));
+    }
+    out}
+}
+\tp{
+就像 GO 的解法一样\em2dash但是更干净，并且更好地处理边缘情况。作者确实掌握了问题的本质：\ruby{游程编码}{\strong{R}un-\strong{L}ength \strong{E}ncoding}。
+}{
+It is quite like the solution in Go -- but cleaner and with a better handling of edge cases. The author did grasp the nature of the problem: run-length encoding.
+}
+} % subtree
+
+
+\subtree{
+\title{Julia (Group II)}
+\julia{%
+function rle(itr)
+   acc = Tuple{eltype(itr), Int}[]
+   x = iterate(itr)
+   isnothing(x) && return acc # iterable is empty
+   last, state = x
+   n = 1
+   for v in Iterators.rest(itr, state)
+           if last == v
+                   n += 1
+           else
+                   push!(acc, (last, n))
+                   last = v
+                   n = 1
+           end
+   end
+   push!(acc, (last, n))
+   return acc
+end
+}
+\tp{
+镜像了上面的 Rust 解法。
+}{
+It mirrors the Rust solution above.
+}
+} % subtree
+
+\subtree{
+\title{Haskell (Group II)}
+\haskell{%
+main = interact soln
+
+soln = show . reverse . go []
+
+go counts [] = counts
+go counts (x:xs) = go (inc x counts) xs
+
+inc c ((x,ct):xs) | c == x = (x,ct+1):xs
+inc c xs = (c, 1):xs
+}
+\tp{
+尽管该解法依赖于显式递归而不是 \code{fold}，但它与 Erlang 解法类似。（后来有另一个人提到了另一种使用 \code{group} 的解法）。
+}{
+Although this solution relies on the explicit recursion rather than fold, it is rather similar to the Erlang solution. (A different person later mentioned another solution, using group).
+}
+} % subtree

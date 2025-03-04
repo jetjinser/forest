@@ -1,0 +1,57 @@
+\title{观察 \sub{Observations}}
+\parent{jsr-000U}
+
+\import{base-macros}
+\import{translate}
+\import{jsr-000U}
+
+\tp{
+在一场不受控制的竞赛中，仅凭几个针对单个问题的解法，我们无法得出任何统计结论。但仍有足够的数据供我们观察和思考。第一个观察结果是，人们成功地使用了多种语言来解决问题，提交者自述大约花了 5-10 分钟。提交的解法似乎也很地道，反映了\dquote{社区标准}，这些语言教学（或自学）用于工业家的使用方式。
+}{
+A few solutions to a single problem in an uncontrolled contest do not let us draw any statistical conclusions. Still there is enough data for observations and reflections. The first observation is that quite a variety of languages were used to solve the problem, successfully, and it took the submitters, by their self-reports, about 5-10 minutes. The submitted solutions also seem idiomatic, reflecting the `community standards', the way these languages are (self-) taught and used in the industry.
+}
+
+\tp{
+第二个令人惊讶的观察结果是，提交的解法分为两类：
+}{
+The second, surprising observation is that the submitted solutions fall into two classes:
+}
+
+\tp{
+\li{
+  \ul{逐字符扫描输入，构造结果: Group II}
+  \ul{将问题视为 groupBy，然后\ruby{映射}{mapping}：Group I}
+}
+}{
+scan the input string char by char, building the result: Group II
+see the problem as groupBy followed by mapping: Group I
+}
+
+\tp{
+这是编写各组解法的语言：
+}{
+Here are the languages used to write the solutions in each group:
+}
+
+\li{
+  \ul{Group I: Clojure, Ruby, Raku, Python, Haskell, APL}
+  \ul{Group II: Go, Racket, Erlang, Rust, Julia, Haskell}
+}
+
+\tp{
+无论选择哪种方式分类编程语言\em2dash函数式与命令式、旧式与新型、由\dquote{业余爱好者}创建与由\dquote{专业人士}创建\em2dash这两类语言中都有表现。
+}{
+Whichever the classification of programming languages one may choose -- functional vs. imperative, old vs. new, created by `amateurs' vs. `professionals' -- there is a representative in both groups.
+}
+
+\tp{
+看看 Racket 和 Rust（或 Go、Julia）的解法，可以得出另一个关于\ruby{状态}{state}的结论。尽管 Racket 解法是\dquote{纯函数式}的，但它与 Rust 和 Go 解法一样拥有状态。状态数量相同。Racket 解法中的状态使用 \code{values} 子句一次性更新；更新按位置而不是按名称与其目标匹配，这很容易出错。（顺便说一句，Rust 和 Julia 对边缘情况的处理比 Racket 或 Go 解法更清晰，显然更正确。）
+}{
+Looking at the Racket and Rust (or Go, Julia) solutions leads to another conclusion, about state. Although the Racket solution is `pure functional', it is just as stateful as Rust and Go solutions. There is the same amount of state. The state is updated in the Racket solution at once, with the values clause; the update is matched to its target by position rather by name, which is quite error prone. (As a side observation, the handling of edge cases is clearer and obviously correct in Rust and Julia than in the Racket or Go solutions.)
+}
+
+\tp{
+因此，\dquote{纯函数式}并不会消除状态；它只是改变了处理状态的方式\em2dash这可能或多或少更清晰和方便。毫无疑问，改进状态处理的方法是将其划分并封装到\dquote{\ruby{更高级}{higher-level}}、\ruby{可组合}{composable}的操作中，如\dquote{groupBy}：参见 Clojure、Ruby、Python 解法。groupBy 本身可以实现可变或不可变状态\em2dash无论怎样，状态都被抽象出来，groupBy 的用户不必关心它。
+}{
+Thus being `pure functional' does not eradicate state; it merely changes the way state is handled -- which could be either more or less clearer and convenient. What unequivocally improves the handling of the state is partitioning and encapsulating it into `higher-level', composable operations like `groupBy': see Clojure, Ruby, Python solutions. The groupBy may itself be implemented with mutable state or without -- no matter, the state is abstracted away and the user of groupBy does not have to care about it.
+}

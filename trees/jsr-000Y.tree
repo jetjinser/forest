@@ -1,0 +1,51 @@
+\title{苹果类比 \sub{The apples analogy}}
+\parent{jsr-000U}
+
+\import{base-macros}
+\import{translate}
+\import{jsr-000U}
+
+\tp{
+我已经提到了几次苹果。以下引用能说明一切。
+}{
+I have mentioned apples several times already. The following quote explains what is it all about.
+}
+
+\tp{
+\blockquote{
+假设我们有一箱苹果，想从中挑选出所有好苹果。我们不想自己做这个任务，所以我们写了一张清单，要求助手来完成。
+}
+}{
+``Suppose we have a box of apples from which we wish to select all of the good apples. Not wishing to do the task ourselves, we write a list of instructions to be carried out by a helper.
+}
+
+\tp{
+\blockquote{
+常规语言的指令可能表达如下内容：从箱子里选一个苹果。如果是好的，就把它放在为好苹果保留的地方；如果不好，就把它扔掉。再选一个苹果；如果是好的，就把它放在保留的地方；如果不好，就把它扔掉\ellipsis继续以这种方式依次检查每个苹果，直到选出所有好苹果。总之，从我们拿起的第一个苹果开始，一次检查一个苹果，直到检查到箱子里的最后一个苹果，直到我们选出并把所有好苹果都放在一边。
+}
+}{
+The instructions corresponding to a conventional language might be expressed something like the following: Select an apple from the box. If it is good, set it aside in some place reserved for the good apples; if it is not good, discard it. Select a second apple; if it is good put it in the reserved place, and if it is not good discard it.... Continue in this manner examining each apple in turn until all of the good apples have been selected. In summary, then, examine the apples one at a time starting with the first one we pick up and finishing with the last one in the box until we have selected and set aside all of the good apples.
+}
+
+
+\tp{
+\blockquote{
+另一方面，与数组语言相对应的指令可以简单地说明\dquote{从框中选择所有好苹果}。
+}
+}{
+On the other hand the instructions corresponding to an array language could be stated simply as ``Select all of the good apples from the box.'' Of course, the apples would still have to be examined individually, but the apple-by-apple details could be left to the helper.
+}
+
+\tp{
+\blockquote{
+可以考虑常规的编程语言是以机器语言为原始形式的\dquote{\ruby{一次一苹果}{one-apple-at-a-time}}语言，而数组语言可以视为\dquote{\ruby{一次所有苹果}{all-the-apples-at-once}}语言。
+}
+}{
+Conventional programming languages may be considered then ``one-apple-at-a-time'' languages with machine languages being a very primitive form, whereas array languages may be considered ``all-the-apples-at-once'' languages.''
+}
+
+\tp{
+\ruby{基思\mdot斯迈利}{Keith Smillie}：\book{My Life with Array Languages}。2005年10月，这个比喻因 \ruby{弗雷德·布鲁克斯}{Frederick P. Brooks} \book{人月神话}而出名。
+}{
+Keith Smillie: ``My Life with Array Languages''. October 2005. This analogy is credited to Frederick P. Brooks: that Fred Brooks, of the Mythical Man-Month fame.
+}
