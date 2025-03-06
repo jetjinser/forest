@@ -34,7 +34,7 @@ let rll (group : char list -> char list list) : char list -> (char * int) list =
 }
 
 \tp{
-类型注释是可选的，但我倾向于写下它们（一个使用 Ocaml 的理由就是类型：不花哨，但没有过多细节，足够可视地展示数据的转移）。由于组是假设的，它作为\ruby{参数}{parameter/argument}出现。这里的 \code{(>>)} 是从左到右的函数组合（就像 F#）。将输入视为\ruby{序列}{sequence}（例如列表）很方便。但字符串在 OCaml 中不是列表\em2dash不过可以借助几个标准库函数轻松地将其转换为列表：
+类型注释是可选的，但我倾向于写下它们（一个使用 Ocaml 的理由就是类型：不花哨，但没有过多细节，足够可视地展示数据的转移）。由于组是假设的，它作为参数（parameter/argument）出现。这里的 \code{(>>)} 是从左到右的函数组合（就像 F#）。将输入视为\ruby{序列}{sequence}（例如列表）很方便。但字符串在 OCaml 中不是列表\em2dash不过可以借助几个标准库函数轻松地将其转换为列表：
 }{
 Type annotations are optional, but I prefer to write them. (One reason to use OCaml is types: not fancy, but sufficient to visualize data transformations, without too many details.) Since group is the assumption, it appears as the parameter (argument). Here, (>>) is the left-to-right functional composition (as in F#). It is convenient to think of input as a sequence, such as list. But a string is not a list in OCaml -- but can be easily turned into one, with the help of a couple standard library functions:
 }
