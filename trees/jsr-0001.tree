@@ -2,6 +2,8 @@
 \author{jinser}
 \meta{author}{false}
 
+\put\transclude/toc{false}
+
 \blockquote{土地测量员}
 
 \p{I am a \em{Junior Computer Science major} and a \em{fancier of programming languages}. There is my WIP [[CV]].}
@@ -12,6 +14,7 @@
 
 \scope{
   \put\transclude/title{recently added}
+  \put\transclude/expanded{false}
   \transclude{jsr-0013}
 }
 

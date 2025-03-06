@@ -163,6 +163,10 @@ code {
   font-size: 0.9em;
 }
 
+p code {
+  white-space: nowrap;
+}
+
 pre code {
   background: transparent;
 }
