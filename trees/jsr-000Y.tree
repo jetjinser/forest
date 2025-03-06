@@ -30,7 +30,7 @@ The instructions corresponding to a conventional language might be expressed som
 
 \tp{
 \blockquote{
-另一方面，与数组语言相对应的指令可以简单地说明\dquote{从框中选择所有好苹果}。
+另一方面，与数组语言相对应的指令可以简单地说明\dquote{从箱子里选择所有好苹果}。
 }
 }{
 On the other hand the instructions corresponding to an array language could be stated simply as ``Select all of the good apples from the box.'' Of course, the apples would still have to be examined individually, but the apple-by-apple details could be left to the helper.
@@ -45,7 +45,11 @@ Conventional programming languages may be considered then ``one-apple-at-a-time'
 }
 
 \tp{
-\ruby{基思\mdot斯迈利}{Keith Smillie}：\book{My Life with Array Languages}。2005年10月，这个比喻因 \ruby{弗雷德·布鲁克斯}{Frederick P. Brooks} \book{人月神话}而出名。
+2005年10月，\ruby{基思\mdot斯迈利}{Keith Smillie}：\book{My Life with Array Languages}。这个比喻要感谢那个以写出\book{人月神话} 而闻名的 \ruby{弗雷德}{Frederick}\mdot\id{P}\mdot\ruby{布鲁克斯}{Brooks}。
 }{
 Keith Smillie: ``My Life with Array Languages''. October 2005. This analogy is credited to Frederick P. Brooks: that Fred Brooks, of the Mythical Man-Month fame.
+}
+
+\p{
+（译者按：[\book{My Life with Array Languages}](https://web.archive.org/web/20190227235203/http://webdocs.cs.ualberta.ca/~smillie/Jpage/MyLife.pdf) 原文 \blockquote{The apple analogy originated with Frederick P. Brooks who worked closely with Ken Iverson in the early days of the development of APL.} 原翻译有错，感谢 [[cireu]] 指出。）
 }

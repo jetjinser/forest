@@ -1,32 +1,71 @@
 {
-  perSystem = { pkgs, inputs', lib, system, ... }:
+  perSystem =
+    { pkgs
+    , inputs'
+    , lib
+    , system
+    , ...
+    }:
     let
       forester = inputs'.forester.packages.default;
       foresterExe = lib.getExe' forester "forester";
+      guile-ts = pkgs.callPackage ./guile-ts.nix { };
+      rust-toolchain = pkgs.rust-bin.stable.latest.default.override {
+        extensions = [
+          "rust-src"
+          "rust-analyzer"
+        ];
+      };
+      x-rs = pkgs.callPackage ./x-rs.nix { };
     in
     {
-      packages.default = forester;
+      packages = {
+        default = x-rs;
+        x-rs = x-rs;
+      };
 
       devshells.default = {
+        env = [
+          {
+            name = "GUILE_LOAD_PATH";
+            prefix = "$DEVSHELL_DIR/${pkgs.guile.siteDir}";
+          }
+        ];
+
         packages =
           let
-            tex = (pkgs.texlive.combine {
-              inherit (pkgs.texlive) scheme-small latexindent dvisvgm
-                pgf tikz-cd spath3
-                mathtools amsfonts stmaryrd
-                standalone
-                tabularray simplebnf
-                ;
-            });
+            tex = (
+              pkgs.texlive.combine {
+                inherit (pkgs.texlive)
+                  scheme-small
+                  latexindent
+                  dvisvgm
+                  pgf
+                  tikz-cd
+                  spath3
+                  mathtools
+                  amsfonts
+                  stmaryrd
+                  standalone
+                  tabularray
+                  simplebnf
+                  ;
+              }
+            );
           in
           [
             forester
             tex
-
-            # pkgs.nodePackages.pnpm
-            pkgs.libxslt
-            pkgs.vscode-langservers-extracted
-          ];
+            guile-ts
+            rust-toolchain
+          ]
+          ++ (with pkgs; [
+            guile
+            libxslt
+            vscode-langservers-extracted
+            tree-sitter
+            gcc
+          ]);
 
         commands = [
           {
@@ -47,8 +86,7 @@
             category = "deploy";
             name = "upload";
             command = ''
-              ./x.sh
-              rsync -rv output/ pgs.sh:forest
+              rsync --delete -rvh output/ pgs.sh:forest
             '';
           }
         ];
@@ -61,22 +99,21 @@
                 let
                   port = 8000;
                   devd = lib.getExe' pkgs.devd "devd";
-                  whenNotFound = pkgs.writeText "whenNotFound.html"
-                    ''
-                      <!DOCTYPE html>
-                      <html lang="en">
-                      <head>
-                          <meta charset="UTF-8">
-                          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                          <title>Not Found</title>
-                      </head>
-                      <body>
-                          <h1>Welcome to the Forest! 🌟</h1>
-                          <p>This is a simple static page that hasn't been built yet. ✨</p>
-                          <p>Build it to view. 🎨</p>
-                      </body>
-                      </html>
-                    '';
+                  whenNotFound = pkgs.writeText "whenNotFound.html" ''
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Not Found</title>
+                    </head>
+                    <body>
+                        <h1>Welcome to the Forest! 🌟</h1>
+                        <p>This is a simple static page that hasn't been built yet. ✨</p>
+                        <p>Build it to view. 🎨</p>
+                    </body>
+                    </html>
+                  '';
                 in
                 ''
                   ${devd} -a -q -l -f ${whenNotFound} -p ${toString port} output/

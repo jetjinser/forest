@@ -11,7 +11,7 @@
 \xmlns:html{http://www.w3.org/1999/xhtml}
 
 \def\hcode[lang][body]{
-  \<html:pre>[class]{highlight}[lang]{\lang}{\body}
+  \<html:pre>{\<html:code>[class]{highlight}[lang]{\lang}{\body}}
 }
 
 \let\with-icon[body]{

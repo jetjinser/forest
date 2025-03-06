@@ -27,3 +27,6 @@ server
 .pre-commit-config.yaml
 
 _tmp/
+
+target/
+result*

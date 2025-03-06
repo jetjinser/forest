@@ -1,0 +1,54 @@
+{
+  "parser-directories": [
+    "/home/jinser/vie/writing/forest/parsers"
+  ],
+  "theme": {
+    "string": 28,
+    "punctuation.delimiter": 239,
+    "function.builtin": {
+      "color": 26,
+      "bold": true
+    },
+    "number": {
+      "color": 94,
+      "bold": true
+    },
+    "operator": {
+      "bold": true,
+      "color": 239
+    },
+    "constructor": 136,
+    "keyword": 56,
+    "module": 136,
+    "property": 124,
+    "string.special": 30,
+    "punctuation.bracket": 239,
+    "variable.builtin": {
+      "bold": true
+    },
+    "attribute": {
+      "color": 124,
+      "italic": true
+    },
+    "variable.parameter": {
+      "underline": true
+    },
+    "comment": {
+      "italic": true,
+      "color": 245
+    },
+    "constant.builtin": {
+      "color": 94,
+      "bold": true
+    },
+    "constant": 94,
+    "tag": 18,
+    "embedded": null,
+    "type": 23,
+    "type.builtin": {
+      "bold": true,
+      "color": 23
+    },
+    "function": 26
+  }
+}

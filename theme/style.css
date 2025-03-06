@@ -163,6 +163,10 @@ code {
   font-size: 0.9em;
 }
 
+pre code {
+  background: transparent;
+}
+
 body {
   font-family: "Inria Sans";
   font-size: 14pt;

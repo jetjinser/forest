@@ -255,7 +255,7 @@ We also notice that there are no loops or recursive functions. Neither did we ha
 Our 'a seq can also be realized as iterator/generator, to be composed via for-loops -- with good performance. Even OCaml Seq.t fuses by design (albeit incompletely: there are still intermediate data structures, but of constant size). Perfect fusion is achievable, if one uses, say, strymonas, which also permits the generation of C code. Here it is.
 }
 
-\ocaml{\startverb
+\c{\startverb
 void rll(const int64_t * aa_1,const int64_t al_2)
 {
    int64_t v_3 = 0;

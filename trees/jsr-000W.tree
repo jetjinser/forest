@@ -40,7 +40,7 @@ The submitter also gave another solution, ``a bit chattier but also more legible
 }
 
 \tp{
-值得注意的是， \code{comp} 是\ruby{函数组合}{functional composition}，而 \code{juxt} 粗略的类型是 \code{(a -> b * a -> c) -> a -> (b * c)}，这是一个组合子，它接收一个函数二元组和一个值，对该值应用两个函数并返回由两个函数返回值组成的元组。
+值得注意的是， \code{comp} 是\ruby{函数组合}{functional composition}，而 \code{juxt} 粗略的类型是 \code{(a -> b * a -> c) -> a -> (b * c)}，这是一个组合子，它接收一个函数二元组和一个值，对该值应用两个函数，然后返回由这两个函数的返回值组成的元组。
 }{
 It is worth noting that comp is the functional composition, and juxt, with the rough type (a->b * a->c) -> a -> (b * c), is the combinator that takes a tuple of functions and a value, applies each function to it and returns the results as a tuple.
 }

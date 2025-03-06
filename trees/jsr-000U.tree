@@ -3,6 +3,7 @@
 \taxon{translation}
 \author{oleg}
 \contributor{jinser}
+\contributor{cireu}
 \meta{original}{https://okmij.org/ftp/Algorithms/grasping-all-apples-at-once.html}
 
 \import{base-macros}
@@ -21,6 +22,7 @@
 \def\julia[src]{\hcode{julia}{\src}}
 \def\haskell[src]{\hcode{haskell}{\src}}
 \def\ocaml[src]{\hcode{ocaml}{\src}}
+\def\c[src]{\hcode{c}{\src}}
 
 \def\references[body]{
   \subtree{
