@@ -170,6 +170,8 @@ p code {
 pre code {
   background: transparent;
   white-space: unset;
+  text-wrap-mode: nowrap;
+  overflow-x: auto;
 }
 
 body {
@@ -558,6 +560,8 @@ td.macro-doc {
 
 blockquote {
   border-inline-start: 1px solid var(--secondary);
+  font-style: italic;
+  margin: 1em;
 }
 
 a.slug:hover,
@@ -582,10 +586,6 @@ a {
 
 .nocite {
   display: none
-}
-
-blockquote {
-  font-style: italic;
 }
 
 
@@ -641,7 +641,7 @@ hr {
 
 ul,
 ol {
-  padding-bottom: .5em;
+  padding: 0 1.3em .3em 1.3em;
 }
 
 ol {
