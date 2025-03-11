@@ -1,10 +1,11 @@
 {
   perSystem =
-    { config
-    , self'
-    , inputs'
-    , pkgs
-    , ...
+    {
+      config,
+      self',
+      inputs',
+      pkgs,
+      ...
     }:
     {
       pre-commit.settings.hooks = {

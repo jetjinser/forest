@@ -1,5 +1,5 @@
-{ rustPlatform
-,
+{
+  rustPlatform,
 }:
 
 rustPlatform.buildRustPackage {
@@ -11,4 +11,3 @@ rustPlatform.buildRustPackage {
   useFetchCargoVendor = true;
   cargoHash = "sha256-FxKpppS+nhoKZGk+oM1rRbHqab4DVxDSxsP3VfNzmQc=";
 }
-

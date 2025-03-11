@@ -1,8 +1,9 @@
 {
   perSystem =
-    { pkgs
-    , inputs'
-    , ...
+    {
+      pkgs,
+      inputs',
+      ...
     }:
     let
       forester = inputs'.forester.packages.default;

@@ -1,8 +1,8 @@
-{ stdenv
-, fetchFromGitHub
-, nodejs
-, pnpm
-,
+{
+  stdenv,
+  fetchFromGitHub,
+  nodejs,
+  pnpm,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
