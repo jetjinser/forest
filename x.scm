@@ -26,7 +26,7 @@
 
 ;; TODO: rewrite it in apply-template
 (define (xslt-transform)
-  (let lp ([trees (all-trees "output")])
+  (let lp ([trees (all-trees +forest+)])
     (match trees
       [() (info "xslt transform done")]
       [(tree . trees)
@@ -178,4 +178,6 @@
   (let ([tree-count (list-transduce transducer rcount
                                     (all-trees +forest+))])
     (info "transduced ~a trees" tree-count))
-  (xslt-transform)) ; TODO: in pipe
+
+  (xslt-transform) ; TODO: in pipe
+  (remove-unused-files! +forest+))

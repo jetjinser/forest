@@ -7,7 +7,7 @@
 
 (define logging-level
   (string->symbol (or (getenv "LOGGING_LEVEL")
-                      "DEBUG")))
+                      "INFO")))
 
 (define level-prior
   (alist->hash-table
