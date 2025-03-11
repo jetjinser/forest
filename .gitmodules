@@ -39,7 +39,7 @@
 	url = https://github.com/alt-jinser/tree-sitter-julia
 [submodule "parsers/tree-sitter-nix"]
 	path = parsers/tree-sitter-nix
-	url = https://github.com/nix-community/tree-sitter-nix
+	url = https://github.com/alt-jinser/tree-sitter-nix
 [submodule "parsers/tree-sitter-kotlin"]
 	path = parsers/tree-sitter-kotlin
 	url = https://github.com/alt-jinser/tree-sitter-kotlin
