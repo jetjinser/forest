@@ -168,8 +168,8 @@
     (tmap (pipe-log "lifted"))
     (tmap (pipe-tree dotxml->html))
     (tmap (pipe-log "dotxml->html rewritten"))
-    ; (tmap (pipe-tree highlight))
-    ; (tmap (pipe-log "highlighted"))
+    (tmap (pipe-tree highlight))
+    (tmap (pipe-log "highlighted"))
     (tmap save-tree)))
 
 ;; main
