@@ -16,21 +16,8 @@
           "rust-analyzer"
         ];
       };
-      x-rs = pkgs.callPackage ./x-rs.nix { };
     in
     {
-      packages = {
-        default = x-rs;
-        x-rs = x-rs;
-        build = pkgs.writeShellApplication {
-          name = "build-forest";
-          runtimeInputs = [ forester ];
-          text = ''
-            build build ${../forest.toml}
-          '';
-        };
-      };
-
       devshells.default = {
         env = [
           {

@@ -74,7 +74,7 @@
      (sxml-match node
         [(html:code (@ (lang ,lang) (class ,cls)) ,code)
          (guard (string=? cls "highlight"))
-         (debug "highlighting lang `~a`" lang)
+         (trace "highlighting lang `~a`" lang)
          (let ([h (ts-highlight (string-trim-both code) lang)])
            (or (and h (html-span (xml->sxml (string-append "<html:code>" (string-trim-both h)
                                                            "</html:code>")
@@ -99,7 +99,6 @@
 (define (dotxml->html tree)
   (define rewriter
     (λ node
-       ; (debug "rewriting ~a" node)
        (sxml-match node
           [(href ,uri)
            (guard (string=? uri (basename uri))) ;; basename.ext

@@ -27,7 +27,7 @@ pub fn highlight_adapter(code: &str, scope: &str) -> String {
         .language_configuration_for_scope(scope)
         .unwrap()
         .and_then(|(language, config)| config.highlight_config(language, None).ok())
-        .unwrap()
+        .expect(format!("scope `{}` not found highlight", scope).as_str())
         .unwrap();
 
     let code = code.as_bytes();
@@ -38,7 +38,14 @@ pub fn highlight_adapter(code: &str, scope: &str) -> String {
 
     // Render and return the highlighted code as an HTML snippet
     let get_style_css = |h: Highlight, html: &mut Vec<u8>| {
-        let css = theme.styles[h.0].css.as_ref().unwrap().as_bytes();
+        let css = theme
+            .styles
+            .get(h.0)
+            .expect(format!("scope: {}", scope).as_str())
+            .css
+            .as_ref()
+            .unwrap()
+            .as_bytes();
         html.write_all(b"style=\"").unwrap();
         html.write_all(css).unwrap();
         html.write_all(b"\"").unwrap();

@@ -41,6 +41,7 @@
         inputs.devshell.flakeModule
         inputs.pre-commit-hooks.flakeModule
 
+        ./pkgs.nix
         ./devshell.nix
         ./hook.nix
       ];
