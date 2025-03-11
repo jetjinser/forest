@@ -1,6 +1,6 @@
 [submodule "parsers/tree-sitter-bash"]
 	path = parsers/tree-sitter-bash
-	url = https://github.com/tree-sitter/tree-sitter-bash
+	url = https://github.com/alt-jinser/tree-sitter-bash
 [submodule "parsers/tree-sitter-c"]
 	path = parsers/tree-sitter-c
 	url = https://github.com/tree-sitter/tree-sitter-c
