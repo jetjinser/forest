@@ -24,7 +24,7 @@
 	url = https://github.com/alt-jinser/tree-sitter-clojure
 [submodule "parsers/tree-sitter-erlang"]
 	path = parsers/tree-sitter-erlang
-	url = https://github.com/WhatsApp/tree-sitter-erlang
+	url = https://github.com/alt-jinser/tree-sitter-erlang
 [submodule "parsers/tree-sitter-scheme"]
 	path = parsers/tree-sitter-scheme
 	url = https://github.com/6cdh/tree-sitter-scheme
