@@ -50,7 +50,7 @@
           <header class="header">
             <nav class="nav">
               <div class="logo">
-                <a href="index.xml" title="Home">
+                <a href="index.html" title="Home">
                   <xsl:text>« Home</xsl:text>
                 </a>
               </div>

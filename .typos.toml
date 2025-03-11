@@ -1,5 +1,5 @@
 [files]
-extend-exclude = ["theme/forester.js"]
+extend-exclude = ["theme/forester.js", "parsers"]
 
 [default.extend-words]
 # morphisim abbr

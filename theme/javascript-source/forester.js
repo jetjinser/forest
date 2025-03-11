@@ -88,7 +88,7 @@ fetch("./forest.json")
     section: section,
     icon: icon,
     handler: () => {
-     window.location.href = item.route
+     window.location.href = item.route.replace('.xml', '.html');
     }
    })
   }
