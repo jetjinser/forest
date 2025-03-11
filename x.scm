@@ -34,7 +34,8 @@
          (debug "~a => ~a"
                 (basename tree)
                 (basename tree-html))
-         (system* "xsltproc" "-o" tree-html
+         (system* "xsltproc" "--encoding" "UTF8"
+                  "-o" tree-html
                   +stylesheet-path+ tree)
          (lp trees))])))
 
