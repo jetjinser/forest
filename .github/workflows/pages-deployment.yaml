@@ -13,7 +13,8 @@ jobs:
         uses: actions/checkout@v4
 
       - uses: DeterminateSystems/nix-installer-action@main
-      - uses: DeterminateSystems/magic-nix-cache-action@main
+      # EOL
+      # - uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Build forest
         run: nix run ./nix#build
