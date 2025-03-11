@@ -35,8 +35,10 @@
             texUsed
           ];
           text = ''
+            export LC_ALL=en_US.UTF-8
+            export LOGGING_LEVEL=DEBUG
             forester build ${../forest.toml}
-            LOGGING_LEVEL=DEBUG ./x.scm
+            ./x.scm
           '';
         };
       };
