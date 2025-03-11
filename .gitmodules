@@ -42,7 +42,7 @@
 	url = https://github.com/nix-community/tree-sitter-nix
 [submodule "parsers/tree-sitter-kotlin"]
 	path = parsers/tree-sitter-kotlin
-	url = https://github.com/fwcd/tree-sitter-kotlin
+	url = https://github.com/alt-jinser/tree-sitter-kotlin
 [submodule "parsers/tree-sitter-moonbit"]
 	path = parsers/tree-sitter-moonbit
 	url = https://github.com/moonbitlang/tree-sitter-moonbit
