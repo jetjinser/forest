@@ -11,6 +11,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # for vendored parsers
+          submodules: 'true'
 
       - uses: DeterminateSystems/nix-installer-action@main
       # EOL
