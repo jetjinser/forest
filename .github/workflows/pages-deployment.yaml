@@ -16,6 +16,13 @@ jobs:
       # EOL
       # - uses: DeterminateSystems/magic-nix-cache-action@main
 
+      # seperate build deps to get better log
+      - name: Build x-rs
+        run: nix build ./nix#x-rs
+
+      - name: Build LaTeX bundled
+        run: nix build ./nix#texUsed
+
       - name: Build forest
         run: nix run ./nix#build
 
