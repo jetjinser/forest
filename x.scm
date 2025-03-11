@@ -1,4 +1,4 @@
-#!/usr/bin/env -S nix shell nixpkgs#guile ./nix#x-rs --command guile -L ./modules -e '(@ (x) main)' -q -s
+#!/usr/bin/env -S nix shell nixpkgs#libxslt nixpkgs#guile ./nix#x-rs --command guile -L ./modules -e '(@ (x) main)' -q -s
 !#
 
 (define-module (x)
