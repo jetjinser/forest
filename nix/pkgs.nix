@@ -27,7 +27,7 @@
     in
     {
       packages = {
-        x-rs = x-rs;
+        inherit texUsed forester x-rs;
         build = pkgs.writeShellApplication {
           name = "build-forest";
           runtimeInputs = [
@@ -39,7 +39,6 @@
             LOGGING_LEVEL=DEBUG ./x.scm
           '';
         };
-        inherit texUsed;
       };
     };
 }

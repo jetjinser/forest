@@ -30,11 +30,13 @@
 
         packages =
           [
-            forester
-            self'.packages.texUsed
             guile-ts
             rust-toolchain
           ]
+          ++ (with self'.packages; [
+            forester
+            texUsed
+          ])
           ++ (with pkgs; [
             guile
             libxslt
