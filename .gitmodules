@@ -33,7 +33,7 @@
 	url = https://github.com/tree-sitter/tree-sitter-haskell
 [submodule "parsers/tree-sitter-racket"]
 	path = parsers/tree-sitter-racket
-	url = https://github.com/6cdh/tree-sitter-racket
+	url = https://github.com/alt-jinser/tree-sitter-racket
 [submodule "parsers/tree-sitter-julia"]
 	path = parsers/tree-sitter-julia
 	url = https://github.com/alt-jinser/tree-sitter-julia
