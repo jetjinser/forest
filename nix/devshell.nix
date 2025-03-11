@@ -5,6 +5,7 @@
       inputs',
       lib,
       system,
+      self',
       ...
     }:
     let
@@ -28,29 +29,9 @@
         ];
 
         packages =
-          let
-            tex = (
-              pkgs.texlive.combine {
-                inherit (pkgs.texlive)
-                  scheme-small
-                  latexindent
-                  dvisvgm
-                  pgf
-                  tikz-cd
-                  spath3
-                  mathtools
-                  amsfonts
-                  stmaryrd
-                  standalone
-                  tabularray
-                  simplebnf
-                  ;
-              }
-            );
-          in
           [
             forester
-            tex
+            self'.packages.texUsed
             guile-ts
             rust-toolchain
           ]
