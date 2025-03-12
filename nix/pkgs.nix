@@ -40,6 +40,7 @@
               libxslt
               guile
               guile-gnutls
+              gnutls
               guile-lib
             ]);
           runtimeEnv = {
