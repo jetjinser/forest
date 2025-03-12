@@ -42,8 +42,6 @@
             libxslt
             guile
             guile-gnutls
-            gnutls
-            guile-lib
 
             vscode-langservers-extracted
             tree-sitter

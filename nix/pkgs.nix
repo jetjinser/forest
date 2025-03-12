@@ -24,10 +24,24 @@
           simplebnf
           ;
       };
+      finalGuile =
+        libraries:
+        pkgs.buildEnv {
+          name = "guile-env";
+          paths = [ pkgs.guile ] ++ libraries;
+          passthru = {
+            inherit (pkgs.guile) siteDir siteCcacheDir;
+          };
+          meta.mainProgram = pkgs.guile.meta.mainProgram or "guile";
+        };
     in
     {
       packages = {
-        inherit texUsed forester x-rs;
+        inherit
+          texUsed
+          forester
+          x-rs
+          ;
         build = pkgs.writeShellApplication {
           name = "build-forest";
           runtimeInputs =
@@ -39,14 +53,21 @@
             ++ (with pkgs; [
               libxslt
               guile
-              guile-gnutls
-              gnutls
-              guile-lib
             ]);
-          runtimeEnv = {
-            LC_ALL = "en_US.UTF-8";
-            LOGGING_LEVEL = "DEBUG";
-          };
+          runtimeEnv =
+            let
+              g = finalGuile (
+                with pkgs;
+                [
+                  guile-gnutls
+                ]
+              );
+            in
+            {
+              LC_ALL = "en_US.UTF-8";
+              LOGGING_LEVEL = "DEBUG";
+              GUILE_LOAD_PATH = "${g}/${g.siteDir}:${g}/lib/scheme-libs";
+            };
           text = ''
             forester build ${../forest.toml}
             ./x.scm
