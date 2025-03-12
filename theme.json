@@ -13,14 +13,17 @@
   "function.builtin": { "color": "#d7827e", "bold": true },
   "function.special": { "color": "#d7827e", "bold": true },
   "function.method": "#d7827e",
+  "function.method.call": "#d7827e",
   "function.call": "#907aa9",
   "function.macro": "#d7827e",
   "keyword": "#286983",
   "keyword.directive": "#907aa9",
   "keyword.function": "#907aa9",
   "keyword.operator": "#797593",
+  "keyword.modifier": "#797593",
   "keyword.repeat": "#286983",
   "keyword.return": "#286983",
+  "keyword.coroutine": "#286983",
   "keyword.conditional": "#286983",
   "keyword.conditional.ternary": "#286983",
   "keyword.import": "#286983",
@@ -56,7 +59,9 @@
   "variable.member": "#56949f",
   "delimiter": "#797593",
   "label": "#56949f",
+  "field": "#56949f",
   "escape": "#286983",
   "boolean": "#d7827e",
-  "error": "#b4637a"
+  "error": "#b4637a",
+  "none": "#FFFFFF"
 }

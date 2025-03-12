@@ -38,7 +38,8 @@
     ("alt-jinser"  "tree-sitter-julia"   "a0aaa43")
     ("alt-jinser"  "tree-sitter-nix"     "30e206c")
     ("alt-jinser"  "tree-sitter-kotlin"  "bb1d5d3")
-    ("moonbitlang" "tree-sitter-moonbit" "f09031f")))
+    ("alt-jinser" "tree-sitter-moonbit"  "7d7590e")
+    ("tree-sitter" "tree-sitter-json"    "46aa487")))
 (define +repos+
   (map (cut apply make-reporef <>)
        +repo-triples+))

@@ -25,6 +25,7 @@
 (define (unarchive file-path dest-dir)
   (let ([dir (string-append dest-dir (basename file-path ".tar.gz"))])
     (mkdir dir)
+    (info "extracting ~a..." file-path)
     (system* "tar" "xf" file-path
              "--strip-components" "1"
              "--directory" dir)
