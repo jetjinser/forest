@@ -1,10 +1,11 @@
-#!/usr/bin/env -S nix shell nixpkgs#libxslt nixpkgs#guile ./nix#x-rs --command guile -L ./modules -e '(@ (x) main)' -q -s
+#!/usr/bin/env -S guile -L ./modules -e '(@ (x) main)' -q -s
 !#
 
 (define-module (x)
   #:export (main)
   #:use-module (logging)
   #:use-module (forest)
+  #:use-module (parser)
   #:use-module (ice-9 string-fun)
   #:use-module (ice-9 match)
   #:use-module (ice-9 regex)
@@ -17,9 +18,30 @@
   #:use-module (srfi srfi-1))
 
 (define +forest+ "output")
+(define +parsers-dir+ "parsers/")
 (define +stylesheet-path+ "output/default.xsl")
 (define +ns+ '((fr . "http://www.jonmsterling.com/jms-005P.xml")
                (html . "http://www.w3.org/1999/xhtml")))
+(define +repo-triples+
+  '(("alt-jinser"  "tree-sitter-bash"    "fad59bb")
+    ("tree-sitter" "tree-sitter-c"       "2a265d6")
+    ("tree-sitter" "tree-sitter-go"      "5e73f47")
+    ("tree-sitter" "tree-sitter-rust"    "e86119b")
+    ("tree-sitter" "tree-sitter-ocaml"   "91708de")
+    ("tree-sitter" "tree-sitter-ruby"    "89bd7a8")
+    ("tree-sitter" "tree-sitter-python"  "710796b")
+    ("alt-jinser"  "tree-sitter-clojure" "2e5ad7a")
+    ("alt-jinser"  "tree-sitter-erlang"  "ef7026b")
+    ("alt-jinser"  "tree-sitter-scheme"  "33ef7cd")
+    ("tree-sitter" "tree-sitter-haskell" "0975ef7")
+    ("alt-jinser"  "tree-sitter-racket"  "2f14c15")
+    ("alt-jinser"  "tree-sitter-julia"   "a0aaa43")
+    ("alt-jinser"  "tree-sitter-nix"     "30e206c")
+    ("alt-jinser"  "tree-sitter-kotlin"  "bb1d5d3")
+    ("moonbitlang" "tree-sitter-moonbit" "f09031f")))
+(define +repos+
+  (map (cut apply make-reporef <>)
+       +repo-triples+))
 
 
 ;; xslt-transform
@@ -175,6 +197,7 @@
 ;; main
 
 (define (main args)
+  (download-parsers +repos+ +parsers-dir+)
   (let ([tree-count (list-transduce transducer rcount
                                     (all-trees +forest+))])
     (info "transduced ~a trees" tree-count))

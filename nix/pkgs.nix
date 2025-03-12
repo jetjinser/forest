@@ -30,13 +30,23 @@
         inherit texUsed forester x-rs;
         build = pkgs.writeShellApplication {
           name = "build-forest";
-          runtimeInputs = [
-            forester
-            texUsed
-          ];
+          runtimeInputs =
+            [
+              forester
+              texUsed
+              x-rs
+            ]
+            ++ (with pkgs; [
+              libxslt
+              guile
+              guile-gnutls
+              guile-lib
+            ]);
+          runtimeEnv = {
+            LC_ALL = "en_US.UTF-8";
+            LOGGING_LEVEL = "DEBUG";
+          };
           text = ''
-            export LC_ALL=en_US.UTF-8
-            export LOGGING_LEVEL=DEBUG
             forester build ${../forest.toml}
             ./x.scm
           '';

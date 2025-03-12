@@ -36,10 +36,14 @@
           ++ (with self'.packages; [
             forester
             texUsed
+            x-rs
           ])
           ++ (with pkgs; [
-            guile
             libxslt
+            guile
+            guile-gnutls
+            guile-lib
+
             vscode-langservers-extracted
             tree-sitter
             gcc
