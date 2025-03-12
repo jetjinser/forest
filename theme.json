@@ -8,7 +8,7 @@
   "constant.builtin": { "color": "#2d8ea0", "bold": true },
   "constant.macro": "#ea9d34",
   "constructor": "#56949f",
-  "embedded": null,
+  "embedded": "#907aa9",
   "function": "#d7827e",
   "function.builtin": { "color": "#d7827e", "bold": true },
   "function.special": { "color": "#d7827e", "bold": true },
