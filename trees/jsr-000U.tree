@@ -24,13 +24,6 @@
 \def\ocaml[src]{\hcode{ocaml}{\src}}
 \def\c[src]{\hcode{c}{\src}}
 
-\def\references[body]{
-  \subtree{
-    \title{引用 \sub{References}}
-    \body
-  }
-}
-
 \declare{[[oleg]]}{Grasping `all-the-apples-at-once'}
 \tips{Click on the translation to expand and view the original text. 点击译文可展开查看原文。}
 \blockquote{Translated according to the version last updated on June 3, 2024.}
@@ -75,14 +68,14 @@ How do we grasp all the apples at once? As in learning and teaching of natural l
 The talk was given at an online meeting of IFIP WG 2.1 on July 1, 2021.
 }
 
-\references{
 \tp{
-Lobsters 上竞赛的讨论串。2021年2月。
-[<https://lobste.rs/s/zpqrpc/random_job_interview_challenge_clojure>](https://lobste.rs/s/zpqrpc/random_job_interview_challenge_clojure)
+\dl{
+  \dt{Lobsters 上竞赛的讨论串。2021年2月。}
+  \dd{[<https://lobste.rs/s/zpqrpc/random_job_interview_challenge_clojure>](https://lobste.rs/s/zpqrpc/random_job_interview_challenge_clojure)}
+}
 }{
 The Lobsters thread with the contest. February 2021.
 <https://lobste.rs/s/zpqrpc/random_job_interview_challenge_clojure>
-}
 }
 } % Introduction end
 

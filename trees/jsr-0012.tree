@@ -312,28 +312,29 @@ void rll(const int64_t * aa_1,const int64_t al_2)
 One more thing: it all worked on the first try.
 }
 
-\references{
 \tp{
-[apples.ml](https://okmij.org/ftp/Algorithms/apples.ml) [4K]\br
-完整的源码
+\dl{
+  \dt{[apples.ml](https://okmij.org/ftp/Algorithms/apples.ml) [4K]}
+  \dd{完整的源码}
+
+  \dt{[apples.c](https://okmij.org/ftp/Algorithms/apples.c) [2K]}
+  \dd{strymonas 解法：生成出的 C 代码。有关生成器，请参阅 strymonas 发行中的 \code{examples/run-length-encoding} 目录。}
+
+  \dt{[Incremental, Linear Pretty-printing](https://okmij.org/ftp/continuations/PPYield/index.html#pp)}
+  \dd{\ruby{分步式}{stepwise}的\ruby{管道}{pipeline}开发可以走得很远。上述参考资料开发了一种相当\ruby{不平凡}{non-trivial}的算法，具有最理想的、难以实现的性能。}
+}
 }{
 apples.ml [4K]
 The complete source code
-}
 
-\tp{
-[apples.c](https://okmij.org/ftp/Algorithms/apples.c) [2K]\br
-strymonas 解法：生成出的 C 代码。有关生成器，请参阅 strymonas 发行中的 \code{examples/run-length-encoding} 目录。
-}{
 apples.c [2K]
 The strymonas solution: generated C code. For the generator, see the directory examples/run-length-encoding in the strymonas distribution.
-}
 
-\tp{
-[Incremental, Linear Pretty-printing](https://okmij.org/ftp/continuations/PPYield/index.html#pp)
-\ruby{分步式}{stepwise}的\ruby{管道}{pipeline}开发可以走得很远。上述参考资料开发了一种相当\ruby{不平凡}{non-trivial}的算法，具有最理想的、难以实现的性能。
-}{
 Incremental, Linear Pretty-printing
 The stepwise pipeline development can be taken quite far. The above reference develops a rather non-trivial algorithm with the optimal, difficult to achieve performance.
 }
+
+
+\tp{
+}{
 }

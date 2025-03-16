@@ -32,14 +32,13 @@ How would you solve it?
 Alexey Grigorev (@Al_Grigor) February 3, 2021 (Twitter)
 }
 
-\references{
 \tp{
-该问题的说明引用自 Lobsters 上发布的网页：\br
-A Random Job Interview Challenge In Clojure. Feb 4 2021 by Savo Djuric\br
-[<https://savo.rocks/posts/a-random-job-interview-challenge-in-clojure/>](https://savo.rocks/posts/a-random-job-interview-challenge-in-clojure/)
+\dl{
+  \dt{该问题的说明引用自 Lobsters 上发布的网页：A Random Job Interview Challenge In Clojure. Feb 4 2021 by Savo Djuric}
+  \dd{[<https://savo.rocks/posts/a-random-job-interview-challenge-in-clojure/>](https://savo.rocks/posts/a-random-job-interview-challenge-in-clojure/)}
+}
 }{
 The statement of the problem is quoted from the web page posted on Lobsters:
 A Random Job Interview Challenge In Clojure. Feb 4 2021 by Savo Djuric
 <https://savo.rocks/posts/a-random-job-interview-challenge-in-clojure/> 
-}
 }

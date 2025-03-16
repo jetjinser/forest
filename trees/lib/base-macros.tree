@@ -30,6 +30,10 @@
   }
 }
 
+\def\dl[body]{\<html:dl>{\body}}
+\def\dt[body]{\<html:dt>{\body}}
+\def\dd[body]{\<html:dd>{\body}}
+
 % fancy style
 \def\tips[body]{
   \blockquote{\strong{tips}: \body}
