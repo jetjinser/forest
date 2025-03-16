@@ -1,1 +1,2 @@
-- [ ] get away vendor parser
+- [x] get away vendor parser
+- [ ] support subtitle with [hgroup](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/hgroup)
