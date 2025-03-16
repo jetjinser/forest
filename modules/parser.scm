@@ -4,6 +4,7 @@
   #:use-module (logging)
   #:use-module (srfi srfi-9)
   #:use-module (ice-9 binary-ports)
+  #:use-module (ice-9 threads)
   #:use-module (web client)
   #:use-module (web response))
 
@@ -45,7 +46,7 @@
         (warning "Failed to download ~a: ~a" url response))))
 
 (define (download-parsers lst dest-dir)
-  (for-each (λ (reporef)
-               (unless (file-exists? (string-append dest-dir (reporef-name reporef)))
-                 (download-parser reporef dest-dir)))
-            lst))
+  (par-for-each (λ (reporef)
+                   (unless (file-exists? (string-append dest-dir (reporef-name reporef)))
+                     (download-parser reporef dest-dir)))
+                lst))
