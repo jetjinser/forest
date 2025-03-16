@@ -31,3 +31,5 @@ _tmp/
 target/
 result*
 parsers/
+
+assets/private/
