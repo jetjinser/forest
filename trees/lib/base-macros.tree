@@ -19,7 +19,10 @@
 }
 \def\icon[path][alt][body]{
   \with-icon{
-    \<html:img>[class]{custom-icon}[src]{\path}[alt]{\alt}{}
+    \<html:img>[class]{custom-icon}[src]{\path}[alt]{\alt}[onerror]{%
+      this.style.display='none';%
+      this.style.height='1em';%
+    }{}
     \body
   }
 }
