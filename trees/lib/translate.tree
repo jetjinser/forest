@@ -4,8 +4,9 @@
 \import{base-macros}
 
 \def\declare[who][title]{
-  \blockquote{This article is translated from \who's article titled "\title".}
-  \blockquote{本文翻译自 \who 题为《\title》的文章}
+  % \blockquote{This article is translated from \who's article titled "\title".}
+  % \blockquote{本文翻译自 \who 题为《\title》的文章}
+  % avoid too many backlinks: noop
 }
 
 \def\tp[ori][tra]{
