@@ -33,6 +33,7 @@
 \def\dl[body]{\<html:dl>{\body}}
 \def\dt[body]{\<html:dt>{\body}}
 \def\dd[body]{\<html:dd>{\body}}
+\def\desc[term][body]{\dt{\term}\dd{\body}}
 
 % fancy style
 \def\tips[body]{

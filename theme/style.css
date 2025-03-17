@@ -188,6 +188,15 @@ mrow:hover {
   background-color: rgba(0, 100, 255, 0.04);
 }
 
+dl {
+  margin-left: 1.2em;
+  margin-right: 1.2em;
+}
+
+dl dt {
+  font-weight: bold;
+}
+
 .logo {
   font-weight: 1000;
   font-size: 24px;
