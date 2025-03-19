@@ -1,0 +1,1381 @@
+\title{Simple but Powerful Pratt Parsing}
+\date{2025-03-19}
+\taxon{translation}
+\author{matklad}
+\contributor{jinser}
+\meta{original}{https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html}
+
+\import{base-macros}
+\import{translate}
+
+\def\rust[src]{\hcode{rust}{\src}}
+
+\declare{[[matklad]]}{}
+\tips{Click on the translation to expand and view the original text. 点击译文可展开查看原文。}
+\blockquote{Translated according to the version last updated on Apr 13, 2020.}
+\blockquote{根据2020年4月13日更新的版本翻译。}
+
+\tp{
+欢迎阅读我关于 Pratt 解析的文章——语法分析的 monad 教程。关于 Pratt 解析的文章数量如此之多，以至于还有一篇[概览文章](https://www.oilshell.org/blog/2017/03/31.html) \startverb:)\stopverb
+}{
+Welcome to my article about Pratt parsing — the monad tutorial of syntactic analysis. The number of Pratt parsing articles is so large that there exists a survey post \startverb:)\stopverb
+}
+
+\tp{
+本文的目标：
+}{
+The goals of this particular article are:
+}
+
+\tp{
+\ul{
+  \li{提出一个问题：所谓的左递归问题被夸大了。}
+  \li{抱怨 BNF（巴科斯-瑙尔范式）在表达中缀表达式方面的不足。}
+  \li{提供对 Pratt 解析算法的描述和实现，坚持核心概念，没有引入类似 DSL 的抽象。}
+  \li{希望让自己最后一次试图理解这个算法。我曾经[实现过](https://github.com/rust-analyzer/rust-analyzer/blob/c388130f5ffbcbe7d3131213a24d12d02f769b87/crates/ra_parser/src/grammar/expressions.rs#L280-L281)一个生产级的 Pratt 解析器，但我现在不再能立即理解那段代码了 \startverb:-)\stopverb}
+}
+}{
+Raising an issue that the so-called left-recursion problem is overstated.
+Complaining about inadequacy of BNF for representing infix expressions.
+Providing a description and implementation of Pratt parsing algorithm which sticks to the core and doesn’t introduce a DSL-y abstraction.
+Understanding the algorithm myself for hopefully the last time. I’ve implemented a production-grade Pratt parser once, but I no longer immediately understand that code \startverb:-)\stopverb
+}
+
+\tp{
+本文假设读者对解析技术有一定的了解，例如，不会在这里解释\ruby{上下文无关文法}{context free grammar}是什么。
+}{
+This post assumes a fair bit of familiarity with parsing techniques, and, for example, does not explain what a context free grammar is.
+}
+
+\subtree{
+\title{介绍 \sub{Introduction}}
+
+\tp{
+\ruby{解析}{parsing}是编译器将一系列\ruby{标记}{token}转换为树状表示的过程：
+}{
+Parsing is the process by which a compiler turns a sequence of tokens into a tree representation:
+}
+
+\pre{\startverb
+                            Add
+                 Parser     / \
+ "1 + 2 * 3"    ------->   1  Mul
+                              / \
+                             2   3
+\stopverb}
+
+\tp{
+有许多方法可以完成这个任务，这些方法大致可以归为以下两类：
+}{
+There are many approaches to this task, which roughly fall into one of the broad two categories:
+}
+
+\tp{
+\ul{
+  \li{使用 DSL 来指定语言的抽象文法}
+  \li{手写解析器}
+}
+}{
+Using a DSL to specify an abstract grammar of the language
+Hand-writing the parser
+}
+
+\tp{
+Pratt 解析是手写解析最常用的技术之一。
+}{
+Pratt parsing is one of the most frequently used techniques for hand-written parsing.
+}
+
+} % subtree
+
+\subtree{
+\title{BNF}
+
+\tp{
+语法分析理论的顶峰在于发现将线性结构解码为树状结构的上下文无关文法表示法（通常使用 BNF 具体语法）：
+}{
+The pinnacle of syntactic analysis theory is discovering the context free grammar notation (often using BNF concrete syntax) for decoding linear structures into trees:
+}
+
+\pre{
+Item ::=
+    StructItem
+  | EnumItem
+  | ...
+
+StructItem ::=
+    'struct' Name '{' FieldList '}'
+
+...
+}
+
+\tp{
+我记得我当时对这个想法非常着迷，特别是它与自然语言句子结构的相似之处。然而，当我们开始描述表达式时，我的乐观情绪很快就消失了。自然表达式文法确实可以让人们看出什么是表达式。
+}{
+I remember being fascinated by this idea, especially by parallels with natural language sentence structure. However, my optimism quickly waned once we got to describing expressions. The natural expression grammar indeed allows one to see what is an expression.
+}
+
+\pre{
+Expr ::=
+    Expr '+' Expr
+  | Expr '*' Expr
+  | '(' Expr ')'
+  | 'number'
+}
+
+\tp{
+虽然这种文法看起来很棒，但实际上它是模糊且不精确的，需要重新编写以适用于自动解析器生成。具体来说，我们需要指定操作符的\ruby{优先级}{precedence}和\ruby{结合性}{associativity}。修正后的文法如下：
+}{
+Although this grammar looks great, it is in fact ambiguous and imprecise, and needs to be rewritten to be amendable to automated parser generation. Specifically, we need to specify precedence and associativity of operators. The fixed grammar looks like this:
+}
+
+\pre{
+Expr ::=
+    Factor
+  | Expr '+' Factor
+
+Factor ::=
+    Atom
+  | Factor '*' Atom
+
+Atom ::=
+    'number'
+  | '(' Expr ')'
+}
+
+\tp{
+对我来说，在这种新的表述中，表达式的\dquote{形状}完全丢失了。此外，我在学习了三四门形式语言课程后，才能够可靠地自己创建这种文法。
+}{
+To me, the “shape” of expressions feels completely lost in this new formulation. Moreover, it took me three or four courses in formal languages before I was able to reliably create this grammar myself.
+}
+
+\tp{
+这就是我为什么喜欢 Pratt 解析\em2dash它是对递归下降解析算法的改进，使用了优先级和结合性的自然术语来解析表达式，而不是语法混淆技术。
+}{
+And that’s why I love Pratt parsing — it is an enhancement of recursive descent parsing algorithm, which uses the natural terminology of precedence and associativity for parsing expressions, instead of grammar obfuscation techniques.
+}
+
+} % subtree
+
+\subtree{
+\title{递归下降和左递归 \sub{Recursive descent and left-recursion}}
+
+\tp{
+手写解析器的最简单技术是\ruby{递归下降}{recursive descent}，它将文法建模为一组相互递归的函数。例如，上述文法片段可以写成这样：
+}{
+The simplest technique for hand-writing a parser is recursive descent, which models the grammar as a set of mutually recursive functions. For example, the above item grammar fragment can look like this:
+}
+
+\rust{%
+fn item(p: &mut Parser) {
+    match p.peek() {
+        STRUCT_KEYWORD => struct_item(p),
+        ENUM_KEYWORD   => enum_item(p),
+        ...
+    }
+}
+
+fn struct_item(p: &mut Parser) {
+    p.expect(STRUCT_KEYWORD);
+    name(p);
+    p.expect(L_CURLY);
+    field_list(p);
+    p.expect(R_CURLY);
+}
+
+...
+}
+
+\tp{
+传统上，教科书指出左递归文法是这种方法的\ruby{阿喀琉斯之踵}{Achilles heel}，并利用这一缺点来促使产生更高级的 LR 解析技术。一种有问题的文法示例如下：
+}{
+Traditionally, text-books point out left-recursive grammars as the Achilles heel of this approach, and use this drawback to motivate more advanced LR parsing techniques. An example of problematic grammar can look like this:
+}
+
+\pre{
+Sum ::=
+    Sum '+' Int
+  | Int
+}
+
+\tp{
+确实，如果我们朴素地编码 \code{sum} 函数，这不会太有用：
+}{
+Indeed, if we naively code the sum function, it wouldn’t be too useful:
+}
+
+\rust{%
+fn sum(p: &mut Parser) {
+    // Try first alternative
+    sum(p); @callout.1
+    p.expect(PLUS);
+    int(p);
+
+    // If that fails, try the second one
+    ...
+}
+}
+
+\tp{
+\callout{
+  \li{到这里，我们会立即进入循环并导致堆栈溢出}
+}
+}{
+(1): At this point we immediately loop and overflow the stack
+}
+
+\tp{
+理论上讲，解决这个问题需要重写语法以消除左递归。然而在实际操作中，对于手写解析器，解决方案要简单得多\em2dash打破纯递归范式，使用循环：
+}{
+A theoretical fix to the problem involves rewriting the grammar to eliminate the left recursion. However in practice, for a hand-written parser, a solution is much simpler — breaking away with a pure recursive paradigm and using a loop:
+}
+
+\rust{%
+fn sum(p: &mut Parser) {
+    int(p);
+    while p.eat(PLUS) {
+        int(p);
+    }
+}
+}
+
+} % subtree
+
+\subtree{
+\title{Pratt 解析，一般\dquote{形状} \sub{Pratt parsing, the general shape}}
+
+\tp{
+仅使用循环不足以解析中缀表达式。相反，Pratt 解析同时使用循环和递归：
+}{
+Using just loops won’t be enough for parsing infix expressions. Instead, Pratt parsing uses both loops and recursion:
+}
+
+\rust{%
+fn parse_expr() {
+    ...
+    loop {
+        ...
+        parse_expr()
+        ...
+    }
+}
+}
+
+\tp{
+它不仅会让你陷入\ruby{摩比乌斯}{Möbeus}形状的仓鼠轮中，而且还能处理结合性和优先级问题！
+}{
+Not only does it send your mind into Möbeus-shaped hamster wheel, it also handles associativity and precedence!
+}
+
+} % subtree
+
+\subtree{
+\title{从优先级到绑定力 \sub{From Precedence to Binding Power}}
+
+\tp{
+我要坦白：我总是被\dquote{高优先级}和\dquote{低优先级}弄糊涂。在 \code{a + b * c}，加法的优先级更低，但它在解析树的顶部\ellipsis
+}{
+I have a confession to make: I am always confused by “high precedence” and “low precedence”. In a + b * c, addition has a lower precedence, but it is at the top of the parse tree…
+}
+
+\tp{
+因此，我发现用\ruby{绑定力}{binding power}的概念来思考更直观。
+}{
+So instead, I find thinking in terms of binding power more intuitive.
+}
+
+\pre{
+expr:   A       +       B       *       C
+power:      3       3       5       5
+}
+
+\tp{
+\code{*} 更强，它有更大的力将 \code{B} 和 \code{C} 结合在一起，于是这个表达式被解析为 \code{A + (B * C)}
+}{
+The * is stronger, it has more power to hold together B and C, and so the expression is parsed as A + (B * C).
+}
+
+
+\tp{
+但是结合性呢？在 \code{A + B + C} 中，所有操作符似乎都有相同的力，目前尚不清楚哪一个 \code{+} 要先结合在一起。不过这也可以用绑定力来建模，如果我们让它稍微不对称：
+}{
+What about associativity though? In A + B + C all operators seem to have the same power, and it is unclear which + to fold first. But this can also be modelled with power, if we make it slightly asymmetric:
+}
+
+\pre{
+expr:      A       +       B       +       C
+power:  0      3      3.1      3      3.1     0
+}
+
+\tp{
+这里我们稍微提高了 \code{+} 的右绑定力，这样它能更紧密地和右操作数结合。我们还在两端添加了零，因为两边没有操作符可以绑定。在这种情况下，（只有）第一个 \code{+} 比它的邻居更强，将两边的参数结合在了一起，因此我们将它可以简化为：
+}{
+Here, we pumped the right power of + just a little bit, so that it holds the right operand tighter. We also added zeros at both ends, as there are no operators to bind from the sides. Here, the first (and only the first) + holds both of its arguments tighter than the neighbors, so we can reduce it:
+}
+
+\pre{
+expr:     (A + B)     +     C
+power:  0          3    3.1    0
+}
+
+\tp{
+现在我们可以将第二个加号折叠起来，得到 \code{(A + B) + C}。或者，从语法树的角度看来，第二个 \code{+} 实际上喜欢右操作数更胜于左操作数，所以它更急于与 \code{C} 结合。在此过程中，第一个 \code{+} 抓住了 \code{A} 和 \code{B}，因为它们没有竞争对手。
+}{
+Now we can fold the second plus and get (A + B) + C. Or, in terms of the syntax tree, the second + really likes its right operand more than the left one, so it rushes to get hold of C. While he does that, the first + captures both A and B, as they are uncontested.
+}
+
+\tp{
+Pratt 解析的作用是通过从左到右处理字符串，找到这些比邻居操作符更强势的操作符。我们几乎已经到了可以开始编写代码的地步，但让我们先看看另一个示例。我们将使用函数组合操作符 \code{.}（\ruby{点}{dot}）作为一个具有高绑定力的\em{右}结合操作符。也就是说，\code{f . g . h} 将被解析为 \code{f . (g . h)}，或者用绑定力来解释：
+}{
+What Pratt parsing does is that it finds these badass, stronger than neighbors operators, by processing the string left to right. We are almost at a point where we finally start writing some code, but let’s first look at the other running example. We will use function composition operator, . (dot) as a right associative operator with a high binding power. That is, f . g . h is parsed as f . (g . h), or, in terms of power
+}
+
+\pre{
+  f     .    g     .    h
+0   8.5    8   8.5    8   0
+}
+
+} % subtree
+
+\subtree{
+\title{迷你 Pratt 解析器 \sub{Minimal Pratt Parser}}
+
+\tp{
+我们将解析一个基本原子为\em{单字符}数字和变量，操作符为标点的表达式。我们定义一个简单的\ruby{分词器}{tokenizer}：
+}{
+We will be parsing expressions where basic atoms are single character numbers and variables, and which uses punctuation for operators. Let’s define a simple tokenizer:
+}
+
+\rust{%
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Token {
+    Atom(char),
+    Op(char),
+    Eof,
+}
+
+struct Lexer {
+    tokens: Vec<Token>,
+}
+
+impl Lexer {
+    fn new(input: &str) -> Lexer {
+        let mut tokens = input
+            .chars()
+            .filter(|it| !it.is_ascii_whitespace())
+            .map(|c| match c {
+                '0'..='9' |
+                'a'..='z' | 'A'..='Z' => Token::Atom(c),
+                _ => Token::Op(c),
+            })
+            .collect::<Vec<_>>();
+        tokens.reverse();
+        Lexer { tokens }
+    }
+
+    fn next(&mut self) -> Token {
+        self.tokens.pop().unwrap_or(Token::Eof)
+    }
+    fn peek(&mut self) -> Token {
+        self.tokens.last().copied().unwrap_or(Token::Eof)
+    }
+}
+}
+
+\tp{
+为了确保我们能正确地处理\del{优先级}绑定力，我们将把\ruby{中缀}{infix}表达式转换为一种具有明确含义的标准符号\em2dash\id{S-expressions}（无论出于和种原因，在波兰不太流行）。
+}{
+To make sure that we got the precedence binding power correctly, we will be transforming infix expressions into a gold-standard (not so popular in Poland, for whatever reason) unambiguous notation — S-expressions:
+}
+
+\pre{
+1 + 2 * 3 == (+ 1 (* 2 3))
+}
+
+\rust{%
+use std::fmt;
+
+enum S {
+    Atom(char),
+    Cons(char, Vec<S>),
+}
+
+impl fmt::Display for S {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            S::Atom(i) => write!(f, "{}", i),
+            S::Cons(head, rest) => {
+                write!(f, "({}", head)?;
+                for s in rest {
+                    write!(f, " {}", s)?
+                }
+                write!(f, ")")
+            }
+        }
+    }
+}
+}
+
+\tp{
+接着让我们从这里开始：包括原子和两个二元操作符 \code{+} 和 \code{*} 的表达式：
+}{
+And let’s start with just this: expressions with atoms and two infix binary operators, + and *:
+}
+
+\rust{%
+fn expr(input: &str) -> S {
+    let mut lexer = Lexer::new(input);
+    expr_bp(&mut lexer)
+}
+
+fn expr_bp(lexer: &mut Lexer) -> S {
+    todo!()
+}
+
+#[test]
+fn tests() {
+    let s = expr("1 + 2 * 3");
+    assert_eq!(s.to_string(), "(+ 1 (* 2 3))")
+}
+}
+
+\tp{
+那么，通用方法大致是我们用来处理左递归的方法\em2dash从第一个数字开始解析，进入循环，消费操作符然后\ellipsis做某事？
+}{
+So, the general approach is roughly the one we used to deal with left recursion — start with parsing a first number, and then loop, consuming operators and doing … something?
+}
+
+\rust{%
+fn expr_bp(lexer: &mut Lexer) -> S {
+    let lhs = match lexer.next() {
+        Token::Atom(it) => S::Atom(it),
+        t => panic!("bad token: {:?}", t),
+    };
+
+    loop {
+        let op = match lexer.next() {
+            Token::Eof => break,
+            Token::Op(op) => op,
+            t => panic!("bad token: {:?}", t),
+        };
+
+        todo!()
+    }
+
+    lhs
+}
+
+#[test]
+fn tests() {
+    let s = expr("1"); @callout.1
+    assert_eq!(s.to_string(), "1");
+}
+}
+
+\tp{
+\callout{
+  \li{注意我们已经能够解析这个简单的测试表达式！}
+}
+}{
+(1) Note that we already can parse this simple test!
+}
+
+\tp{
+我们想使用绑定力的想法，因此让我们计算操作符左边和右边的力。我们用 \code{u8} 来表示绑定力，所以，为了满足结合性，我们会加 \code{1}，然后为输入的结尾保留 \code{0}，操作符的最低绑定力就是 \code{1} 了。
+}{
+We want to use this power idea, so let’s compute both left and right powers of the operator. We’ll use u8 to represent power, so, for associativity, we’ll add 1. And we’ll reserve the 0 power for the end of input, so the lowest power operator can have is 1.
+}
+
+\rust{%
+fn expr_bp(lexer: &mut Lexer) -> S {
+    let lhs = match lexer.next() {
+        Token::Atom(it) => S::Atom(it),
+        t => panic!("bad token: {:?}", t),
+    };
+
+    loop {
+        let op = match lexer.peek() {
+            Token::Eof => break,
+            Token::Op(op) => op,
+            t => panic!("bad token: {:?}", t),
+        };
+        let (l_bp, r_bp) = infix_binding_power(op);
+
+        todo!()
+    }
+
+    lhs
+}
+
+fn infix_binding_power(op: char) -> (u8, u8) {
+    match op {
+        '+' | '-' => (1, 2),
+        '*' | '/' => (3, 4),
+        _ => panic!("bad op: {:?}", op)
+    }
+}
+}
+
+\tp{
+现在到了关键部分，我们将引入递归。考虑这个例子（绑定力在下）：
+}{
+And now comes the tricky bit, where we introduce recursion into the picture. Let’s think about this example (with powers below):
+}
+
+\pre{
+a   +   b   *   c   *   d   +   e
+  1   2   3   4   3   4   1   2
+}
+
+\tp{
+光标现在位于第一个 \code{+} 号，我们知道左边的绑定力 \code{bp} 是 \code{1}，右边的是 \code{2}。左操作数 \code{lhs} 存储 \code{a}。\code{+} 之后的下一个操作符是 \code{*}，所以我们不应该将 \code{b} 添加到 \code{a} 中。问题在于我们还没有看到下一个操作符，我们刚刚经过 \code{+}。我们能加入\ruby{前瞻}{lookahead}吗？看来不行\em2dash我们需要跳过 \code{b}、\code{c} 和 \code{d} 找到下一个具有更低绑定力的操作符，这听起来相当\ruby{无界}{unbounded}。不过我们在逐步接近了！当前的右优先级是 \code{2}，为了能够折叠表达式，我们需要找到下一个优先级更低的操作符。因此，让我们从 \code{b} 开始递归调用 \code{expr_bp}，但也让它一旦遇到绑定优先级低于 \code{2} 的就停下。这就需要在主函数中增加 \code{min_bp} 参数。
+}{
+The cursor is at the first +, we know that the left bp is 1 and the right one is 2. The lhs stores a. The next operator after + is *, so we shouldn’t add b to a. The problem is that we haven’t yet seen the next operator, we are just past +. Can we add a lookahead? Looks like no — we’d have to look past all of b, c and d to find the next operator with lower binding power, which sounds pretty unbounded. But we are onto something! Our current right priority is 2, and, to be able to fold the expression, we need to find the next operator with lower priority. So let’s recursively call expr_bp starting at b, but also tell it to stop as soon as bp drops below 2. This necessitates the addition of min_bp argument to the main function.
+}
+
+\tp{
+于是，我们有了一个功能齐全的迷你 Pratt 解析器：
+}{
+And lo, we have a fully functioning minimal Pratt parser:
+}
+
+\rust{%
+fn expr(input: &str) -> S {
+    let mut lexer = Lexer::new(input);
+    expr_bp(&mut lexer, 0) @callout.5
+}
+
+fn expr_bp(lexer: &mut Lexer, min_bp: u8) -> S { @callout.1
+    let mut lhs = match lexer.next() {
+        Token::Atom(it) => S::Atom(it),
+        t => panic!("bad token: {:?}", t),
+    };
+
+    loop {
+        let op = match lexer.peek() {
+            Token::Eof => break,
+            Token::Op(op) => op,
+            t => panic!("bad token: {:?}", t),
+        };
+
+        let (l_bp, r_bp) = infix_binding_power(op);
+        if l_bp < min_bp { @callout.2
+            break;
+        }
+
+        lexer.next(); @callout.3
+        let rhs = expr_bp(lexer, r_bp);
+
+        lhs = S::Cons(op, vec![lhs, rhs]); @callout.4
+    }
+
+    lhs
+}
+
+fn infix_binding_power(op: char) -> (u8, u8) {
+    match op {
+        '+' | '-' => (1, 2),
+        '*' | '/' => (3, 4),
+        _ => panic!("bad op: {:?}"),
+    }
+}
+
+#[test]
+fn tests() {
+    let s = expr("1");
+    assert_eq!(s.to_string(), "1");
+
+    let s = expr("1 + 2 * 3");
+    assert_eq!(s.to_string(), "(+ 1 (* 2 3))");
+
+    let s = expr("a + b * c * d + e");
+    assert_eq!(s.to_string(), "(+ (+ a (* (* b c) d)) e)");
+}
+}
+
+\tp{
+\callout{
+  \li{\code{min_bp} 参数是关键的新增项。\code{expr_bp} 现在可以解析具有相对较高绑定力的表达式。一旦它遇到比 \code{min_bp} 更弱的绑定力时，就会停止解析。}
+  \li{这就是 \dquote{停止解析} 的地方}
+  \li{在这里，我们越过操作符本身并进行递归调用，注意我们如何使用 \code{l_bp} 与 \code{min_bp} 对比进行检查，并将 \code{r_bp} 作为递归调用的新 \code{min_bp}。因此你可以把 \code{min_bp} 看作当前表达式左侧操作符的绑定力。}
+  \li{最后，在解析完正确的右侧表达式之后，我们组装出新的当前表达式。}
+  \li{要开始递归，我们使用零作为绑定力。请记住，一开始左侧操作符的绑定优先级是可能的最低值，零，因为那里实际上没有操作符。}
+}
+}{
+(1) min_bp argument is the crucial addition. expr_bp now parses expressions with relatively high binding power. As soon as it sees something weaker than min_bp, it stops.
+(2) This is the “it stops” point.
+(3) And here we bump past the operator itself and make the recursive call. Note how we use l_bp to check against min_bp, and r_bp as the new min_bp of the recursive call. So, you can think about min_bp as the binding power of the operator to the left of the current expressions.
+(4) Finally, after parsing the correct right hand side, we assemble the new current expression.
+(5) To start the recursion, we use binding power of zero. Remember, at the beginning the binding power of the operator to the left is the lowest possible, zero, as there’s no actual operator there.
+}
+
+\tp{
+是的，这 40 行代码就是 Pratt 解析算法。它们有些难对付，但如果你理解了它们，其他部分就只是简单的扩展。
+}{
+So, yup, these 40 lines are the Pratt parsing algorithm. They are tricky, but, if you understand them, everything else is straightforward additions.
+}
+
+} % subtree
+
+\subtree{
+\title{铃铛和哨子 \sub{Bells and Whistles}}
+
+\tp{
+现在让我们添加各种奇特的表达式以展示这个算法的强大功能和灵活性。首先，添加一个高优先级，右结合的函数组合操作符 \code{.}：
+}{
+Now let’s add all kinds of weird expressions to show the power and flexibility of the algorithm. First, let’s add a high-priority, right associative function composition operator: .:
+}
+
+\rust{%
+fn infix_binding_power(op: char) -> (u8, u8) {
+    match op {
+        '+' | '-' => (1, 2),
+        '*' | '/' => (3, 4),
+        '.' => (6, 5), @hl
+        _ => panic!("bad op: {:?}"),
+    }
+}
+}
+
+\tp{
+是的，只要一行！注意操作符的左侧绑定更紧，这赋予了我们需要的右结合性：
+}{
+Yup, it’s a single line! Note how the left side of the operator binds tighter, which gives us desired right associativity:
+}
+
+\rust{%
+let s = expr("f . g . h");
+assert_eq!(s.to_string(), "(. f (. g h))");
+
+let s = expr(" 1 + 2 + f . g . h * 3 * 4");
+assert_eq!(s.to_string(), "(+ (+ 1 2) (* (* (. f (. g h)) 3) 4))");
+}
+
+\tp{
+现在，让我们添加一元操作符 \code{-}。它的绑定力要比二元算术操作符更强，但比组合操作符 \code{.} 弱。这需要我们更改循环的起始方式，因为我们不再能假设第一个符号是一个原子，我们还需要处理负号。不过，让类型来引导我们。首先，从绑定优先级开始。作为一个一元操作符，它实际上只有右侧绑定力，所以，让我们来编码这部分内容：
+}{
+Now, let’s add unary -, which binds tighter than binary arithmetic operators, but less tight than composition. This requires changes to how we start our loop, as we no longer can assume that the first token is an atom, and need to handle minus as well. But let the types drive us. First, we start with binding powers. As this is an unary operator, it really only have right binding power, so, ahem, let’s just code this:
+}
+
+\rust{%
+fn prefix_binding_power(op: char) -> ((), u8) { @callout.1
+    match op {
+        '+' | '-' => ((), 5),
+        _ => panic!("bad op: {:?}", op),
+    }
+}
+
+fn infix_binding_power(op: char) -> (u8, u8) {
+    match op {
+        '+' | '-' => (1, 2),
+        '*' | '/' => (3, 4),
+        '.' => (8, 7), @callout.2
+        _ => panic!("bad op: {:?}"),
+    }
+}
+}
+
+\tp{
+\callout{
+  \li{在这里，我们返回一个 dummy \code{()} ，以明确表明这是一个前缀而不是后缀操作符，因此只能将表达式绑定到右边。}
+  \li{注意，因为我们想在 \code{.} 和 \code{*} 之间添加一元操作符 \code{-}，所以我们需要将 \code{.} 的优先级\ruby{上调}{shift} \code{2} 两级。一般规则是，如果操作符是二元的，则我们使用奇数优先级作为基数，然后选择一侧将其增加 \code{1} 以实现结合性。对于一元减法来说，这不太重要，我们可以使用 \code{5} 或 \code{6}，但坚持使用奇数更为一致。}
+}
+}{
+(1) Here, we return a dummy () to make it clear that this is a prefix, and not a postfix operator, and thus can only bind things to the right.
+(2) Note, as we want to add unary - between . and *, we need to shift priorities of . by two. The general rule is that we use an odd priority as base, and bump it by one for associativity, if the operator is binary. For unary minus it doesn’t matter and we could have used either 5 or 6, but sticking to odd is more consistent.
+}
+
+\tp{
+将此代码插入 \code{expr_bp}，我们得到了：
+}{
+Plugging this into expr_bp, we get:
+}
+
+\rust{%
+fn expr_bp(lexer: &mut Lexer, min_bp: u8) -> S {
+    let mut lhs = match lexer.next() {
+        Token::Atom(it) => S::Atom(it),
+        Token::Op(op) => {
+            let ((), r_bp) = prefix_binding_power(op);
+            todo!()
+        }
+        t => panic!("bad token: {:?}", t),
+    };
+    ...
+}
+}
+
+\tp{
+现在我们只有 \code{r_bp} 而没有 \code{l_bp}，所以只要从主循环的代码里复制粘贴一半出来？别忘了，我们使用 \code{r_bp} 进行递归调用。
+}{
+Now, we only have r_bp and not l_bp, so let’s just copy-paste half of the code from the main loop? Remember, we use r_bp for recursive calls.
+}
+
+\rust{%
+fn expr_bp(lexer: &mut Lexer, min_bp: u8) -> S {
+    let mut lhs = match lexer.next() {
+        Token::Atom(it) => S::Atom(it),
+        Token::Op(op) => {
+            let ((), r_bp) = prefix_binding_power(op);
+            let rhs = expr_bp(lexer, r_bp);
+            S::Cons(op, vec![rhs])
+        }
+        t => panic!("bad token: {:?}", t),
+    };
+
+    loop {
+        let op = match lexer.peek() {
+            Token::Eof => break,
+            Token::Op(op) => op,
+            t => panic!("bad token: {:?}", t),
+        };
+
+        let (l_bp, r_bp) = infix_binding_power(op);
+        if l_bp < min_bp {
+            break;
+        }
+
+        lexer.next();
+        let rhs = expr_bp(lexer, r_bp);
+
+        lhs = S::Cons(op, vec![lhs, rhs]);
+    }
+
+    lhs
+}
+
+#[test]
+fn tests() {
+    ...
+
+    let s = expr("--1 * 2");
+    assert_eq!(s.to_string(), "(* (- (- 1)) 2)");
+
+    let s = expr("--f . g");
+    assert_eq!(s.to_string(), "(- (- (. f g)))");
+}
+}
+
+\tp{
+有趣的是，这种纯机械的、类型驱动的转换是有效的。当然，你也可以推理出它为什么有效。同样的参数也适用；在我们消费了前缀操作符之后，操作数由绑定更紧密的操作符组成，而我们恰好有一个可以解析比指定绑定力更紧密的表达式的函数。
+}{
+Amusingly, this purely mechanical, type-driven transformation works. You can also reason why it works, of course. The same argument applies; after we’ve consumed a prefix operator, the operand consists of operators that bind tighter, and we just so conveniently happen to have a function which can parse expressions tighter than the specified power.
+}
+
+\tp{
+好吧，开始变得愚蠢了。如果使用 \code{((), u8)} \dquote{正好}适用于前缀操作符，那么 \code{(u8, ())} 可以处理后缀操作符吗？好，让我们添加阶乘 \code{!}。它应该比 \code{-} 绑定得更紧密，因为 \code{-(92!)} 显然比 \code{(-92)!} 更有用。那么，熟悉的操练\em2dash新的优先级函数，上调 \code{.} 的优先级（这一点在 Pratt 解析器中很烦人），复制粘贴代码\ellipsis
+}{
+Ok, this is getting stupid. If using ((), u8) “just worked” for prefix operators, can (u8, ()) deal with postfix ones? Well, let’s add ! for factorials. It should bind tighter than -, because -(92!) is obviously more useful than (-92)!. So, the familiar drill — new priority function, shifting priority of . (this bit is annoying in Pratt parsers), copy-pasting the code…
+}
+
+\rust{%
+let (l_bp, ()) = postfix_binding_power(op);
+if l_bp < min_bp {
+    break;
+}
+
+let (l_bp, r_bp) = infix_binding_power(op);
+if l_bp < min_bp {
+    break;
+}
+}
+
+\tp{
+等等，这里有问题。解析前缀表达式之后，我们可以看到后缀或中缀操作符。但我们放弃了无法识别的操作符，这是不行的\ellipsis所以，我们让 \code{postfix_binding_power} 返回一个 option，用于操作符不是后缀的情况：
+}{
+Wait, something’s wrong here. After we’ve parsed the prefix expression, we can see either a postfix or an infix operator. But we bail on unrecognized operators, which is not going to work… So, let’s make postfix_binding_power to return an option, for the case where the operator is not postfix:
+}
+
+\rust{%
+fn expr_bp(lexer: &mut Lexer, min_bp: u8) -> S {
+    let mut lhs = match lexer.next() {
+        Token::Atom(it) => S::Atom(it),
+        Token::Op(op) => {
+            let ((), r_bp) = prefix_binding_power(op);
+            let rhs = expr_bp(lexer, r_bp);
+            S::Cons(op, vec![rhs])
+        }
+        t => panic!("bad token: {:?}", t),
+    };
+
+    loop {
+        let op = match lexer.peek() {
+            Token::Eof => break,
+            Token::Op(op) => op,
+            t => panic!("bad token: {:?}", t),
+        };
+
+        if let Some((l_bp, ())) = postfix_binding_power(op) { @hl
+            if l_bp < min_bp { @hl
+                break; @hl
+            } @hl
+            lexer.next(); @hl
+ @hl
+            lhs = S::Cons(op, vec![lhs]); @hl
+            continue; @hl
+        } @hl
+
+        let (l_bp, r_bp) = infix_binding_power(op);
+        if l_bp < min_bp {
+            break;
+        }
+
+        lexer.next();
+        let rhs = expr_bp(lexer, r_bp);
+
+        lhs = S::Cons(op, vec![lhs, rhs]);
+    }
+
+    lhs
+}
+
+fn prefix_binding_power(op: char) -> ((), u8) {
+    match op {
+        '+' | '-' => ((), 5),
+        _ => panic!("bad op: {:?}", op),
+    }
+}
+
+fn postfix_binding_power(op: char) -> Option<(u8, ())> { @hl
+    let res = match op { @hl
+        '!' => (7, ()), @hl
+        _ => return None, @hl
+    }; @hl
+    Some(res) @hl
+} @hl
+
+fn infix_binding_power(op: char) -> (u8, u8) {
+    match op {
+        '+' | '-' => (1, 2),
+        '*' | '/' => (3, 4),
+        '.' => (10, 9),
+        _ => panic!("bad op: {:?}"),
+    }
+}
+
+#[test]
+fn tests() {
+    let s = expr("-9!");
+    assert_eq!(s.to_string(), "(- (! 9))");
+
+    let s = expr("f . g !");
+    assert_eq!(s.to_string(), "(! (. f g))");
+}
+}
+
+\tp{
+很有趣，旧的测试和新的测试都通过了。
+}{
+Amusingly, both the old and the new tests pass.
+}
+
+\tp{
+现在我们准备添加一种新的表达式：括号表达式。其实这并不难，我们一开始就可以这样做，但这时候才处理它是有意义的，你马上就会明白为什么。括号只是一种基本表达式，处理方式与 atom 类似：
+}{
+Now, we are ready to add a new kind of expression: parenthesised expression. It is actually not that hard, and we could have done it from the start, but it makes sense to handle this here, you’ll see in a moment why. Parens are just a primary expressions, and are handled similar to atoms:
+}
+
+\rust{\startverb
+let mut lhs = match lexer.next() {
+    Token::Atom(it) => S::Atom(it),
+    Token::Op('(') => {
+        let lhs = expr_bp(lexer, 0);
+        assert_eq!(lexer.next(), Token::Op(')'));
+        lhs
+    }
+    Token::Op(op) => {
+        let ((), r_bp) = prefix_binding_power(op);
+        let rhs = expr_bp(lexer, r_bp);
+        S::Cons(op, vec![rhs])
+    }
+    t => panic!("bad token: {:?}", t),
+};
+\stopverb}
+
+\tp{
+不幸的是，以下测试失败了：
+}{
+Unfortunately, the following test fails:
+}
+
+\tp{
+panic 来自下面的循环\em2dash我们唯一的终止条件是到达 eof，而 \code{\startverb)\stopverb} 绝对不是 eof。解决这个问题的最简单方法是将 \code{infix_binding_power} 更改为在无法识别的操作数上返回 \code{None}。这样，它就会变得类似于 \code{postfix_binding_power}！
+}{\startverb
+The panic comes from the loop below — the only termination condition we have is reaching eof, and ) is definitely not eof. The easiest way to fix that is to change infix_binding_power to return None on unrecognized operands. That way, it’ll become similar to postfix_binding_power again!
+\stopverb}
+
+\rust{\startverb
+fn expr_bp(lexer: &mut Lexer, min_bp: u8) -> S {
+    let mut lhs = match lexer.next() {
+        Token::Atom(it) => S::Atom(it),
+        Token::Op('(') => { @hl
+            let lhs = expr_bp(lexer, 0); @hl
+            assert_eq!(lexer.next(), Token::Op(')')); @hl
+            lhs @hl
+        } @hl
+        Token::Op(op) => {
+            let ((), r_bp) = prefix_binding_power(op);
+            let rhs = expr_bp(lexer, r_bp);
+            S::Cons(op, vec![rhs])
+        }
+        t => panic!("bad token: {:?}", t),
+    };
+
+    loop {
+        let op = match lexer.peek() {
+            Token::Eof => break,
+            Token::Op(op) => op,
+            t => panic!("bad token: {:?}", t),
+        };
+
+        if let Some((l_bp, ())) = postfix_binding_power(op) {
+            if l_bp < min_bp {
+                break;
+            }
+            lexer.next();
+
+            lhs = S::Cons(op, vec![lhs]);
+            continue;
+        }
+
+        if let Some((l_bp, r_bp)) = infix_binding_power(op) { @hl
+            if l_bp < min_bp { @hl
+                break; @hl
+            } @hl
+ @hl
+            lexer.next(); @hl
+            let rhs = expr_bp(lexer, r_bp); @hl
+ @hl
+            lhs = S::Cons(op, vec![lhs, rhs]); @hl
+            continue; @hl
+        } @hl
+
+        break;
+    }
+
+    lhs
+}
+
+fn prefix_binding_power(op: char) -> ((), u8) {
+    match op {
+        '+' | '-' => ((), 5),
+        _ => panic!("bad op: {:?}", op),
+    }
+}
+
+fn postfix_binding_power(op: char) -> Option<(u8, ())> {
+    let res = match op {
+        '!' => (7, ()),
+        _ => return None,
+    };
+    Some(res)
+}
+
+fn infix_binding_power(op: char) -> Option<(u8, u8)> { @hl
+    let res = match op { @hl
+        '+' | '-' => (1, 2), @hl
+        '*' | '/' => (3, 4), @hl
+        '.' => (10, 9), @hl
+        _ => return None, @hl
+    }; @hl
+    Some(res) @hl
+} @hl
+\stopverb}
+
+\tp{
+现在让我们添加数组索引操作符：\code{a[i]}。它是什么\ruby{缀}{-fix}？\ruby{包围缀}{Around-fix}？如果它只是 \code{a[]}，它显然是后缀。如果它只是 \code{[i]}，它的作用与括号完全相同。关键在：\code{i} 部分实际上并不参与整个绑定力策略，因为它是\ruby{明确界定}{unambiguously delimited}的。所以我们只需要这样做：
+}{
+And now let’s add array indexing operator: a[i]. What kind of -fix is it? Around-fix? If it were just a[], it would clearly be postfix. if it were just [i], it would work exactly like parens. And it is the key: the i part doesn’t really participate in the whole power game, as it is unambiguously delimited. So, let’s do this:
+}
+
+\rust{\startverb
+fn expr_bp(lexer: &mut Lexer, min_bp: u8) -> S {
+    let mut lhs = match lexer.next() {
+        Token::Atom(it) => S::Atom(it),
+        Token::Op('(') => {
+            let lhs = expr_bp(lexer, 0);
+            assert_eq!(lexer.next(), Token::Op(')'));
+            lhs
+        }
+        Token::Op(op) => {
+            let ((), r_bp) = prefix_binding_power(op);
+            let rhs = expr_bp(lexer, r_bp);
+            S::Cons(op, vec![rhs])
+        }
+        t => panic!("bad token: {:?}", t),
+    };
+
+    loop {
+        let op = match lexer.peek() {
+            Token::Eof => break,
+            Token::Op(op) => op,
+            t => panic!("bad token: {:?}", t),
+        };
+
+        if let Some((l_bp, ())) = postfix_binding_power(op) {
+            if l_bp < min_bp {
+                break;
+            }
+            lexer.next();
+
+            lhs = if op == '[' { @hl
+                let rhs = expr_bp(lexer, 0); @hl
+                assert_eq!(lexer.next(), Token::Op(']')); @hl
+                S::Cons(op, vec![lhs, rhs]) @hl
+            } else { @hl
+                S::Cons(op, vec![lhs]) @hl
+            }; @hl
+            continue;
+        }
+
+        if let Some((l_bp, r_bp)) = infix_binding_power(op) {
+            if l_bp < min_bp {
+                break;
+            }
+
+            lexer.next();
+            let rhs = expr_bp(lexer, r_bp);
+
+            lhs = S::Cons(op, vec![lhs, rhs]);
+            continue;
+        }
+
+        break;
+    }
+
+    lhs
+}
+
+fn prefix_binding_power(op: char) -> ((), u8) {
+    match op {
+        '+' | '-' => ((), 5),
+        _ => panic!("bad op: {:?}", op),
+    }
+}
+
+fn postfix_binding_power(op: char) -> Option<(u8, ())> {
+    let res = match op {
+        '!' | '[' => (7, ()), @callout.1
+        _ => return None,
+    };
+    Some(res)
+}
+
+fn infix_binding_power(op: char) -> Option<(u8, u8)> {
+    let res = match op {
+        '+' | '-' => (1, 2),
+        '*' | '/' => (3, 4),
+        '.' => (10, 9),
+        _ => return None,
+    };
+    Some(res)
+}
+
+#[test]
+fn tests() {
+    ...
+
+    let s = expr("x[0][1]");
+    assert_eq!(s.to_string(), "([ ([ x 0) 1)");
+}
+\stopverb}
+
+\tp{
+\callout{
+  \li{注意，我们对 \code{!} 和 \code{\startverb[\stopverb} 使用相同的优先级。一般来说，为了保证算法的正确性，当我们做出决策时，保证优先级永远不相等是非常重要的。否则我们可能会陷入在两个同样好的化简候选者中微调结合性的境地。然而， 我们仅比较右 \code{bp} 和左 \code{bp}！因此对于两个后缀运算符，优先级相同是没问题的，因为他们都是右 \code{dp}。}
+}
+}{\startverb
+(1) Note that we use the same priority for ! as for [. In general, for the correctness of our algorithm it’s pretty important that, when we make decisions, priorities are never equal. Otherwise, we might end up in a situation like the one before tiny adjustment for associativity, where there were two equally-good candidates for reduction. However, we only compare right bp with left bp! So for two postfix operators it’s OK to have priorities the same, as they are both right.
+\stopverb}
+
+\tp{
+最后，所有操作符的最终 boss，可怕的\ruby{三元}{ternary}操作符：
+}{
+Finally, the ultimate boss of all operators, the dreaded ternary:
+}
+
+\pre{c ? e1 : e2}
+
+\tp{
+这是\ellipsis\ruby{所有什么地方缀}{all-other-the-place-fix}操作符吗？好吧，我们稍微改变下三元操作符的语法：
+}{
+Is this … all-other-the-place-fix operator? Well, let’s change the syntax of ternary slightly:
+}
+\blockquote{译者按：Agda 中确实存在这种混合的操作符，且可以由用户定义，称为\dquote{混缀}（[Mixfix Operators](https://agda.readthedocs.io/en/latest/language/mixfix-operators.html)）}
+
+\pre{c [ e1 ] e2}
+
+\tp{
+让我们回想一下，\code{a[i]} 事实上是后缀运算符 + 括号\ellipsis所以，是的，\code{?} 和 \code{:} 实际上是一对奇怪的括号！我们就这样处理！现在，优先级和结合性呢？在这种情况下，结合性到底是什么？
+}{
+And let’s recall that a[i] turned out to be a postfix operator + parenthesis… So, yeah, ? and : are actually a weird pair of parens! And let’s handle it as such! Now, what about priority and associativity? What associativity even is in this case?
+}
+
+\pre{a ? b : c ? d : e}
+
+\tp{
+为了弄清楚，我们只需要压缩括号部分：
+}{
+To figure it out, we just squash the parens part:
+}
+
+\pre{a ?: c ?: e}
+
+\tp{
+这可以被解析为
+}{
+This can be parsed as
+}
+
+\pre{(a ?: c) ?: e}
+
+\tp{
+或作为
+}{
+or as
+}
+
+\pre{a ?: (c ?: e)}
+
+\tp{
+什么更有用？为了这样的\code{?}-链：
+}{
+What is more useful? For ?-chains like this:
+}
+
+\pre{
+a ? b :
+c ? d :
+e
+}
+
+\tp{
+右结合的读法更有用。从优先级来看，三元操作符优先级较低。在 C 语言中，只有 \code{=} 和 \code{,} 有更低的优先级。趁此机会，我们也添加 C 风格的右结合 \code{=}。
+}{
+the right-associative reading is more useful. Priority-wise, the ternary is low priority. In C, only = and , have lower priority. While we are at it, let’s add C-style right associative = as well.
+}
+
+\tp{
+这是我们最完整，最完美的简单 Pratt 解析器的版本：
+}{
+Here’s our the most complete and perfect version of a simple Pratt parser:
+}
+
+\rust{\startverb
+use std::{fmt, io::BufRead};
+
+enum S {
+    Atom(char),
+    Cons(char, Vec<S>),
+}
+
+impl fmt::Display for S {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            S::Atom(i) => write!(f, "{}", i),
+            S::Cons(head, rest) => {
+                write!(f, "({}", head)?;
+                for s in rest {
+                    write!(f, " {}", s)?
+                }
+                write!(f, ")")
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Token {
+    Atom(char),
+    Op(char),
+    Eof,
+}
+
+struct Lexer {
+    tokens: Vec<Token>,
+}
+
+impl Lexer {
+    fn new(input: &str) -> Lexer {
+        let mut tokens = input
+            .chars()
+            .filter(|it| !it.is_ascii_whitespace())
+            .map(|c| match c {
+                '0'..='9'
+                | 'a'..='z' | 'A'..='Z' => Token::Atom(c),
+                _ => Token::Op(c),
+            })
+            .collect::<Vec<_>>();
+        tokens.reverse();
+        Lexer { tokens }
+    }
+
+    fn next(&mut self) -> Token {
+        self.tokens.pop().unwrap_or(Token::Eof)
+    }
+    fn peek(&mut self) -> Token {
+        self.tokens.last().copied().unwrap_or(Token::Eof)
+    }
+}
+
+fn expr(input: &str) -> S {
+    let mut lexer = Lexer::new(input);
+    expr_bp(&mut lexer, 0)
+}
+
+fn expr_bp(lexer: &mut Lexer, min_bp: u8) -> S {
+    let mut lhs = match lexer.next() {
+        Token::Atom(it) => S::Atom(it),
+        Token::Op('(') => {
+            let lhs = expr_bp(lexer, 0);
+            assert_eq!(lexer.next(), Token::Op(')'));
+            lhs
+        }
+        Token::Op(op) => {
+            let ((), r_bp) = prefix_binding_power(op);
+            let rhs = expr_bp(lexer, r_bp);
+            S::Cons(op, vec![rhs])
+        }
+        t => panic!("bad token: {:?}", t),
+    };
+
+    loop {
+        let op = match lexer.peek() {
+            Token::Eof => break,
+            Token::Op(op) => op,
+            t => panic!("bad token: {:?}", t),
+        };
+
+        if let Some((l_bp, ())) = postfix_binding_power(op) {
+            if l_bp < min_bp {
+                break;
+            }
+            lexer.next();
+
+            lhs = if op == '[' {
+                let rhs = expr_bp(lexer, 0);
+                assert_eq!(lexer.next(), Token::Op(']'));
+                S::Cons(op, vec![lhs, rhs])
+            } else {
+                S::Cons(op, vec![lhs])
+            };
+            continue;
+        }
+
+        if let Some((l_bp, r_bp)) = infix_binding_power(op) {
+            if l_bp < min_bp {
+                break;
+            }
+            lexer.next();
+
+            lhs = if op == '?' {
+                let mhs = expr_bp(lexer, 0);
+                assert_eq!(lexer.next(), Token::Op(':'));
+                let rhs = expr_bp(lexer, r_bp);
+                S::Cons(op, vec![lhs, mhs, rhs])
+            } else {
+                let rhs = expr_bp(lexer, r_bp);
+                S::Cons(op, vec![lhs, rhs])
+            };
+            continue;
+        }
+
+        break;
+    }
+
+    lhs
+}
+
+fn prefix_binding_power(op: char) -> ((), u8) {
+    match op {
+        '+' | '-' => ((), 9),
+        _ => panic!("bad op: {:?}", op),
+    }
+}
+
+fn postfix_binding_power(op: char) -> Option<(u8, ())> {
+    let res = match op {
+        '!' => (11, ()),
+        '[' => (11, ()),
+        _ => return None,
+    };
+    Some(res)
+}
+
+fn infix_binding_power(op: char) -> Option<(u8, u8)> {
+    let res = match op {
+        '=' => (2, 1),
+        '?' => (4, 3),
+        '+' | '-' => (5, 6),
+        '*' | '/' => (7, 8),
+        '.' => (14, 13),
+        _ => return None,
+    };
+    Some(res)
+}
+
+#[test]
+fn tests() {
+    let s = expr("1");
+    assert_eq!(s.to_string(), "1");
+
+    let s = expr("1 + 2 * 3");
+    assert_eq!(s.to_string(), "(+ 1 (* 2 3))");
+
+    let s = expr("a + b * c * d + e");
+    assert_eq!(s.to_string(), "(+ (+ a (* (* b c) d)) e)");
+
+    let s = expr("f . g . h");
+    assert_eq!(s.to_string(), "(. f (. g h))");
+
+    let s = expr(" 1 + 2 + f . g . h * 3 * 4");
+    assert_eq!(
+        s.to_string(),
+        "(+ (+ 1 2) (* (* (. f (. g h)) 3) 4))",
+    );
+
+    let s = expr("--1 * 2");
+    assert_eq!(s.to_string(), "(* (- (- 1)) 2)");
+
+    let s = expr("--f . g");
+    assert_eq!(s.to_string(), "(- (- (. f g)))");
+
+    let s = expr("-9!");
+    assert_eq!(s.to_string(), "(- (! 9))");
+
+    let s = expr("f . g !");
+    assert_eq!(s.to_string(), "(! (. f g))");
+
+    let s = expr("(((0)))");
+    assert_eq!(s.to_string(), "0");
+
+    let s = expr("x[0][1]");
+    assert_eq!(s.to_string(), "([ ([ x 0) 1)");
+
+    let s = expr(
+        "a ? b :
+         c ? d
+         : e",
+    );
+    assert_eq!(s.to_string(), "(? a b (? c d e))");
+
+    let s = expr("a = 0 ? b : c = d");
+    assert_eq!(s.to_string(), "(= a (= (? 0 b c) d))")
+}
+
+fn main() {
+    for line in std::io::stdin().lock().lines() {
+        let line = line.unwrap();
+        let s = expr(&line);
+        println!("{}", s)
+    }
+}
+\stopverb}
+
+\tp{
+该代码也可以在此[仓库](https://github.com/matklad/minipratt)中获得，输入结束 \startverb:-)\stopverb
+}{
+The code is also available in this repository, Eof \startverb:-)\stopverb
+}
+
+} % subtree

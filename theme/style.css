@@ -56,20 +56,13 @@ ol.callout>li {
 ol.callout>li::before {
   counter-increment: callout;
   content: counter(callout);
-  position: absolute;
-  top: 0.5rem;
+  position: relative;
+  top: -0.2em;
+  left: -0.5em;
 }
 
 i.callout::after {
   content: attr(data-value);
-}
-
-ol.callout>li::before {
-  counter-increment: callout;
-  content: counter(callout);
-  position: absolute;
-  top: -0.2em;
-  left: -0.5em;
 }
 
 ol.callout>li::before,

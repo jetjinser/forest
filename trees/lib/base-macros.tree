@@ -42,6 +42,8 @@
   \<html:ol>[class]{callout}{\body}
 }
 
+\def\del[body]{\<html:del>{\body}}
+
 % fancy style
 \def\tips[body]{
   \blockquote{\strong{tips}: \body}
