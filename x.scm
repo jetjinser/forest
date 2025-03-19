@@ -15,6 +15,7 @@
   #:use-module (sxml transform)
   #:use-module (srfi srfi-171)
   #:use-module (srfi srfi-26)
+  #:use-module (srfi srfi-11)
   #:use-module (srfi srfi-1))
 
 (define +forest+ "output")
@@ -99,10 +100,14 @@
         [(html:code (@ (lang ,lang) (class ,cls)) ,code)
          (guard (string=? cls "highlight"))
          (trace "highlighting lang `~a`" lang)
-         (let ([h (ts-highlight (string-trim-both code) lang)])
-           (or (and h (html-span (xml->sxml (string-append "<html:code>" (string-trim-both h)
-                                                           "</html:code>")
-                                            #:namespaces +ns+)))
+         (let*-values ([(plain-code) (string-trim-both code)]
+                       [(markers code-lines) (code-markers plain-code)]
+                       [(h) (ts-highlight (string-join code-lines "\n") lang)])
+           (or (and h
+                   (let* ([plain-h (string-trim-both h)]
+                          [marked-h (mark-code markers plain-h)]
+                          [coded-h (string-append "<html:code>" marked-h "</html:code>")])
+                     (html-span (xml->sxml coded-h #:namespaces +ns+))))
                code))]
         [,otherwise otherwise])))
 
@@ -114,6 +119,26 @@
       [*default* . ,(λ args args)]))
   (pre-post-order sxml transformer))
 
+;; TODO: refactor
+(define (code-markers plain-code)
+  (define (find-mark line)
+    (let ([last-token (last-pair (string-tokenize line))])
+      (or (and (pair? last-token)
+               (match (car last-token)
+                 ["@hl" (begin (trace "found highlight line")
+                               (list 'hi (string-drop-right line
+                                                            (string-length (car last-token)))))]
+                 [else (list #f line)]))
+          (list #f line))))
+  (unzip2 (map find-mark
+                     (string-split plain-code #\newline))))
+(define (mark-code markers highlighted-code)
+  (define (mark-line mark-and-line)
+    (match (car mark-and-line)
+      ['hi (string-append "<html:span class=\"highlight-line\">" (cadr mark-and-line) "</html:span>")]
+      [else (string-append "<html:span>" (cadr mark-and-line) "</html:span>")]))
+  (let ([lines (string-split highlighted-code #\newline)])
+    (string-join (map mark-line (zip markers lines)) "\n")))
 
 ;; dotxml->html
 
@@ -203,5 +228,5 @@
                                     (all-trees +forest+))])
     (info "transduced ~a trees" tree-count))
 
-  (xslt-transform) ; TODO: in pipe
-  (remove-unused-files! +forest+))
+  (xslt-transform)) ; TODO: in pipe
+  ; (remove-unused-files! +forest+))

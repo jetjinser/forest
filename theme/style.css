@@ -35,6 +35,10 @@ span.with-icon img {
   height: 1cap;
 }
 
+span.highlight-line {
+  background-color: #FFCA;
+}
+
 .duration {
   color: #555;
   font-size: 0.9em;
@@ -172,6 +176,8 @@ pre code {
   white-space: unset;
   text-wrap-mode: nowrap;
   overflow-x: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 body {
