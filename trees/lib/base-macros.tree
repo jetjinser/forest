@@ -38,6 +38,10 @@
 \def\dd[body]{\<html:dd>{\body}}
 \def\desc[term][body]{\dt{\term}\dd{\body}}
 
+\def\callout[body]{
+  \<html:ol>[class]{callout}{\body}
+}
+
 % fancy style
 \def\tips[body]{
   \blockquote{\strong{tips}: \body}

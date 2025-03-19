@@ -125,17 +125,28 @@
     (let ([last-token (last-pair (string-tokenize line))])
       (or (and (pair? last-token)
                (match (car last-token)
-                 ["@hl" (begin (trace "found highlight line")
-                               (list 'hi (string-drop-right line
-                                                            (string-length (car last-token)))))]
+                 ["@hl"
+                  (begin (trace "found highlight line")
+                         (list 'hi
+                               ;; + 1 for remove pre-space
+                               (string-drop-right line (+ 1 (string-length (car last-token))))))]
+                 [(? (cut string-prefix? "@callout." <>))
+                  (begin (trace "found callout")
+                         (list `(callout ,(string-take-right (car last-token) 1))
+                               ;; keep the pre-space
+                               (string-drop-right line (string-length (car last-token)))))]
                  [else (list #f line)]))
           (list #f line))))
   (unzip2 (map find-mark
-                     (string-split plain-code #\newline))))
+               (string-split plain-code #\newline))))
 (define (mark-code markers highlighted-code)
   (define (mark-line mark-and-line)
     (match (car mark-and-line)
       ['hi (string-append "<html:span class=\"highlight-line\">" (cadr mark-and-line) "</html:span>")]
+      [(callout data-value)
+       (string-append "<html:span>"
+                      (cadr mark-and-line) "<html:i class=\"callout\" data-value=\"" data-value "\"></html:i>"
+                      "</html:span>")]
       [else (string-append "<html:span>" (cadr mark-and-line) "</html:span>")]))
   (let ([lines (string-split highlighted-code #\newline)])
     (string-join (map mark-line (zip markers lines)) "\n")))
@@ -228,5 +239,5 @@
                                     (all-trees +forest+))])
     (info "transduced ~a trees" tree-count))
 
-  (xslt-transform)) ; TODO: in pipe
-  ; (remove-unused-files! +forest+))
+  (xslt-transform) ; TODO: in pipe
+  (remove-unused-files! +forest+))

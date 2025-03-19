@@ -44,6 +44,50 @@ span.highlight-line {
   font-size: 0.9em;
 }
 
+ol.callout {
+  list-style: none;
+  counter-reset: callout;
+}
+
+ol.callout>li {
+  position: relative;
+}
+
+ol.callout>li::before {
+  counter-increment: callout;
+  content: counter(callout);
+  position: absolute;
+  top: 0.5rem;
+}
+
+i.callout::after {
+  content: attr(data-value);
+}
+
+ol.callout>li::before {
+  counter-increment: callout;
+  content: counter(callout);
+  position: absolute;
+  top: -0.2em;
+  left: -0.5em;
+}
+
+ol.callout>li::before,
+i.callout::after {
+  font-style: normal;
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  line-height: 0.9rem;
+  border-radius: 100%;
+  background-color: black;
+  color: white;
+  text-align: center;
+}
+
+
 /* inria-sans-300 - latin_latin-ext */
 @font-face {
   font-display: swap;
