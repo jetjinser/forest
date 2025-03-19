@@ -18,9 +18,9 @@ The second, surprising observation is that the submitted solutions fall into two
 }
 
 \tp{
-\li{
-  \ul{逐字符扫描输入，构造结果: Group II}
-  \ul{将问题视为 groupBy，然后\ruby{映射}{mapping}：Group I}
+\ul{
+  \li{逐字符扫描输入，构造结果: Group II}
+  \li{将问题视为 groupBy，然后\ruby{映射}{mapping}：Group I}
 }
 }{
 scan the input string char by char, building the result: Group II
@@ -33,9 +33,9 @@ see the problem as groupBy followed by mapping: Group I
 Here are the languages used to write the solutions in each group:
 }
 
-\li{
-  \ul{Group I: Clojure, Ruby, Raku, Python, Haskell, APL}
-  \ul{Group II: Go, Racket, Erlang, Rust, Julia, Haskell}
+\ul{
+  \li{Group I: Clojure, Ruby, Raku, Python, Haskell, APL}
+  \li{Group II: Go, Racket, Erlang, Rust, Julia, Haskell}
 }
 
 \tp{

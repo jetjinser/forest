@@ -9,6 +9,10 @@
 \import{translate}
 
 \def\rust[src]{\hcode{rust}{\src}}
+\def\bnf[src]{\hcode{bnf}{\src}}
+\def\scheme[src]{\hcode{scheme}{\src}}
+\def\c[src]{\hcode{c}{\src}}
+\def\ascii[src]{\hcode{ascii}{\src}}
 
 \declare{[[matklad]]}{}
 \tips{Click on the translation to expand and view the original text. 点击译文可展开查看原文。}
@@ -56,7 +60,7 @@ This post assumes a fair bit of familiarity with parsing techniques, and, for ex
 Parsing is the process by which a compiler turns a sequence of tokens into a tree representation:
 }
 
-\pre{\startverb
+\ascii{\startverb
                             Add
                  Parser     / \
  "1 + 2 * 3"    ------->   1  Mul
@@ -97,7 +101,7 @@ Pratt parsing is one of the most frequently used techniques for hand-written par
 The pinnacle of syntactic analysis theory is discovering the context free grammar notation (often using BNF concrete syntax) for decoding linear structures into trees:
 }
 
-\pre{
+\bnf{
 Item ::=
     StructItem
   | EnumItem
@@ -115,7 +119,7 @@ StructItem ::=
 I remember being fascinated by this idea, especially by parallels with natural language sentence structure. However, my optimism quickly waned once we got to describing expressions. The natural expression grammar indeed allows one to see what is an expression.
 }
 
-\pre{
+\bnf{
 Expr ::=
     Expr '+' Expr
   | Expr '*' Expr
@@ -129,7 +133,7 @@ Expr ::=
 Although this grammar looks great, it is in fact ambiguous and imprecise, and needs to be rewritten to be amendable to automated parser generation. Specifically, we need to specify precedence and associativity of operators. The fixed grammar looks like this:
 }
 
-\pre{
+\bnf{
 Expr ::=
     Factor
   | Expr '+' Factor
@@ -150,7 +154,7 @@ To me, the “shape” of expressions feels completely lost in this new formulat
 }
 
 \tp{
-这就是我为什么喜欢 Pratt 解析\em2dash它是对递归下降解析算法的改进，使用了优先级和结合性的自然术语来解析表达式，而不是语法混淆技术。
+这就是我为什么喜欢 Pratt 解析\em2dash它是对递归下降解析算法的改进，使用了优先级和结合性的自然术语来解析表达式，而不是文法混淆技术。
 }{
 And that’s why I love Pratt parsing — it is an enhancement of recursive descent parsing algorithm, which uses the natural terminology of precedence and associativity for parsing expressions, instead of grammar obfuscation techniques.
 }
@@ -192,7 +196,7 @@ fn struct_item(p: &mut Parser) {
 Traditionally, text-books point out left-recursive grammars as the Achilles heel of this approach, and use this drawback to motivate more advanced LR parsing techniques. An example of problematic grammar can look like this:
 }
 
-\pre{
+\bnf{
 Sum ::=
     Sum '+' Int
   | Int
@@ -284,7 +288,7 @@ I have a confession to make: I am always confused by “high precedence” and �
 So instead, I find thinking in terms of binding power more intuitive.
 }
 
-\pre{
+\ascii{
 expr:   A       +       B       *       C
 power:      3       3       5       5
 }
@@ -302,7 +306,7 @@ The * is stronger, it has more power to hold together B and C, and so the expres
 What about associativity though? In A + B + C all operators seem to have the same power, and it is unclear which + to fold first. But this can also be modelled with power, if we make it slightly asymmetric:
 }
 
-\pre{
+\ascii{
 expr:      A       +       B       +       C
 power:  0      3      3.1      3      3.1     0
 }
@@ -313,7 +317,7 @@ power:  0      3      3.1      3      3.1     0
 Here, we pumped the right power of + just a little bit, so that it holds the right operand tighter. We also added zeros at both ends, as there are no operators to bind from the sides. Here, the first (and only the first) + holds both of its arguments tighter than the neighbors, so we can reduce it:
 }
 
-\pre{
+\ascii{
 expr:     (A + B)     +     C
 power:  0          3    3.1    0
 }
@@ -330,7 +334,7 @@ Pratt 解析的作用是通过从左到右处理字符串，找到这些比邻�
 What Pratt parsing does is that it finds these badass, stronger than neighbors operators, by processing the string left to right. We are almost at a point where we finally start writing some code, but let’s first look at the other running example. We will use function composition operator, . (dot) as a right associative operator with a high binding power. That is, f . g . h is parsed as f . (g . h), or, in terms of power
 }
 
-\pre{
+\ascii{
   f     .    g     .    h
 0   8.5    8   8.5    8   0
 }
@@ -388,9 +392,7 @@ impl Lexer {
 To make sure that we got the precedence binding power correctly, we will be transforming infix expressions into a gold-standard (not so popular in Poland, for whatever reason) unambiguous notation — S-expressions:
 }
 
-\pre{
-1 + 2 * 3 == (+ 1 (* 2 3))
-}
+\scheme{1 + 2 * 3 == (+ 1 (* 2 3))}
 
 \rust{%
 use std::fmt;
@@ -522,7 +524,7 @@ fn infix_binding_power(op: char) -> (u8, u8) {
 And now comes the tricky bit, where we introduce recursion into the picture. Let’s think about this example (with powers below):
 }
 
-\pre{
+\ascii{
 a   +   b   *   c   *   d   +   e
   1   2   3   4   3   4   1   2
 }
@@ -1094,7 +1096,7 @@ fn tests() {
 Finally, the ultimate boss of all operators, the dreaded ternary:
 }
 
-\pre{c ? e1 : e2}
+\c{c ? e1 : e2}
 
 \tp{
 这是\ellipsis\ruby{所有什么地方缀}{all-other-the-place-fix}操作符吗？好吧，我们稍微改变下三元操作符的语法：
@@ -1103,7 +1105,7 @@ Is this … all-other-the-place-fix operator? Well, let’s change the syntax of
 }
 \blockquote{译者按：Agda 中确实存在这种混合的操作符，且可以由用户定义，称为\dquote{混缀}（[Mixfix Operators](https://agda.readthedocs.io/en/latest/language/mixfix-operators.html)）}
 
-\pre{c [ e1 ] e2}
+\c{c [ e1 ] e2}
 
 \tp{
 让我们回想一下，\code{a[i]} 事实上是后缀运算符 + 括号\ellipsis所以，是的，\code{?} 和 \code{:} 实际上是一对奇怪的括号！我们就这样处理！现在，优先级和结合性呢？在这种情况下，结合性到底是什么？
@@ -1111,7 +1113,7 @@ Is this … all-other-the-place-fix operator? Well, let’s change the syntax of
 And let’s recall that a[i] turned out to be a postfix operator + parenthesis… So, yeah, ? and : are actually a weird pair of parens! And let’s handle it as such! Now, what about priority and associativity? What associativity even is in this case?
 }
 
-\pre{a ? b : c ? d : e}
+\c{a ? b : c ? d : e}
 
 \tp{
 为了弄清楚，我们只需要压缩括号部分：
@@ -1119,7 +1121,7 @@ And let’s recall that a[i] turned out to be a postfix operator + parenthesis�
 To figure it out, we just squash the parens part:
 }
 
-\pre{a ?: c ?: e}
+\c{a ?: c ?: e}
 
 \tp{
 这可以被解析为
@@ -1127,7 +1129,7 @@ To figure it out, we just squash the parens part:
 This can be parsed as
 }
 
-\pre{(a ?: c) ?: e}
+\c{(a ?: c) ?: e}
 
 \tp{
 或作为
@@ -1135,7 +1137,7 @@ This can be parsed as
 or as
 }
 
-\pre{a ?: (c ?: e)}
+\c{a ?: (c ?: e)}
 
 \tp{
 什么更有用？为了这样的\code{?}-链：
@@ -1143,7 +1145,7 @@ or as
 What is more useful? For ?-chains like this:
 }
 
-\pre{
+\c{
 a ? b :
 c ? d :
 e
