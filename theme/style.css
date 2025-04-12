@@ -1,5 +1,41 @@
 /* SPDX-License-Identifier: CC0-1.0 */
 
+/* typo start */
+@counter-style parenthesized-decimal {
+  system: fixed;
+  symbols: '\2474' '\2475' '\2476' '\2477' '\2478' '\2479' '\247A' '\247B' '\247C' '\247D' '\247E' '\247F' '\2480' '\2481' '\2482' '\2483' '\2484' '\2485' '\2486' '\2487';
+  /* symbols: '⑴' '⑵' '⑶' '⑷' '⑸' '⑹' '⑺' '⑻' '⑼' '⑽' '⑾' '⑿' '⒀' '⒁' '⒂' '⒃' '⒄' '⒅' '⒆' '⒇'; */
+  suffix: ' ';
+}
+
+:root {
+  counter-reset: cite footnote;
+}
+.cite[href] {
+  counter-increment: cite;
+}
+.cite[href]:empty::after {
+  content: counter(cite, parenthesized-decimal);
+}
+
+.footnote {
+  counter-increment: footnote;
+}
+.footnote > a:empty::before {
+  content: counter(footnote, parenthesized-decimal);
+}
+
+body:has(article):has(.typo-p:not(footer .typo-p)) {
+  background-color: oklch(0.85 0 0);
+}
+
+.typo-p {
+  text-indent: 2em each-line;
+  font-size: 16pt;
+  line-height: 1.7;
+}
+/* typo stop */
+
 html.dark {
   filter: invert(1) hue-rotate(150deg);
   background-color: rgb(230, 230, 230);
