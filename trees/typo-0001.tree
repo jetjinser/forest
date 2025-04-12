@@ -5,7 +5,7 @@
 \def\footnote[n][desc]{\<html:p>[class]{footnote}[id]{fn\n}{\<html:a>[href]{#c\n}{} \desc}}
 
 \title{狂人日记\cite{1}}
-\author{jinser}
+\author{luxun}
 \taxon{typology}
 \meta{lang}{zh-cmn}
 
