@@ -99,3 +99,14 @@ fetch("./forest.json")
 
   ninja.data = items
  });
+
+window.onload = function() {
+  const vertElement = document.querySelector('.vert');
+  if (vertElement) {
+    window.scrollTo({
+      top: 0,
+      left: document.body.scrollWidth,
+      behavior: "smooth",
+    });
+  }
+};

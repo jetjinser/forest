@@ -53,6 +53,22 @@ body:has(article):has(.typo-p:not(footer .typo-p)) {
   text-indent: 2em each-line;
   font-size: 16pt;
   line-height: 1.7;
+  quotes: "“" "”" "‘" "’";
+}
+.vert {
+  text-indent: unset;
+  quotes: "「" "」" "『" "』";
+  max-height: 70vh;
+  width: 98%;
+}
+article:has(.vert) {
+  writing-mode: vertical-rl;
+}
+
+.proper-name {
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-underline-offset: 0.25em;
 }
 /* typo stop */
 
@@ -204,7 +220,6 @@ i.callout::after {
 }
 
 :root {
-  --content-gap: 15px;
   --radius: 5px;
 }
 
@@ -234,7 +249,7 @@ h4 {
 pre,
 img,
 .katex-display,
-section,
+/* section, */
 center {
   overflow-y: hidden;
 }
@@ -359,8 +374,8 @@ footer h2 {
     transition: ease all .2s;
   }
 
-  #grid-wrapper>article {
-    max-width: calc((2.5 / 3) * 100%);
+  #grid-wrapper>article:not(article:has(.vert)) {
+    width: calc((2.5 / 3) * 100%);
   }
 
   #grid-wrapper {
