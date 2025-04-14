@@ -58,8 +58,7 @@ body:has(article):has(.typo-p:not(footer .typo-p)) {
 .vert {
   text-indent: unset;
   quotes: "「" "」" "『" "』";
-  max-height: 70vh;
-  width: 98%;
+  max-inline-size: 70vi;
   letter-spacing: 0.2em;
 }
 article:has(.vert) {
