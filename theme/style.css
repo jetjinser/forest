@@ -60,6 +60,7 @@ body:has(article):has(.typo-p:not(footer .typo-p)) {
   quotes: "「" "」" "『" "』";
   max-height: 70vh;
   width: 98%;
+  letter-spacing: 0.2em;
 }
 article:has(.vert) {
   writing-mode: vertical-rl;
@@ -68,7 +69,7 @@ article:has(.vert) {
 .proper-name {
   text-decoration: underline;
   text-decoration-style: solid;
-  text-underline-offset: 0.25em;
+  text-underline-offset: 0.15em;
 }
 /* typo stop */
 

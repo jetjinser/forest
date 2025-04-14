@@ -10,6 +10,9 @@
 \meta{lang}{zh-cmn}
 \meta{original}{\verb!|https://zh.wikisource.org/zh-hans/%E9%81%8E%E7%A7%A6%E8%AB%96!}
 
+\put\transclude/toc{false}
+\put\transclude/numbered{false}
+
 \subtree{
 \title{上}
 \meta{lang}{zh-cmn}
