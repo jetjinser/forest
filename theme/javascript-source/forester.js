@@ -17,10 +17,14 @@ if (localStorage.getItem('theme') === "dark" || (!('theme' in localStorage) && p
     setDarkMode(true, preference);
 }
 window.onload = function () {
-    document.getElementById('button-dark-mode').addEventListener('click', function() {
-        setDarkMode(!document.documentElement.classList.contains('dark'), preference);
+    const darkModeButton = document.getElementById("button-dark-mode");
+    const isDarkModeEnabled = () => document.documentElement.classList.toggle("dark");
+
+    darkModeButton.addEventListener("click", function() {
+        setDarkMode(isDarkModeEnabled(), preference);
     });
 };
+
 
 // ===
 
