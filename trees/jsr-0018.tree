@@ -1,0 +1,36 @@
+\title{Guix in Wonderland}
+\date{2025-04-18}
+\author{jinser}
+
+\import{base-macros}
+\def\scheme[src]{\hcode{scheme}{\src}}
+
+\p{[\code{user-account}](https://guix.gnu.org/manual/en/html_node/User-Accounts.html#index-user_002daccount) 的 \code{password} config 如何工作？似乎和 NixOS 有所不同，或我的理解有错。我填入 mkpasswd 生成的 hashed password，但 sudo 时无法使用提供的密码。}
+\hr
+
+\p{要如何找到当前 channel 某个 repo 的源代码呢？比如查看 Guix repo 的源代码。应该已经下载下来到 gnu store 里了。}
+\hr
+
+\p{fish 的 home service，虽然文档里没有，但搜索到了[邮件列表里的一个 commit](https://lists.libreplanet.org/archive/html/guix-commits/2025-03/msg02304.html)，如下，可以工作
+\scheme{%
+(service home-fish-service-type
+      (home-fish-configuration))
+}
+}
+\hr
+
+\p{我用\scheme{\verb!|(lset-difference eqv? %base-packages (list nvi mg)!}来删掉一些预定义的包，不知道是不是正常实践。}
+\hr
+
+\p{怎么知道哪个包在哪个模块？目前是直接在 guix repo 里 grep。}
+\hr
+
+\p{git 的 home service?}
+\p{直接使用 \code{home-xdg-configuration-files-service-type} 写 \code{$XDG_CONFIG_DIR/git/config}}
+\hr
+
+\p{Guix channel 的 repo 似乎就是 git repo，而且还是 git pull 下来的。感觉有点费力，不知道有没有特化一些提供 tarball 下载的 Git forge。}
+\hr
+
+\p{guix system reconfigure 可以 remote sudo 吗？}
+\hr

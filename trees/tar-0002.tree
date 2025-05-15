@@ -1,0 +1,7 @@
+\title{Rust in QEMU update, April 2025}
+\author{jinser}
+\date{2025-05-15}
+\meta{original}{https://alhassy.com/TypedLisp.html}
+\meta{lobster}{https://lobste.rs/s/spxkvs/typed_lisp_primer}
+
+\p{Common Lisp 的 (dynamic) type system 和 racket 的 contracts 有何区别？}
