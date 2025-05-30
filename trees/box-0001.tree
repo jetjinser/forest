@@ -1,0 +1,14 @@
+\title{Teto In the Box}
+\author{jinser}
+
+\import{html}
+
+\script/module{
+  import init from "https://assets.purejs.icu/pkgs/teto-box/teto_box.js";
+  init();
+}
+
+\canvas{}
+
+\p{Imagine this is a teto.}
+

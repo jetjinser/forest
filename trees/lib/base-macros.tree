@@ -7,6 +7,7 @@
 \def\id[body]{\body}
 
 % ===
+% TODO: move html stuffs to lib/html.tree
 
 \xmlns:html{http://www.w3.org/1999/xhtml}
 

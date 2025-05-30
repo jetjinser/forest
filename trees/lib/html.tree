@@ -1,0 +1,15 @@
+\title{HTML macros}
+\author{jinser}
+
+\xmlns:html{http://www.w3.org/1999/xhtml}
+
+\def\canvas[body]{
+  \<html:canvas>[id]{canvas}{\body}
+}
+
+\def\script[body]{
+  \<html:script>{\body}
+}
+\def\script/module[body]{
+  \<html:script>[type]{module}{\body}
+}

@@ -311,6 +311,11 @@ dl dt {
   font-weight: bold;
 }
 
+#canvas {
+  height: 100%;
+  width: 100%;
+}
+
 .logo {
   font-weight: 1000;
   font-size: 24px;
