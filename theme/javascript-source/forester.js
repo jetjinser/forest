@@ -16,14 +16,13 @@ const preference = window.matchMedia('(prefers-color-scheme: dark)').matches ? '
 if (localStorage.getItem('theme') === "dark" || (!('theme' in localStorage) && preference === 'dark')) {
     setDarkMode(true, preference);
 }
-window.onload = function () {
-    const darkModeButton = document.getElementById("button-dark-mode");
-    const isDarkModeEnabled = () => document.documentElement.classList.toggle("dark");
 
-    darkModeButton.addEventListener("click", function() {
-        setDarkMode(isDarkModeEnabled(), preference);
-    });
-};
+const darkModeButton = document.getElementById("button-dark-mode");
+const isDarkModeEnabled = () => document.documentElement.classList.toggle("dark");
+
+darkModeButton.addEventListener("click", function() {
+    setDarkMode(isDarkModeEnabled(), preference);
+});
 
 
 // ===
