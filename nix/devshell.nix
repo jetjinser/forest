@@ -46,6 +46,8 @@
             vscode-langservers-extracted
             tree-sitter
             gcc
+
+            lyx
           ]);
 
         commands = [

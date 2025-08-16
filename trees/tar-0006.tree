@@ -1,0 +1,4 @@
+\title{Unsoundness and accidental features in the \code{#[target_feature]} attribute}
+\date{2025-07-14}
+\meta{original}{https://predr.ag/blog/unsoundness-and-accidental-features-in-target-feature/}
+\meta{lobster}{https://lobste.rs/s/msogci/unsoundness_accidental_features_target}
