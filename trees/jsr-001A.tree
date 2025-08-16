@@ -3,4 +3,4 @@
 \author{jinser}
 \meta{slides}{https://assets.purejs.icu/slides/kont-nix-promotion.pdf}
 
-\p{\emph{subtitle}: \code{(talk (call/cc 如何正确地在办公室里把 Nix 安利给同事？))}}
+\p{\em{subtitle}: \code{(talk (call/cc 如何正确地在办公室里把 Nix 安利给同事？))}}
