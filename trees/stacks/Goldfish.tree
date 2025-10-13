@@ -1,0 +1,15 @@
+\import{base-macros}
+
+\def\goldfishicon[body]{
+  \icon{https://raw.githubusercontent.com/XmacsLabs/goldfish/refs/heads/main/GoldfishScheme-logo.png}{🐟}{\body}
+}
+
+\title{\goldfishicon{Goldfish}}
+\taxon{stack}
+\meta{github}{https://github.com/XmacsLabs/goldfish}
+\meta{gitee}{https://gitee.com/XmacsLabs/goldfish}
+
+\blockquote{Goldfish Scheme is a fast, lightweight Scheme interpreter designed to be as practical and easy to use as Python. It features R7RS-small compatibility, Scala-like functional collections, and a versatile, Python-inspired standard library.}
+
+\p{Developed by [[XmacsLabs]] for use in projects such as [[Mogan_STEM]] and [[Liii_STEM]].}
+

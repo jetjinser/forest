@@ -1,0 +1,14 @@
+\import{base-macros}
+
+\def\moganicon[body]{
+  \icon{https://mogan.app/mogan-logo.png}{Mogan STEM}{\body}
+}
+
+\title{\moganicon{Mogan STEM}}
+\taxon{stack}
+\meta{external}{https://mogan.app/}
+
+\p{Mogan STEM is a powerful, open-source scientific text editor designed for intuitive, interactive, and efficient technical writing. It provides a WYSIWYG experience, eliminating the complexity of LaTeX and enabling seamless conversion between LaTeX, Markdown, and Word formats in real time.}
+
+\p{Developed and maintained by the [[XmacsLabs]] community, Mogan STEM aims to make scientific writing 100x faster and more enjoyable for everyone.}
+

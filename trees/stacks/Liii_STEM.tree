@@ -1,0 +1,11 @@
+\import{base-macros}
+\import{Liii}
+
+\title{\liiiicon{Liii STEM}}
+\taxon{stack}
+\meta{external}{https://liiistem.com/}
+
+\p{Liii STEM is an AI-powered, commercial scientific writing platform designed for fast, intuitive, and professional document creation. It offers a WYSIWYG experience, eliminating LaTeX complexity and enabling seamless conversion between LaTeX, Markdown, and Word formats in real time.}
+
+\p{Developed by [[Liii]], Liii STEM builds on the technical foundation of GNU TeXmacs, and shares its ecosystem with [[Mogan_STEM]] and [[Goldfish]].}
+

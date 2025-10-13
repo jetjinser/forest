@@ -1,0 +1,13 @@
+\title{typesetting engine & scheme interpreter developer at [[Liii]]}
+\author{jinser}
+
+\import{base-macros}
+
+\p{\duration{2024.7}{2024.9} During this period, I focused on the development of the typesetting engine, editor functionality, and scheme interpreter for [[Liii_STEM]] and its open-source counterpart [[Mogan_STEM]].}
+
+\ul{
+  \li{Developed the [https://github.com/XmacsLabs/goldfish](Goldfish Scheme interpreter) and standard libraries, including the packrat parser, REPL, and markdown tokenizer, which serve as the scripting foundation for the typesetting software.}
+  \li{Implemented a streaming LLM renderer for real-time rendering of LLM output within the typesetting environment.}
+}
+
+\p{These tasks required deep integration between the interpreter, editor, and rendering pipeline, as well as designing extensible APIs for scripting and automation.}

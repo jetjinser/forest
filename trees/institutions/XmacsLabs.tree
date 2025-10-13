@@ -1,0 +1,23 @@
+\import{base-macros}
+
+\def\xmacsicon[body]{
+  \icon{https://raw.githubusercontent.com/XmacsLabs/.github/refs/heads/main/profile/XmacsLabs.png}{XmacsLabs}{\body}
+}
+
+\title{\xmacsicon{XmacsLabs}}
+\taxon{institution}
+\meta{github}{https://github.com/XmacsLabs}
+\meta{gitlab}{https://git.lug.ustc.edu.cn/XmacsLabs}
+\meta{codeberg}{https://codeberg.org/XmacsLabs}
+\meta{gitee}{https://gitee.com/XmacsLabs}
+
+\p{XmacsLabs is a non-profit organization dedicated to creating open-source tools for exploring science and technology. The team collaborates on projects for structured editing, programming, and scientific publishing.}
+
+\ul{
+  \li{[[Mogan_STEM]]: a structured editor based on GNU TeXmacs (Stable)}
+  \li{Mogan Language: a structured programming language (Designing)}
+  \li{Xmacs Planet: public docs by the Xmacs community (Beta)}
+  \li{TMML Wiki: wiki of Science and Technology (Alpha)}
+}
+
+\p{XmacsLabs also maintains open structured text projects such as [《Mozi》](https://gitee.com/XmacsLabs/mozi) (Simplified Chinese) and [《Interactive SICP》](https://gitee.com/XmacsLabs/interactive-sicp) (English).}

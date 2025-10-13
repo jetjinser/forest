@@ -1,0 +1,25 @@
+\import{base-macros}
+
+\def\liiiicon[body]{
+  \icon{https://liiistem.com/liii_icon.png}{Liii Network}{\body}
+}
+
+\title{\liiiicon{Liii Network}}
+\taxon{company}
+\meta{external}{https://liiistem.com/company-profile.html}
+
+\p{Liii Network Technology Co., Ltd. is dedicated to revolutionizing scientific and technical writing through AI-powered tools and innovative software solutions. The company bridges the gap between traditional LaTeX complexity and modern user expectations.}
+
+\ul{
+  \li{Develops [[Liii_STEM]]: an AI-integrated scientific writing platform with intelligent assistance, Magic Paste, and professional typesetting.}
+  \li{Maintains open-source projects such as [[Mogan_STEM]] and contributes to the GNU TeXmacs ecosystem.}
+  \li{Creates writing tools including intelligent formula editing and automated referencing systems.}
+}
+
+\p{Key achievements include LLM and VLM integration, commercial launch of Liii STEM, development of Goldfish Scheme for AI functionality, and globalization of GNU TeXmacs with UTF-8 support.}
+
+\ul{
+  \li{Founded in 2023 by Da Shen, with support from USTC-Deqing Alpha Research Institute.}
+  \li{Related projects: GNU TeXmacs, [[Mogan_STEM]], [[Goldfish]].}
+}
+

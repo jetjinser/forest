@@ -14,6 +14,7 @@
 
 \subtree{
   \title{work experience}
+  \transclude{jsr-001B}
   \transclude{jsr-000E}
   \transclude{jsr-000F}
   \transclude{jsr-000K}
