@@ -14,7 +14,7 @@
 
 @font-face {
   font-family: 'KingHwaOldSong LT';
-  src: url('https://assets.purejs.icu/fonts/京華老宋体-LT原版鉛字字形.ttf') format('truetype');
+  src: url('https://assets.purejs.icu/fonts/京華老宋体-LT原版鉛字字形-subset.woff2') format('woff');
   font-display: swap;
   unicode-range: U+4E00-9FFF, U+3400-4DBF;
 }
