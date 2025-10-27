@@ -1,6 +1,6 @@
 \xmlns:html{http://www.w3.org/1999/xhtml}
 \def\q[body]{\<html:q>{\body}}
-\def\p[body]{\<html:p>[class]{typo-p}{\body}}
+\def\p[body]{\<html:p>[class]{typo-p leadtype}{\body}}
 
 \def\cite[n]{\<html:sup>{\<html:a>[class]{cite}[href]{#fn\n}[id]{c\n}{}}}
 \def\footnote[n][desc]{\<html:p>[class]{footnote}[id]{fn\n}{\<html:a>[href]{#c\n}{} \desc}}

@@ -2,7 +2,7 @@
 \def\pn[body]{\<html:span>[class]{proper-name}{\body}}
 \def\hr{\<html:hr>{}}
 \def\q[body]{\<html:q>{\body}}
-\def\p[body]{\<html:p>[class]{typo-p vert}{\body}}
+\def\p[body]{\<html:p>[class]{typo-p leadtype vert}{\body}}
 
 \title{过秦论}
 \author{jiayi}
