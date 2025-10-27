@@ -4,3 +4,15 @@ This favicon was generated using the following font:
 - Font Author: Copyright 2011 Google Inc. All Rights Reserved.
 - Font Source: https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmEU9vAx05IsDqlA.ttf
 - Font License: Apache License, version 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html))
+
+This website uses the following fonts:
+
+- Font Title: 京華老宋体
+- Font Author: 特里王
+- Font Source: https://zhuanlan.zhihu.com/p/1915922891633043436
+- Font License: Free for commercial use, but not open source. Redistribution, modification, or selling the font file is prohibited. For details, see the original license statement (Chinese).
+
+Other font licenses can be found in the LICENSES directory:
+- CC0-1.0.txt
+- MIT.txt
+- OFL-1.1.txt
