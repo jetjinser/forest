@@ -3,8 +3,6 @@
 
 \import{base-macros}
 
-\wip{continue writing}
-
 \transclude{jinser}
 
 \subtree{
