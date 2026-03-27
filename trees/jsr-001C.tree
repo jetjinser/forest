@@ -126,7 +126,7 @@
 
 \p{But \code{spawn-fiber} doesn't return the result—it returns the fiber object. We need channels to communicate results back. Here's a complete working example that demonstrates true concurrency:}
 
-\pre{\startverb
+\scheme{\startverb
 (use-modules (fibers))
 (use-modules (fibers channels))
 (use-modules (web response))
@@ -231,7 +231,7 @@
 
 \p{Here's the complete Goblins implementation with the same httpbin delay test:}
 
-\pre{\startverb
+\scheme{\startverb
 (use-modules (goblins))
 (use-modules (goblins vat))
 (use-modules (goblins actor-lib methods))
