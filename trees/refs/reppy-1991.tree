@@ -1,0 +1,24 @@
+\title{CML: A Higher Concurrent Language}
+\author{johnreppy}
+\taxon{reference}
+\date{1991}
+\meta{bibtex}\verb!!|
+@inproceedings{10.1145/113445.113470,
+author = {Reppy, John H.},
+title = {CML: A higher concurrent language},
+year = {1991},
+isbn = {0897914287},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/113445.113470},
+doi = {10.1145/113445.113470},
+booktitle = {Proceedings of the ACM SIGPLAN 1991 Conference on Programming Language Design and Implementation},
+pages = {293–305},
+numpages = {13},
+location = {Toronto, Ontario, Canada},
+series = {PLDI '91}
+}
+!!
+\meta{doi}{10.1145/113445.113470}
+
+\p{Presents the full design and implementation of CML (Concurrent ML), a higher-order concurrent programming language. Building upon the 1988 paper's foundation of synchronous operations as first-class values, this work demonstrates how event combinators enable powerful abstraction mechanisms for concurrent programming. CML provides composable synchronization primitives that allow programmers to build complex concurrent structures from simple, reusable components.}

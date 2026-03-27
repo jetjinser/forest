@@ -1,0 +1,358 @@
+\title{Building an Async HTTPS Client with Goblins and Fibers}
+\author{jinser}
+\date{2026-03-28}
+
+\import{base-macros}
+\def\scheme[src]{\hcode{scheme}{\src}}
+
+\wip{This article is primarily written by LLM with human supervision and review. It remains a work in progress and is subject to further modification and updates.}
+
+\p{This is a walkthrough of building an asynchronous HTTP client in Guile Scheme. We start with Fibers' Concurrent ML (CML) primitives, get async HTTP working there first, and then integrate it into Goblins' actor framework.}
+
+\p{\strong{The goal}: Create an HTTPS client that can make non-blocking requests without freezing the system, first using Fibers alone, then integrated with Goblins' actor model. While HTTP would work similarly, HTTPS presents a unique challenge due to TLS handling.}
+
+
+\subtree{%
+\title{The Problem with Blocking I/O}
+
+\p{Guile's standard \code{(web client)} module provides \code{http-request}, \code{http-get}, etc., but these are synchronous. They block until the response is received. In any concurrent system—whether simple fibers or full actor frameworks—blocking operations freeze the entire execution context.}
+
+\p{We needed a way to perform HTTP requests that:}
+\ol{
+  \li{Don't block other fibers from running}
+  \li{Work with Fibers' cooperative scheduling}
+  \li{Can later be integrated into Goblins' actor model}
+}
+} % subtree
+
+
+\subtree{%
+\title{Understanding Fibers}
+
+\p{[Fibers](https://github.com/wingo/fibers), developed by [[wingo]], implements \strong{Concurrent ML (CML)} as described in his article [[wingo-2017-cml]]. Fibers builds upon the theoretical foundation laid by [[johnreppy]] in his seminal papers [[reppy-1988]] and [[reppy-1991]]. Unlike preemptive threading, CML-style concurrency is \strong{cooperative}—fibers explicitly yield control at synchronization points.}
+
+\p{The key insight of CML is that synchronous operations are \em{abstractions} over potential synchronizations—much like a lambda expression is an abstraction over an expression that may be evaluated later. An operation is a value that can be stored, passed around, and composed. You can \code{perform} (or in CML terminology, \code{synchronize}) an operation zero times, once, or multiple times—only then does the actual synchronization occur.}
+
+\p{Fibers uses the term \em{operation} rather than CML's original \em{event}, and \code{perform-operation} rather than \code{synchronize}, but the concepts are identical. Operations can be combined using combinators like \code{choice-operation} (select from multiple operations) and \code{wrap-operation} (attach continuations to operations).}
+} % subtree
+
+
+\subtree{%
+\title{Why Standard HTTP Won't Work with Fibers}
+
+\p{Simply wrapping \code{http-request} in a fiber isn't sufficient. Here's the critical insight: \strong{Fibers' cooperative scheduling only works when operations can yield control}.}
+
+\scheme{%
+;; This doesn't work!
+(spawn-fiber
+  (λ ()
+    (http-request "https://example.com")))
+}
+
+\p{In Fibers terms:}
+\ol{
+  \li{Standard blocking I/O is not a Fibers \em{operation}—it cannot be composed, cannot be selected among alternatives using \code{choice-operation}, and most importantly, cannot yield control}
+  \li{When \code{read()} blocks on a socket with no data, the fiber blocks at the OS level}
+  \li{The Fibers scheduler has no visibility into this blocking—other fibers cannot run until the I/O completes}
+  \li{For cooperative multitasking to work, I/O must itself be expressed as Fibers operations, allowing the fiber to register interest ("notify me when data arrives") and yield immediately}
+}
+
+\p{Without non-blocking sockets, \code{spawn-fiber} is merely wrapping a blocking operation in a fiber—no actual concurrency is achieved. The fiber blocks, and any other fibers waiting to run are stalled.}
+} % subtree
+
+
+\subtree{%
+\title{The Socket Problem}
+
+\p{Guile's standard \code{(web client)} module uses GnuTLS for HTTPS connections. The problem: GnuTLS wraps the underlying socket in a TLS port before we can configure it, preventing us from setting the \code{O_NONBLOCK} flag required by Fibers. As the Guile Reference Manual notes, "Any port type defined by an extension in C may not be suspendable, for example SSL ports from GnuTLS."}
+
+\p{\strong{This only affects HTTPS}. Plain HTTP works fine—the raw socket remains accessible. But in practice, we need HTTPS, and the GnuTLS layer encapsulates the socket before we can configure it for non-blocking I/O.}
+
+\p{The solution comes from [guile-websocket](https://dthompson.us/projects/guile-websocket.html), which faced the same issue. They provide a patched \code{open-socket-for-uri} that accepts a \code{#:configure-socket} callback—\strong{a hook that runs after the socket is created but before TLS wrapping occurs}. This is the critical difference: Guile's standard library doesn't provide this hook. Since this function isn't exported from guile-websocket's public API, we access it via Guile's \code{@@} operator:}
+
+\scheme{%
+;;; Borrow from guile-websocket's internal (web socket client) module.
+;;; This version provides #:configure-socket, a hook called before TLS wrapping.
+(define open-socket-for-uri
+  (@@ (web socket client) open-socket-for-uri))
+}
+} % subtree
+
+
+\subtree{%
+\title{Making Sockets Non-Blocking}
+
+\p{The Fibers documentation explains the requirements for ports to work with its cooperative scheduling:}
+
+\blockquote{The port has to either never block, or support non-blocking I/O. Since Guile version 3.0.10, this is the case for all ports except those that use libreadline. Any port type defined by an extension in C may not be suspendable, however, for example SSL ports from GnuTLS.}
+
+\p{We pass this function to guile-websocket's \code{#:configure-socket} hook, which calls it after socket creation but before TLS wrapping:}
+
+\scheme{%
+(define (use-nonblocking-i/o! port)
+  (fcntl port F_SETFL
+         (logior O_NONBLOCK (fcntl port F_GETFL))))
+}
+
+\p{This function applies the standard \code{fcntl} incantation:}
+\ol{
+  \li{Gets the current flags with \code{F_GETFL}}
+  \li{Bitwise-ORs \code{O_NONBLOCK} with the existing flags}
+  \li{Sets the new flags with \code{F_SETFL}}
+}
+} % subtree
+
+
+\subtree{%
+\title{Fibers-Only HTTP Client}
+
+\p{Now we can create a wrapper that opens a non-blocking socket and passes it to the HTTP procedure:}
+
+\scheme{%
+(define (wrap-http-nonblocking http-proc)
+  (λ (uri . args)
+    (let ([port (open-socket-for-uri
+                  uri
+                  #:configure-socket use-nonblocking-i/o!)])
+      (apply http-proc uri #:port port args))))
+}
+
+\p{This higher-order function:}
+\ol{
+  \li{Takes an HTTP procedure (like \code{http-request})}
+  \li{Returns a new function that opens a non-blocking socket}
+  \li{Passes that socket to the original procedure}
+}
+
+\p{But \code{spawn-fiber} doesn't return the result—it returns the fiber object. We need channels to communicate results back. Here's a complete working example that demonstrates true concurrency:}
+
+\pre{\startverb
+(use-modules (fibers))
+(use-modules (fibers channels))
+(use-modules (web response))
+(use-modules ((web client) #:hide (open-socket-for-uri)))
+
+;;; Borrow open-socket-for-uri from guile-websocket's internal module
+(define open-socket-for-uri
+  (@@ (web socket client) open-socket-for-uri))
+
+;;; Set O_NONBLOCK flag on a port
+(define (use-nonblocking-i/o! port)
+  (fcntl port F_SETFL
+         (logior O_NONBLOCK (fcntl port F_GETFL))))
+
+;;; Wrap an HTTP procedure to use non-blocking sockets
+(define (wrap-http-nonblocking http-proc)
+  (λ (uri . args)
+    (let ([port (open-socket-for-uri
+                  uri
+                  #:configure-socket use-nonblocking-i/o!)])
+      (apply http-proc uri #:port port args))))
+
+;;; Make a delayed request and send result to channel
+(define (make-delayed-request delay-seconds channel)
+  (spawn-fiber
+    (λ ()
+      (display (format #f "[~a] Starting request with ~a second delay~%"
+                       (strftime "%H:%M:%S" (localtime (current-time)))
+                       delay-seconds))
+      (define-values (response body)
+        ((wrap-http-nonblocking http-request)
+         (string-append "https://httpbin.org/delay/"
+                       (number->string delay-seconds))))
+      (display (format #f "[~a] Completed ~a second delay request, status: ~a~%"
+                       (strftime "%H:%M:%S" (localtime (current-time)))
+                       delay-seconds
+                       (response-code response)))
+      (put-message channel (cons delay-seconds response)))))
+
+;;; Run concurrent requests with different delays
+(define result-channel (make-channel))
+
+(run-fibers
+  (λ ()
+    (display "Starting 3 concurrent requests with delays of 5s, 2s, and 3s...")
+    (newline)
+    (display (format #f "[~a] Main fiber starting~%~%"
+                    (strftime "%H:%M:%S" (localtime (current-time)))))
+
+    ;; Spawn three fibers
+    (make-delayed-request 5 result-channel)
+    (make-delayed-request 2 result-channel)
+    (make-delayed-request 3 result-channel)
+
+    ;; Collect results - they'll arrive in completion order (2s, 3s, 5s)
+    (let loop ([n 0])
+      (when (< n 3)
+        (define result (get-message result-channel))
+        (display (format #f "[~a] Received result from ~as delay request~%"
+                        (strftime "%H:%M:%S" (localtime (current-time)))
+                        (car result)))
+        (loop (1+ n))))
+
+    (display "\nAll requests completed!"))
+  #:drain? #t)
+\stopverb}
+
+\p{When you run this, you'll see the 2-second request complete first, then 3-second, then 5-second—proving the fibers are truly concurrent. The total execution time is ~5 seconds, not 10 seconds.}
+} % subtree
+
+
+\subtree{%
+\title{From Local to Distributed}
+
+\p{While Fibers gives us the low-level mechanism for non-blocking I/O, our ultimate goal is a \strong{distributed} HTTP client—one that can communicate with other objects across a network. This requires more than just local concurrency primitives.}
+
+\p{\strong{The Distributed Challenge}: We need an architecture that can seamlessly handle both local and remote communication. Fibers provides cooperative multitasking within a single process, but it doesn't give us:}
+
+\ol{
+  \li{\strong{Network transparency}: The ability to invoke HTTP operations on remote objects as if they were local}
+  \li{\strong{Object capability security}: A security model based on reference access rather than identity}
+  \li{\strong{Distributed promise pipelining}: The ability to compose async operations across network boundaries}
+  \li{\strong{Location independence}: Code that works the same whether components are in the same process or across the globe}
+}
+
+\p{This is where Goblins comes in. Goblins is not just an actor library—it's a \strong{distributed object programming environment}. While it uses actors (objects that communicate via message passing) as its foundation, its true power lies in the \strong{OCapN} (Object Capability Network) protocol. Actors are the means; distributed, secure, networked communication is the end.}
+
+\p{By wrapping our HTTP client in Goblins actors, we gain the ability to:}
+\ol{
+  \li{Use the same HTTP client interface locally or remotely}
+  \li{Leverage sophisticated promise pipelining for async composition}
+  \li{Build on object capability security guarantees}
+  \li{Prepare for a distributed architecture from day one}
+}
+} % subtree
+
+
+\subtree{%
+\title{Goblins Actor Implementation}
+
+\p{Goblins builds on top of Fibers, providing a distributed object environment. The \code{fibrous} macro combines \code{spawn-fiber} with Goblins' sophisticated promise system—called \em{vows}. Unlike simple Fibers channels, vows support distributed promise pipelining: you can compose async operations across network boundaries.}
+
+\p{Here's the complete Goblins implementation with the same httpbin delay test:}
+
+\pre{\startverb
+(use-modules (goblins))
+(use-modules (goblins vat))
+(use-modules (goblins actor-lib methods))
+(use-modules (fibers conditions))
+(use-modules (web response))
+(use-modules ((web client) #:hide (open-socket-for-uri)))
+
+;;; Borrow open-socket-for-uri from guile-websocket
+(define open-socket-for-uri (@@ (web socket client) open-socket-for-uri))
+
+(define (use-nonblocking-i/o! port)
+  (fcntl port F_SETFL
+         (logior O_NONBLOCK (fcntl port F_GETFL))))
+
+(define (wrap-http-nonblocking http-proc)
+  (lambda (uri . args)
+    (let ([port (open-socket-for-uri uri #:configure-socket use-nonblocking-i/o!)])
+      (apply http-proc uri #:port port args))))
+
+;;; Define the HTTP client actor
+(define-actor (^http-client _bcom)
+  #:self self
+  (methods
+    [(request uri . args)
+     (fibrous (call-with-values (lambda () ((wrap-http-nonblocking http-request) uri args))
+                                cons))]
+    [(get     uri . args) (apply $ self 'request uri #:method 'GET     args)]
+    [(head    uri . args) (apply $ self 'request uri #:method 'HEAD    args)]
+    [(post    uri . args) (apply $ self 'request uri #:method 'POST    args)]
+    [(put     uri . args) (apply $ self 'request uri #:method 'PUT     args)]
+    [(delete  uri . args) (apply $ self 'request uri #:method 'DELETE  args)]
+    [(trace   uri . args) (apply $ self 'request uri #:method 'TRACE   args)]
+    [(options uri . args) (apply $ self 'request uri #:method 'OPTIONS args)]))
+
+;;; Demonstrate async behavior with concurrent HTTP requests
+(define (run-demo)
+  (define done? (make-condition))
+  (define completed-count 0)
+  (define total-requests 3)
+
+  (define (check-complete!)
+    (set! completed-count (1+ completed-count))
+    (when (= completed-count total-requests)
+      (signal-condition! done?)))
+
+  (define vat (spawn-vat))
+
+  (with-vat vat
+    (define http-client (spawn ^http-client))
+
+    (display "Starting 3 concurrent requests with delays of 5s, 2s, and 3s...")
+    (newline)
+    (display (format #f "[~a] Main vat starting" 
+                     (strftime "%H:%M:%S" (localtime (current-time)))))
+    (newline)
+    (newline)
+
+    ;; Request 1: 5 second delay
+    (on (<- http-client 'get "https://httpbin.org/delay/5")
+        (lambda (result)
+          (display (format #f "[~a] Completed 5s delay request, status: ~a"
+                           (strftime "%H:%M:%S" (localtime (current-time)))
+                           (response-code (car result))))
+          (newline)
+          (check-complete!)))
+
+    ;; Request 2: 2 second delay (will complete first)
+    (on (<- http-client 'get "https://httpbin.org/delay/2")
+        (lambda (result)
+          (display (format #f "[~a] Completed 2s delay request, status: ~a"
+                           (strftime "%H:%M:%S" (localtime (current-time)))
+                           (response-code (car result))))
+          (newline)
+          (check-complete!)))
+
+    ;; Request 3: 3 second delay (will complete second)
+    (on (<- http-client 'get "https://httpbin.org/delay/3")
+        (lambda (result)
+          (display (format #f "[~a] Completed 3s delay request, status: ~a"
+                           (strftime "%H:%M:%S" (localtime (current-time)))
+                           (response-code (car result))))
+          (newline)
+          (check-complete!))))
+
+  ;; Wait for all requests to complete
+  ;; Note: on returns immediately, so we need done? to prevent exit
+  (wait done?)
+
+  (vat-halt! vat)
+
+  (display "")
+  (display (format #f "[~a] All requests completed!" 
+                   (strftime "%H:%M:%S" (localtime (current-time)))))
+  (newline)
+  'done)
+
+;; Run the demo
+(run-demo)
+\stopverb}
+
+\p{Key differences from the Fibers version:}
+\ol{
+  \li{We use \code{on} handlers instead of explicit channels—Goblins manages the async flow}
+  \li{The \code{<-} operator sends messages to actors, which can be local or remote}
+  \li{We use \code{done?} condition to wait for completion because \code{on} returns immediately}
+  \li{The actor can be transparently moved to another machine via OCapN without code changes}
+}
+
+\p{The \code{request} method uses \code{fibrous} to leverage Fibers for non-blocking I/O while returning a Goblins vow. This vow can be pipelined with other async operations, even across network boundaries. The \code{call-with-values} handles Guile's multiple return values, and \code{cons} packages them for distributed messaging.}
+} % subtree
+
+
+\subtree{%
+\title{Future Improvements}
+
+\p{Some ideas for extending this:}
+\ul{
+  \li{\strong{Connection pooling}: Reuse connections for multiple requests to the same host}
+  \li{\strong{Timeout handling}: Add timeouts to prevent waiting forever}
+  \li{\strong{Request/response interceptors}: Add middleware for logging, retries, etc.}
+}
+
+\p{But the foundation is solid—a clean, composable async HTTP client that plays nicely with Goblins' actor model and can scale from local to distributed.}
+} % subtree

@@ -1,0 +1,9 @@
+\title{A New Concurrent ML}
+\author{wingo}
+\taxon{reference}
+\date{2017-06-29}
+\meta{url}{https://wingolog.org/archives/2017/06/29/a-new-concurrent-ml}
+
+\p{Andy Wingo's comprehensive article describing the implementation of Concurrent ML primitives in Guile's Fibers library. This article explains how to implement multi-core CML and demonstrates that the work required is essentially the same as implementing channels, but provides a more expressive interface.}
+
+\p{The article covers the implementation of operations, choice combinators, and the integration with Guile's fiber-based concurrency system. It serves as both a tutorial on CML concepts and a guide for implementing them in other languages.}

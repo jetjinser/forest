@@ -1,0 +1,25 @@
+\title{Synchronous Operations as First-Class Values}
+\author{johnreppy}
+\taxon{reference}
+\date{1988}
+\meta{bibtex}\verb!!|
+@inproceedings{10.1145/53990.54015,
+author = {Reppy, J. H.},
+title = {Synchronous operations as first-class values},
+year = {1988},
+isbn = {0897912691},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/53990.54015},
+doi = {10.1145/53990.54015},
+abstract = {Synchronous message passing via channels is an interprocess communication (IPC) mechanism found in several concurrent languages, such as CSP, occam, and Amber. Such languages provide a powerful selective I/O operation, which plays a vital role in managing communication with multiple processes. Because the channel IPC mechanism is "operation-oriented," only procedural abstraction techniques can be used in structuring the communication/synchronization aspects of a system. This has the unfortunate effect of restricting the use of selective I/O, which in turn limits the communication structure. We propose a new, "value-oriented" approach to channel-based synchronization. We make synchronous operations first-class values, called events, in much the same way that functions are first-class values in functional programming languages. Our approach allows the use of data abstraction techniques for structuring IPC. We have incorporated events into PML, a concurrent functional programming language, and have implemented run-time support for them as part of the Pegasus system.},
+booktitle = {Proceedings of the ACM SIGPLAN 1988 Conference on Programming Language Design and Implementation},
+pages = {250–259},
+numpages = {10},
+location = {Atlanta, Georgia, USA},
+series = {PLDI '88}
+}
+!!
+\meta{doi}{10.1145/53990.54015}
+
+\p{Introduces the concept of synchronous operations as first-class values, the foundational idea behind Concurrent ML. Operations are abstractions over potential synchronizations that can be composed before being executed, enabling a "value-oriented" approach to channel-based synchronization rather than the traditional "operation-oriented" approach.}
