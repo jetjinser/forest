@@ -9,7 +9,7 @@
     }:
     {
       pre-commit.settings.hooks = {
-        nixfmt-rfc-style.enable = true;
+        nixfmt.enable = true;
         typos = {
           enable = false;
           settings.configPath = ".typos.toml"; # FIXME: cannot apply?
