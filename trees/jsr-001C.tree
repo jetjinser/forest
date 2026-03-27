@@ -247,7 +247,7 @@
          (logior O_NONBLOCK (fcntl port F_GETFL))))
 
 (define (wrap-http-nonblocking http-proc)
-  (lambda (uri . args)
+  (λ (uri args)
     (let ([port (open-socket-for-uri uri #:configure-socket use-nonblocking-i/o!)])
       (apply http-proc uri #:port port args))))
 
@@ -256,7 +256,7 @@
   #:self self
   (methods
     [(request uri . args)
-     (fibrous (call-with-values (lambda () ((wrap-http-nonblocking http-request) uri args))
+     (fibrous (call-with-values (λ () ((wrap-http-nonblocking http-request) uri args))
                                 cons))]
     [(get     uri . args) (apply $ self 'request uri #:method 'GET     args)]
     [(head    uri . args) (apply $ self 'request uri #:method 'HEAD    args)]
@@ -291,7 +291,7 @@
 
     ;; Request 1: 5 second delay
     (on (<- http-client 'get "https://httpbin.org/delay/5")
-        (lambda (result)
+        (λ (result)
           (display (format #f "[~a] Completed 5s delay request, status: ~a"
                            (strftime "%H:%M:%S" (localtime (current-time)))
                            (response-code (car result))))
@@ -300,7 +300,7 @@
 
     ;; Request 2: 2 second delay (will complete first)
     (on (<- http-client 'get "https://httpbin.org/delay/2")
-        (lambda (result)
+        (λ (result)
           (display (format #f "[~a] Completed 2s delay request, status: ~a"
                            (strftime "%H:%M:%S" (localtime (current-time)))
                            (response-code (car result))))
@@ -309,7 +309,7 @@
 
     ;; Request 3: 3 second delay (will complete second)
     (on (<- http-client 'get "https://httpbin.org/delay/3")
-        (lambda (result)
+        (λ (result)
           (display (format #f "[~a] Completed 3s delay request, status: ~a"
                            (strftime "%H:%M:%S" (localtime (current-time)))
                            (response-code (car result))))
