@@ -1,5 +1,7 @@
 \title{Building an Async HTTPS Client with Goblins and Fibers}
 \author{jinser}
+\tag{blog}
+\tag{wip}
 \date{2026-03-28}
 
 \import{base-macros}

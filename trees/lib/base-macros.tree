@@ -182,6 +182,7 @@
 
 \def\dquote[body]{\ldq\body\rdq}
 \def\book[body]{\lab\body\rab}
+\def\movie[body]{\lab\body\rab}
 
 % ===
 
